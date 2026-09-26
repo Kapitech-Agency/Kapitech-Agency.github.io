@@ -392,10 +392,10 @@ export const AdminSettings: React.FC = () => {
       <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
         <div>
           <h1 className="ams-page-title">
-            <Settings className="text-[var(--accent-text)] shrink-0" size={22} />
+            <Settings className="text-accent-text shrink-0" size={22} />
             <span>{language === 'id' ? 'Pengaturan Sistem & Keamanan' : 'Settings'}</span>
           </h1>
-          <p className="text-xs text-[var(--muted)] mt-1 font-sans">
+          <p className="text-xs text-muted mt-1 font-sans">
             {language === 'id'
               ? 'Konfigurasi akun master admin, hak akses RBAC, integrasi API, dan log audit keamanan terenkripsi.'
               : 'Configure master admin identity, 4-tier RBAC access matrix, API cloud integrations, and encrypted audit trail.'}
@@ -404,13 +404,13 @@ export const AdminSettings: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-[var(--line)] pb-2 overflow-x-auto custom-scrollbar">
+      <div className="flex items-center gap-2 border-b border-line pb-2 overflow-x-auto custom-scrollbar">
         <button
           onClick={() => handleTabChange('profile')}
           className={`px-4 py-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'profile'
-              ? 'bg-[var(--accent)] text-white font-semibold '
-              : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
+              ? 'bg-accent text-white font-semibold '
+              : 'text-muted hover:text-text hover:bg-panel'
           }`}
         >
           <UserCheck size={15} />
@@ -421,8 +421,8 @@ export const AdminSettings: React.FC = () => {
           onClick={() => handleTabChange('branding')}
           className={`px-4 py-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'branding'
-              ? 'bg-[var(--accent)] text-white font-semibold '
-              : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
+              ? 'bg-accent text-white font-semibold '
+              : 'text-muted hover:text-text hover:bg-panel'
           }`}
         >
           <Palette size={15} />
@@ -434,8 +434,8 @@ export const AdminSettings: React.FC = () => {
            disabled={!canManageAdminAccounts}
           className={`px-4 py-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'rbac'
-              ? 'bg-[var(--accent)] text-white font-semibold '
-              : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
+              ? 'bg-accent text-white font-semibold '
+              : 'text-muted hover:text-text hover:bg-panel'
           }`}
         >
           <Layers size={15} />
@@ -446,8 +446,8 @@ export const AdminSettings: React.FC = () => {
           onClick={() => handleTabChange('security')}
           className={`px-4 py-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'security'
-              ? 'bg-[var(--accent)] text-white font-semibold '
-              : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
+              ? 'bg-accent text-white font-semibold '
+              : 'text-muted hover:text-text hover:bg-panel'
           }`}
         >
           <Lock size={15} />
@@ -459,8 +459,8 @@ export const AdminSettings: React.FC = () => {
            disabled={!canAccessServer}
           className={`px-4 py-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'api'
-              ? 'bg-[var(--accent)] text-white font-semibold '
-              : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
+              ? 'bg-accent text-white font-semibold '
+              : 'text-muted hover:text-text hover:bg-panel'
           }`}
         >
           <Database size={15} />
@@ -472,8 +472,8 @@ export const AdminSettings: React.FC = () => {
            disabled={!canViewAuditLogs}
           className={`px-4 py-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'audit'
-              ? 'bg-[var(--accent)] text-white font-semibold '
-              : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
+              ? 'bg-accent text-white font-semibold '
+              : 'text-muted hover:text-text hover:bg-panel'
           }`}
         >
           <ShieldCheck size={15} />
@@ -483,16 +483,16 @@ export const AdminSettings: React.FC = () => {
 
       {/* TAB 1: PROFILE & MASTER ACCOUNT */}
       {activeTab === 'profile' && (
-        <div className="w-full bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6">
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[var(--line)]">
-            <div className="w-10 h-10 rounded-card bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)] shrink-0">
+        <div className="w-full bg-panel border border-line rounded-card p-5 sm:p-6">
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-line">
+            <div className="w-10 h-10 rounded-card bg-accent/10 border border-accent/30 flex items-center justify-center text-accent shrink-0">
               <UserCheck size={20} />
             </div>
             <div>
-              <h2 className="text-base font-semibold font-sans text-[var(--text)]">
+              <h2 className="text-base font-semibold font-sans text-text">
                 {language === 'id' ? 'Profil & Identitas Master' : 'Master Profile & Identity'}
               </h2>
-              <p className="text-xs text-[var(--muted)] font-sans">
+              <p className="text-xs text-muted font-sans">
                 {language === 'id' 
                   ? 'Konfigurasi identitas login pengelola sistem dan kredensial utama.' 
                   : 'Configure system administrator login identity and primary credentials.'}
@@ -503,8 +503,8 @@ export const AdminSettings: React.FC = () => {
           {securityStatus && (
             <div className={`mb-6 p-4 rounded-card text-xs font-sans flex items-start gap-2.5 ${
               securityStatus.success 
-                ? 'bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)]' 
-                : 'bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--danger)]'
+                ? 'bg-success/10 border border-success/30 text-success' 
+                : 'bg-danger/10 border border-danger/30 text-danger'
             }`}>
               {securityStatus.success ? <Check size={16} className="shrink-0 mt-0.5" /> : <AlertCircle size={16} className="shrink-0 mt-0.5" />}
               <span>{securityStatus.message}</span>
@@ -514,7 +514,7 @@ export const AdminSettings: React.FC = () => {
           <form onSubmit={handleUpdateSecurity} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-sans text-[var(--muted)] mb-1 font-semibold">
+                <label className="block text-xs font-sans text-muted mb-1 font-semibold">
                   {language === 'id' ? 'Nama Pengguna (Username)' : 'Username'}
                 </label>
                 <input
@@ -522,12 +522,12 @@ export const AdminSettings: React.FC = () => {
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent font-sans min-h-10"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-sans text-[var(--muted)] mb-1 font-semibold">
+                <label className="block text-xs font-sans text-muted mb-1 font-semibold">
                   {language === 'id' ? 'Email Notifikasi' : 'Notification Email'}
                 </label>
                 <input
@@ -535,28 +535,28 @@ export const AdminSettings: React.FC = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent font-sans min-h-10"
                 />
               </div>
             </div>
 
-            <div className="p-4 bg-[var(--panel)] border border-[var(--line)] rounded-card space-y-2">
+            <div className="p-4 bg-panel border border-line rounded-card space-y-2">
               <div className="flex items-center justify-between text-xs font-sans">
-                <span className="text-[var(--muted)]">{language === 'id' ? 'Tingkat Akses (Role Tier):' : 'Role Tier Level:'}</span>
-                <span className="text-[var(--accent)] font-semibold">{session?.user.role || storedCreds.role}</span>
+                <span className="text-muted">{language === 'id' ? 'Tingkat Akses (Role Tier):' : 'Role Tier Level:'}</span>
+                <span className="text-accent font-semibold">{session?.user.role || storedCreds.role}</span>
               </div>
               <div className="flex items-center justify-between text-xs font-sans">
-                <span className="text-[var(--muted)]">{language === 'id' ? 'Divisi Agensi:' : 'Agency Division:'}</span>
-                <span className="text-[var(--text)] font-semibold">{storedCreds.division || 'Management'}</span>
+                <span className="text-muted">{language === 'id' ? 'Divisi Agensi:' : 'Agency Division:'}</span>
+                <span className="text-text font-semibold">{storedCreds.division || 'Management'}</span>
               </div>
               <div className="flex items-center justify-between text-xs font-sans">
-                <span className="text-[var(--muted)]">{language === 'id' ? 'Terakhir Login:' : 'Last Login:'}</span>
-                <span className="text-[var(--muted)]">{new Date(session?.user.lastLogin || Date.now()).toLocaleString()}</span>
+                <span className="text-muted">{language === 'id' ? 'Terakhir Login:' : 'Last Login:'}</span>
+                <span className="text-muted">{new Date(session?.user.lastLogin || Date.now()).toLocaleString()}</span>
               </div>
             </div>
 
-            <div className="pt-2 border-t border-[var(--line)]">
-              <label className="block text-xs font-sans text-[var(--muted)] mb-1 font-semibold">
+            <div className="pt-2 border-t border-line">
+              <label className="block text-xs font-sans text-muted mb-1 font-semibold">
                 {language === 'id' ? 'Password Saat Ini (Wajib Konfirmasi Perubahan) *' : 'Current Password (Required for confirmation) *'}
               </label>
               <input
@@ -565,7 +565,7 @@ export const AdminSettings: React.FC = () => {
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder={language === 'id' ? 'Masukkan password admin saat ini...' : 'Enter your current password...'}
-                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent font-sans min-h-10"
               />
             </div>
 
@@ -573,7 +573,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="submit"
                 disabled={securityLoading}
-                className="px-5 py-2.5 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-50 min-h-10"
+                className="px-5 py-2.5 rounded-control bg-accent text-white text-xs font-sans font-semibold hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-50 min-h-10"
               >
                 {securityLoading ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
                 <span>{language === 'id' ? 'Perbarui Akun Master' : 'Update Master Account'}</span>
@@ -585,16 +585,16 @@ export const AdminSettings: React.FC = () => {
 
       {/* TAB 2: BRAND IDENTITY & SEO */}
       {activeTab === 'branding' && (
-        <div className="w-full max-w-4xl bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6">
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[var(--line)]">
-            <div className="w-10 h-10 rounded-card bg-[var(--series-3)]/10 border border-[var(--series-3)]/30 flex items-center justify-center text-[var(--series-3)] shrink-0">
+        <div className="w-full max-w-4xl bg-panel border border-line rounded-card p-5 sm:p-6">
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-line">
+            <div className="w-10 h-10 rounded-card bg-series-3/10 border border-series-3/30 flex items-center justify-center text-series-3 shrink-0">
               <Palette size={20} />
             </div>
             <div>
-              <h2 className="text-base font-semibold font-sans text-[var(--text)]">
+              <h2 className="text-base font-semibold font-sans text-text">
                 {language === 'id' ? 'Identitas Brand, Metadata & Notifikasi' : 'Brand Identity, Metadata & Notification Rules'}
               </h2>
-              <p className="text-xs text-[var(--muted)] font-sans">
+              <p className="text-xs text-muted font-sans">
                 {language === 'id'
                   ? 'Konfigurasi representasi visual dan aturan SEO global untuk kapitech.id dan ams.kapitech.id.'
                   : 'Configure visual branding, search meta tags, and global agency settings for kapitech.id.'}
@@ -603,7 +603,7 @@ export const AdminSettings: React.FC = () => {
           </div>
 
           {metaStatus && (
-            <div className="mb-6 p-4 rounded-card text-xs font-sans flex items-start gap-2.5 bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)]">
+            <div className="mb-6 p-4 rounded-card text-xs font-sans flex items-start gap-2.5 bg-success/10 border border-success/30 text-success">
               <Check size={16} className="shrink-0 mt-0.5" />
               <span>{metaStatus}</span>
             </div>
@@ -612,63 +612,63 @@ export const AdminSettings: React.FC = () => {
           <form onSubmit={handleSaveMeta} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-sans text-[var(--muted)] mb-1 font-semibold">
+                <label className="block text-xs font-sans text-muted mb-1 font-semibold">
                   {language === 'id' ? 'Nama Agensi Global' : 'Global Agency Name'}
                 </label>
                 <input
                   type="text"
                   value={metaSettings.agencyName}
                   onChange={(e) => setMetaSettings({ ...metaSettings, agencyName: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent font-sans min-h-10"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-sans text-[var(--muted)] mb-1 font-semibold">
+                <label className="block text-xs font-sans text-muted mb-1 font-semibold">
                   {language === 'id' ? 'Domain Publik' : 'Public Domain'}
                 </label>
                 <input
                   type="text"
                   value="https://kapitech.id"
                   disabled
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)]/50 border border-[var(--line)] rounded-control text-xs text-[var(--muted)] font-sans cursor-not-allowed min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-panel/50 border border-line rounded-control text-xs text-muted font-sans cursor-not-allowed min-h-10"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-sans text-[var(--muted)] mb-1 font-semibold">
+              <label className="block text-xs font-sans text-muted mb-1 font-semibold">
                 {language === 'id' ? 'Tagline / Slogan Utama' : 'Hero Tagline / Catchphrase'}
               </label>
               <input
                 type="text"
                 value={metaSettings.tagline}
                 onChange={(e) => setMetaSettings({ ...metaSettings, tagline: e.target.value })}
-                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent font-sans min-h-10"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-sans text-[var(--muted)] mb-1 font-semibold">
+              <label className="block text-xs font-sans text-muted mb-1 font-semibold">
                 {language === 'id' ? 'Deskripsi Meta (SEO Global)' : 'Meta Description (Global SEO)'}
               </label>
               <textarea
                 rows={3}
                 value={metaSettings.metaDescription}
                 onChange={(e) => setMetaSettings({ ...metaSettings, metaDescription: e.target.value })}
-                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
+                className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent font-sans"
               />
             </div>
 
-            <div className="pt-4 border-t border-[var(--line)] space-y-3">
+            <div className="pt-4 border-t border-line space-y-3">
               <label className="flex items-center gap-3 cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={metaSettings.soundEffectsEnabled}
                   onChange={(e) => setMetaSettings({ ...metaSettings, soundEffectsEnabled: e.target.checked })}
-                  className="w-4 h-4 rounded bg-[var(--panel)] border-[var(--line)] text-[var(--accent)] accent-[var(--accent)]"
+                  className="w-4 h-4 rounded bg-panel border-line text-accent accent-accent"
                 />
-                <span className="text-xs text-[var(--text)] font-sans">
+                <span className="text-xs text-text font-sans">
                   {language === 'id' 
                     ? 'Aktifkan Notifikasi Suara (Chime) saat ada lead baru masuk' 
                     : 'Enable audio chime notification on new incoming lead submission'}
@@ -680,9 +680,9 @@ export const AdminSettings: React.FC = () => {
                   type="checkbox"
                   checked={metaSettings.enableLiveChat}
                   onChange={(e) => setMetaSettings({ ...metaSettings, enableLiveChat: e.target.checked })}
-                  className="w-4 h-4 rounded bg-[var(--panel)] border-[var(--line)] text-[var(--accent)] accent-[var(--accent)]"
+                  className="w-4 h-4 rounded bg-panel border-line text-accent accent-accent"
                 />
-                <span className="text-xs text-[var(--text)] font-sans">
+                <span className="text-xs text-text font-sans">
                   {language === 'id' 
                     ? 'Tampilkan Floating Contact & WhatsApp Widget di pojok kanan bawah' 
                     : 'Display Floating WhatsApp & Contact Widget on bottom-right'}
@@ -693,7 +693,7 @@ export const AdminSettings: React.FC = () => {
             <div className="pt-4 flex items-center justify-end">
               <button
                 type="submit"
-                className="px-5 py-2.5 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:brightness-110 transition-all flex items-center gap-2 min-h-10"
+                className="px-5 py-2.5 rounded-control bg-accent text-white text-xs font-sans font-semibold hover:brightness-110 transition-all flex items-center gap-2 min-h-10"
               >
                 <Save size={14} />
                 <span>{language === 'id' ? 'Simpan Pengaturan Brand' : 'Save Brand Settings'}</span>
@@ -710,26 +710,26 @@ export const AdminSettings: React.FC = () => {
           {accountActionMessage && (
             <div className={`p-4 rounded-card border flex items-center gap-3 text-xs font-sans animate-fadeIn ${
               accountActionMessage.success
-                ? 'bg-[var(--success)]/10 border-[var(--success)]/30 text-[var(--success)]'
-                : 'bg-[var(--danger)]/10 border-[var(--danger)]/30 text-[var(--danger)]'
+                ? 'bg-success/10 border-success/30 text-success'
+                : 'bg-danger/10 border-danger/30 text-danger'
             }`}>
-              {accountActionMessage.success ? <Check size={16} className="shrink-0 text-[var(--success)]" /> : <AlertCircle size={16} className="shrink-0 text-[var(--danger)]" />}
+              {accountActionMessage.success ? <Check size={16} className="shrink-0 text-success" /> : <AlertCircle size={16} className="shrink-0 text-danger" />}
               <span>{accountActionMessage.message}</span>
             </div>
           )}
 
           {/* Accounts Management Section */}
-          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 pb-5 border-b border-[var(--line)]">
+          <div className="bg-panel border border-line rounded-card p-5 sm:p-6 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 pb-5 border-b border-line">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-card bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--danger)] shrink-0">
+                <div className="w-10 h-10 rounded-card bg-accent/10 border border-accent/30 flex items-center justify-center text-danger shrink-0">
                   <Users size={20} />
                 </div>
                 <div>
-                  <h2 className="text-base font-semibold font-sans text-[var(--text)]">
+                  <h2 className="text-base font-semibold font-sans text-text">
                     {language === 'id' ? 'Manajemen Akun Stakeholder & Teknisi' : 'Stakeholder & Technical Accounts'}
                   </h2>
-                  <p className="text-xs text-[var(--muted)] font-sans">
+                  <p className="text-xs text-muted font-sans">
                     {language === 'id'
                       ? 'Kelola akun khusus Stakeholder Executive, Teknisi IT, dan staf dengan hak akses granular.'
                       : 'Manage dedicated accounts for Executive Stakeholders, IT Engineers, and operations.'}
@@ -740,7 +740,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="button"
                 onClick={handleOpenAddAccount}
-                className="h-10 px-4 min-h-10 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:brightness-110 transition-all flex items-center justify-center gap-2 self-start sm:self-auto shrink-0"
+                className="h-10 px-4 min-h-10 rounded-control bg-accent text-white text-xs font-sans font-semibold hover:brightness-110 transition-all flex items-center justify-center gap-2 self-start sm:self-auto shrink-0"
               >
                 <UserPlus size={15} />
                 <span>{language === 'id' ? 'Tambah Akun Baru' : 'Add New Account'}</span>
@@ -757,62 +757,62 @@ export const AdminSettings: React.FC = () => {
                 return (
                   <div 
                     key={acc.id}
-                    className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] flex flex-col justify-between hover:border-[var(--line)] transition-all space-y-4"
+                    className="p-4 rounded-card bg-panel border border-line flex flex-col justify-between hover:border-line transition-all space-y-4"
                   >
                     <div>
                       <div className="flex items-start justify-between gap-2 mb-2.5">
                         <div className="flex items-center gap-2.5">
                           <div className={`w-9 h-9 rounded-card flex items-center justify-center font-semibold text-xs font-sans ${
-                            isMaster ? 'bg-[var(--danger)]/20 text-[var(--danger)] border border-[var(--danger)]/30' :
+                            isMaster ? 'bg-danger/20 text-danger border border-danger/30' :
                             isExecutive ? 'bg-warning/20 text-warning border border-warning/30' :
-                            isIT ? 'bg-[var(--success)]/20 text-[var(--success)] border border-[var(--success)]/30' :
-                            'bg-[var(--series-3)]/20 text-[var(--series-3)] border border-[var(--series-3)]/30'
+                            isIT ? 'bg-success/20 text-success border border-success/30' :
+                            'bg-series-3/20 text-series-3 border border-series-3/30'
                           }`}>
                             {acc.name.split(' ').map(n => n[0]).slice(0, 2).join('')}
                           </div>
                           <div>
-                            <h3 className="text-sm font-semibold text-[var(--text)] leading-snug">{acc.name}</h3>
-                            <p className="text-[11px] font-sans text-[var(--muted)]">@{acc.username}</p>
+                            <h3 className="text-sm font-semibold text-text leading-snug">{acc.name}</h3>
+                            <p className="text-[11px] font-sans text-muted">@{acc.username}</p>
                           </div>
                         </div>
 
                         <span className={`text-[10px] font-sans px-2 py-0.5 rounded-badge border shrink-0 ${
-                          isMaster ? 'bg-[var(--danger)]/10 text-[var(--danger)] border-[var(--danger)]/30' :
-                          isExecutive ? 'bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/30' :
-                          isIT ? 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30' :
-                          'bg-[var(--series-3)]/10 text-[var(--series-3)] border-[var(--series-3)]/30'
+                          isMaster ? 'bg-danger/10 text-danger border-danger/30' :
+                          isExecutive ? 'bg-warning/10 text-warning border-warning/30' :
+                          isIT ? 'bg-success/10 text-success border-success/30' :
+                          'bg-series-3/10 text-series-3 border-series-3/30'
                         }`}>
                           {acc.division || 'Operations'}
                         </span>
                       </div>
 
                       <div className="space-y-1.5 pt-1 text-[11px] font-sans">
-                        <div className="text-[var(--muted)] flex items-center justify-between">
+                        <div className="text-muted flex items-center justify-between">
                           <span>Role:</span>
-                          <span className="font-semibold text-[var(--text)] truncate max-w-[170px]">{acc.role}</span>
+                          <span className="font-semibold text-text truncate max-w-[170px]">{acc.role}</span>
                         </div>
-                        <div className="text-[var(--muted)] flex items-center justify-between">
+                        <div className="text-muted flex items-center justify-between">
                           <span>Email:</span>
-                          <span className="text-[var(--muted)] truncate max-w-[170px]">{acc.email}</span>
+                          <span className="text-muted truncate max-w-[170px]">{acc.email}</span>
                         </div>
-                        <div className="text-[var(--muted)] flex items-center justify-between">
+                        <div className="text-muted flex items-center justify-between">
                           <span>Status:</span>
-                          <span className="text-[var(--success)] flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[var(--success)]" />
+                          <span className="text-success flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-success" />
                             Aktif
                           </span>
                         </div>
                       </div>
 
                       {/* Permissions Summary Badges */}
-                      <div className="mt-3 pt-3 border-t border-[var(--line)] flex flex-wrap gap-1">
+                      <div className="mt-3 pt-3 border-t border-line flex flex-wrap gap-1">
                         {acc.permissions?.canManageInvoicing && (
-                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30 rounded">
+                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-success/10 text-success border border-success/30 rounded">
                             Invoice
                           </span>
                         )}
                         {acc.permissions?.canApproveBudgets && (
-                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-[var(--warning)]/10 text-[var(--warning)] border border-amber-800/40 rounded">
+                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-warning/10 text-warning border border-amber-800/40 rounded">
                             Budget Approval
                           </span>
                         )}
@@ -822,7 +822,7 @@ export const AdminSettings: React.FC = () => {
                           </span>
                         )}
                         {acc.permissions?.canViewAuditLogs && (
-                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)] rounded">
+                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-panel text-muted border border-line rounded">
                             Audit Logs
                           </span>
                         )}
@@ -834,13 +834,13 @@ export const AdminSettings: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="pt-3 border-t border-[var(--line)] flex items-center justify-between gap-2">
+                    <div className="pt-3 border-t border-line flex items-center justify-between gap-2">
                       <button
                         type="button"
                         onClick={() => handleOpenEditPermissions(acc)}
-                        className="min-h-10 px-2.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--text)] text-[11px] font-sans font-medium flex items-center gap-1.5 transition-colors"
+                        className="min-h-10 px-2.5 rounded-control bg-panel hover:bg-panel text-text text-[11px] font-sans font-medium flex items-center gap-1.5 transition-colors"
                       >
-                        <Sliders size={13} className="text-[var(--danger)]" />
+                        <Sliders size={13} className="text-danger" />
                         <span>{language === 'id' ? 'Atur Izin' : 'Permissions'}</span>
                       </button>
 
@@ -848,14 +848,14 @@ export const AdminSettings: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleDeleteAccountClick(acc.id, acc.name)}
-                          className="h-8 px-2 rounded-control hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] text-[11px] font-sans transition-colors flex items-center gap-1"
+                          className="h-8 px-2 rounded-control hover:bg-danger/10 text-muted hover:text-danger text-[11px] font-sans transition-colors flex items-center gap-1"
                           title="Hapus Akun"
                         >
                           <Trash2 size={13} />
                           <span className="hidden sm:inline">{language === 'id' ? 'Hapus' : 'Delete'}</span>
                         </button>
                       ) : (
-                        <span className="text-[10px] font-sans text-[var(--muted)] italic">Root Master</span>
+                        <span className="text-[10px] font-sans text-muted italic">Root Master</span>
                       )}
                     </div>
                   </div>
@@ -865,16 +865,16 @@ export const AdminSettings: React.FC = () => {
           </div>
 
           {/* Reference RBAC Matrix */}
-          <div className="w-full bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 space-y-6">
-            <div className="flex items-center gap-3 pb-4 border-b border-[var(--line)]">
+          <div className="w-full bg-panel border border-line rounded-card p-5 sm:p-6 space-y-6">
+            <div className="flex items-center gap-3 pb-4 border-b border-line">
               <div className="w-10 h-10 rounded-card bg-info/10 border border-info/30 flex items-center justify-center text-info shrink-0">
                 <Layers size={20} />
               </div>
               <div>
-                <h2 className="text-base font-semibold font-sans text-[var(--text)]">
+                <h2 className="text-base font-semibold font-sans text-text">
                   {language === 'id' ? 'Standar Hirarki Hak Akses Stakeholder Kapitech' : 'Kapitech Stakeholder Access Standards'}
                 </h2>
-                <p className="text-xs text-[var(--muted)] font-sans">
+                <p className="text-xs text-muted font-sans">
                   {language === 'id'
                     ? 'Struktur hirarki hak akses dan izin operasi di seluruh modul AMS Kapitech.'
                     : 'Enterprise permission matrix across financial, pipeline, sprint delivery, and system configurations.'}
@@ -885,7 +885,7 @@ export const AdminSettings: React.FC = () => {
             <div className="ams-table-scroll overflow-x-auto custom-scrollbar">
               <table className="w-full text-xs font-sans text-left border-collapse min-w-[650px]">
                 <thead>
-                  <tr className="border-b border-[var(--line)] text-[var(--muted)]">
+                  <tr className="border-b border-line text-muted">
                     <th className="py-3 px-4 font-semibold">{language === 'id' ? 'Tingkatan & Peran' : 'Tier Level & Role'}</th>
                     <th className="py-3 px-4 font-semibold">{language === 'id' ? 'Finansial & Invoice' : 'Financial & Invoicing'}</th>
                     <th className="py-3 px-4 font-semibold">{language === 'id' ? 'CRM & Pipeline Prospek' : 'CRM & Client Leads'}</th>
@@ -893,46 +893,46 @@ export const AdminSettings: React.FC = () => {
                     <th className="py-3 px-4 font-semibold">{language === 'id' ? 'Sistem & Cloud API' : 'System & Cloud API'}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[var(--line)]">
-                  <tr className="hover:bg-[var(--panel)]/60 transition-colors">
-                    <td className="py-3.5 px-4 font-semibold text-[var(--text)] flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[var(--warning)] shrink-0"></span>
+                <tbody className="divide-y divide-line">
+                  <tr className="hover:bg-panel/60 transition-colors">
+                    <td className="py-3.5 px-4 font-semibold text-text flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-warning shrink-0"></span>
                       <span>Stakeholder Executive (Managing Partner)</span>
                     </td>
-                    <td className="py-3.5 px-4 text-[var(--success)] font-semibold">{language === 'id' ? 'Approval & Audit Finansial Penuh' : 'Financial Approval & Audit'}</td>
-                    <td className="py-3.5 px-4 text-[var(--success)] font-semibold">{language === 'id' ? 'Akses Penuh Pipeline' : 'Full Pipeline View'}</td>
-                    <td className="py-3.5 px-4 text-[var(--warning)]">{language === 'id' ? 'Review Milestone & Delivery' : 'Milestone & Delivery Review'}</td>
-                    <td className="py-3.5 px-4 text-[var(--muted)]">{language === 'id' ? 'Audit Log & Governance' : 'Audit Logs & Governance'}</td>
+                    <td className="py-3.5 px-4 text-success font-semibold">{language === 'id' ? 'Approval & Audit Finansial Penuh' : 'Financial Approval & Audit'}</td>
+                    <td className="py-3.5 px-4 text-success font-semibold">{language === 'id' ? 'Akses Penuh Pipeline' : 'Full Pipeline View'}</td>
+                    <td className="py-3.5 px-4 text-warning">{language === 'id' ? 'Review Milestone & Delivery' : 'Milestone & Delivery Review'}</td>
+                    <td className="py-3.5 px-4 text-muted">{language === 'id' ? 'Audit Log & Governance' : 'Audit Logs & Governance'}</td>
                   </tr>
-                  <tr className="hover:bg-[var(--panel)]/60 transition-colors">
-                    <td className="py-3.5 px-4 font-semibold text-[var(--text)] flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[var(--success)] shrink-0"></span>
+                  <tr className="hover:bg-panel/60 transition-colors">
+                    <td className="py-3.5 px-4 font-semibold text-text flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-success shrink-0"></span>
                       <span>Teknisi IT / Systems Engineer</span>
                     </td>
-                    <td className="py-3.5 px-4 text-[var(--muted)]">{language === 'id' ? 'Tanpa Akses Finansial' : 'No Financial Access'}</td>
-                    <td className="py-3.5 px-4 text-[var(--muted)]">{language === 'id' ? 'Tanpa Akses' : 'No Access'}</td>
-                    <td className="py-3.5 px-4 text-[var(--success)] font-semibold">{language === 'id' ? 'Teknis Penuh & Sprint Tasks' : 'Technical & Sprint Tasks'}</td>
-                    <td className="py-3.5 px-4 text-[var(--success)] font-semibold">{language === 'id' ? 'Server, Cloud Run, API & Diagnostics' : 'Full Server, Cloud & Diagnostics'}</td>
+                    <td className="py-3.5 px-4 text-muted">{language === 'id' ? 'Tanpa Akses Finansial' : 'No Financial Access'}</td>
+                    <td className="py-3.5 px-4 text-muted">{language === 'id' ? 'Tanpa Akses' : 'No Access'}</td>
+                    <td className="py-3.5 px-4 text-success font-semibold">{language === 'id' ? 'Teknis Penuh & Sprint Tasks' : 'Technical & Sprint Tasks'}</td>
+                    <td className="py-3.5 px-4 text-success font-semibold">{language === 'id' ? 'Server, Cloud Run, API & Diagnostics' : 'Full Server, Cloud & Diagnostics'}</td>
                   </tr>
-                  <tr className="hover:bg-[var(--panel)]/60 transition-colors">
-                    <td className="py-3.5 px-4 font-semibold text-[var(--text)] flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[var(--series-3)] shrink-0"></span>
+                  <tr className="hover:bg-panel/60 transition-colors">
+                    <td className="py-3.5 px-4 font-semibold text-text flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-series-3 shrink-0"></span>
                       <span>Tier 2: Project Manager (PM)</span>
                     </td>
-                    <td className="py-3.5 px-4 text-[var(--warning)]">{language === 'id' ? 'Lihat & Draf Invoice' : 'View & Draft Invoices'}</td>
-                    <td className="py-3.5 px-4 text-[var(--success)] font-semibold">{language === 'id' ? 'Kelola Pipeline & Delegasi' : 'Manage Pipeline & Assign'}</td>
-                    <td className="py-3.5 px-4 text-[var(--success)] font-semibold">{language === 'id' ? 'Sprint Planning & Kelola Task' : 'Sprint Planning & Task Mgmt'}</td>
-                    <td className="py-3.5 px-4 text-[var(--muted)]">{language === 'id' ? 'Hanya Lihat' : 'View Only'}</td>
+                    <td className="py-3.5 px-4 text-warning">{language === 'id' ? 'Lihat & Draf Invoice' : 'View & Draft Invoices'}</td>
+                    <td className="py-3.5 px-4 text-success font-semibold">{language === 'id' ? 'Kelola Pipeline & Delegasi' : 'Manage Pipeline & Assign'}</td>
+                    <td className="py-3.5 px-4 text-success font-semibold">{language === 'id' ? 'Sprint Planning & Kelola Task' : 'Sprint Planning & Task Mgmt'}</td>
+                    <td className="py-3.5 px-4 text-muted">{language === 'id' ? 'Hanya Lihat' : 'View Only'}</td>
                   </tr>
-                  <tr className="hover:bg-[var(--panel)]/60 transition-colors">
-                    <td className="py-3.5 px-4 font-semibold text-[var(--text)] flex items-center gap-2">
+                  <tr className="hover:bg-panel/60 transition-colors">
+                    <td className="py-3.5 px-4 font-semibold text-text flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-cyan-400 shrink-0"></span>
                       <span>Tier 3: Operational Staff</span>
                     </td>
-                    <td className="py-3.5 px-4 text-[var(--muted)]">{language === 'id' ? 'Tanpa Akses' : 'No Access'}</td>
+                    <td className="py-3.5 px-4 text-muted">{language === 'id' ? 'Tanpa Akses' : 'No Access'}</td>
                     <td className="py-3.5 px-4 text-cyan-300">{language === 'id' ? 'Lihat Prospek Terkait' : 'View Assigned Deals'}</td>
-                    <td className="py-3.5 px-4 text-[var(--success)] font-semibold">{language === 'id' ? 'Update Task Terkait' : 'Update Assigned Tasks'}</td>
-                    <td className="py-3.5 px-4 text-[var(--muted)]">{language === 'id' ? 'Tanpa Akses' : 'No Access'}</td>
+                    <td className="py-3.5 px-4 text-success font-semibold">{language === 'id' ? 'Update Task Terkait' : 'Update Assigned Tasks'}</td>
+                    <td className="py-3.5 px-4 text-muted">{language === 'id' ? 'Tanpa Akses' : 'No Access'}</td>
                   </tr>
                 </tbody>
               </table>
@@ -944,19 +944,19 @@ export const AdminSettings: React.FC = () => {
       {/* MODAL: TAMBAH AKUN BARU (MOBILE FULLSCREEN + STICKY HEADER & FOOTER) */}
       {isAddAccountModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-bg/80  overflow-y-auto">
-          <div className="w-full h-full sm:h-auto sm:max-h-[calc(100dvh-28px)] sm:max-w-2xl bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-card flex flex-col overflow-hidden">
+          <div className="w-full h-full sm:h-auto sm:max-h-[calc(100dvh-28px)] sm:max-w-2xl bg-panel border-0 sm:border sm:border-line rounded-card flex flex-col overflow-hidden">
             
             {/* Sticky Header */}
-            <div className="sticky top-0 z-20 bg-[var(--panel)]  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
+            <div className="sticky top-0 z-20 bg-panel  px-5 sm:px-6 py-4 border-b border-line flex items-center justify-between shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-card bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--danger)] shrink-0">
+                <div className="w-9 h-9 rounded-card bg-accent/10 border border-accent/30 flex items-center justify-center text-danger shrink-0">
                   <UserPlus size={18} />
                 </div>
                 <div>
-                  <h3 className="text-base font-semibold font-sans text-[var(--text)]">
+                  <h3 className="text-base font-semibold font-sans text-text">
                     {language === 'id' ? 'Tambah Akun Stakeholder / Teknisi' : 'Add Stakeholder / Technical Account'}
                   </h3>
-                  <p className="text-[11px] font-sans text-[var(--muted)]">
+                  <p className="text-[11px] font-sans text-muted">
                     {language === 'id' ? 'Pilih peran dan sesuaikan hak akses sistem.' : 'Select role and configure granular permissions.'}
                   </p>
                 </div>
@@ -965,7 +965,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsAddAccountModalOpen(false)}
-                className="w-8 h-8 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] flex items-center justify-center transition-colors shrink-0"
+                className="w-8 h-8 rounded-control bg-panel hover:bg-panel text-muted hover:text-text flex items-center justify-center transition-colors shrink-0"
               >
                 <X size={16} />
               </button>
@@ -976,7 +976,7 @@ export const AdminSettings: React.FC = () => {
               
               {/* Role Selection Cards */}
               <div>
-                <label className="block text-xs font-sans text-[var(--muted)] normal-case tracking-normal mb-2 font-semibold">
+                <label className="block text-xs font-sans text-muted normal-case tracking-normal mb-2 font-semibold">
                   {language === 'id' ? 'Pilih Tipe Peran Stakeholder' : 'Select Stakeholder Role'}
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -986,14 +986,14 @@ export const AdminSettings: React.FC = () => {
                     className={`p-3.5 rounded-card border text-left transition-all ${
                       newAccRole === 'Stakeholder Executive'
                         ? 'bg-warning/10 border-warning/50 ring-1 ring-warning/30'
-                        : 'bg-[var(--panel)] border-[var(--line)] hover:border-[var(--line)]'
+                        : 'bg-panel border-line hover:border-line'
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <Briefcase size={16} className="text-[var(--warning)]" />
-                      <span className="font-semibold text-xs text-[var(--text)]">Stakeholder Executive</span>
+                      <Briefcase size={16} className="text-warning" />
+                      <span className="font-semibold text-xs text-text">Stakeholder Executive</span>
                     </div>
-                    <p className="text-[11px] text-[var(--muted)] leading-relaxed font-sans">
+                    <p className="text-[11px] text-muted leading-relaxed font-sans">
                       C-Level, Managing Partner, Sponsor. Akses approval finansial & review strategis.
                     </p>
                   </button>
@@ -1004,14 +1004,14 @@ export const AdminSettings: React.FC = () => {
                     className={`p-3.5 rounded-card border text-left transition-all ${
                       newAccRole === 'Teknisi IT / Systems Engineer'
                         ? 'bg-success/10 border-success/50 ring-1 ring-success/30'
-                        : 'bg-[var(--panel)] border-[var(--line)] hover:border-[var(--line)]'
+                        : 'bg-panel border-line hover:border-line'
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <Terminal size={16} className="text-[var(--success)]" />
-                      <span className="font-semibold text-xs text-[var(--text)]">Teknisi IT / Engineer</span>
+                      <Terminal size={16} className="text-success" />
+                      <span className="font-semibold text-xs text-text">Teknisi IT / Engineer</span>
                     </div>
-                    <p className="text-[11px] text-[var(--muted)] leading-relaxed font-sans">
+                    <p className="text-[11px] text-muted leading-relaxed font-sans">
                       Lead DevOps, Infrastructure, Cloud Run & API. Akses teknis penuh tanpa finansial.
                     </p>
                   </button>
@@ -1021,15 +1021,15 @@ export const AdminSettings: React.FC = () => {
                     onClick={() => handleRoleChangeForNewAccount('Tier 2: Project Manager (PM)')}
                     className={`p-3.5 rounded-card border text-left transition-all ${
                       newAccRole === 'Tier 2: Project Manager (PM)'
-                        ? 'bg-[var(--series-3)]/10 border-[var(--series-3)]/50 ring-1 ring-[var(--series-3)]/30'
-                        : 'bg-[var(--panel)] border-[var(--line)] hover:border-[var(--line)]'
+                        ? 'bg-series-3/10 border-series-3/50 ring-1 ring-series-3/30'
+                        : 'bg-panel border-line hover:border-line'
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <Layers size={16} className="text-[var(--series-3)]" />
-                      <span className="font-semibold text-xs text-[var(--text)]">Project Manager (PM)</span>
+                      <Layers size={16} className="text-series-3" />
+                      <span className="font-semibold text-xs text-text">Project Manager (PM)</span>
                     </div>
-                    <p className="text-[11px] text-[var(--muted)] leading-relaxed font-sans">
+                    <p className="text-[11px] text-muted leading-relaxed font-sans">
                       Sprint planning, delivery klien, task delegation & draf faktur invoice.
                     </p>
                   </button>
@@ -1040,14 +1040,14 @@ export const AdminSettings: React.FC = () => {
                     className={`p-3.5 rounded-card border text-left transition-all ${
                       newAccRole === 'Tier 3: Operational Staff'
                         ? 'bg-info/10 border-info/50 ring-1 ring-info/30'
-                        : 'bg-[var(--panel)] border-[var(--line)] hover:border-[var(--line)]'
+                        : 'bg-panel border-line hover:border-line'
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <UserCheck size={16} className="text-info" />
-                      <span className="font-semibold text-xs text-[var(--text)]">Operational Staff</span>
+                      <span className="font-semibold text-xs text-text">Operational Staff</span>
                     </div>
-                    <p className="text-[11px] text-[var(--muted)] leading-relaxed font-sans">
+                    <p className="text-[11px] text-muted leading-relaxed font-sans">
                       Staf teknis / desainer operasional untuk update tugas harian.
                     </p>
                   </button>
@@ -1057,7 +1057,7 @@ export const AdminSettings: React.FC = () => {
               {/* Personal Details */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-sans text-[var(--muted)] normal-case tracking-normal mb-1.5 font-semibold">
+                  <label className="block text-xs font-sans text-muted normal-case tracking-normal mb-1.5 font-semibold">
                     {language === 'id' ? 'Nama Lengkap' : 'Full Name'} *
                   </label>
                   <input
@@ -1066,12 +1066,12 @@ export const AdminSettings: React.FC = () => {
                     value={newAccName}
                     onChange={(e) => setNewAccName(e.target.value)}
                     placeholder="Contoh: Alexander Hartanto"
-                    className="w-full min-h-10 px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-sm text-[var(--text)] font-sans focus:outline-none focus:border-[var(--accent)] transition-all"
+                    className="w-full min-h-10 px-3.5 py-2.5 bg-panel border border-line rounded-control text-sm text-text font-sans focus:outline-none focus:border-accent transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-sans text-[var(--muted)] normal-case tracking-normal mb-1.5 font-semibold">
+                  <label className="block text-xs font-sans text-muted normal-case tracking-normal mb-1.5 font-semibold">
                     Username *
                   </label>
                   <input
@@ -1080,12 +1080,12 @@ export const AdminSettings: React.FC = () => {
                     value={newAccUsername}
                     onChange={(e) => setNewAccUsername(e.target.value)}
                     placeholder="Contoh: exec.alex"
-                    className="w-full min-h-10 px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-sm text-[var(--text)] font-sans focus:outline-none focus:border-[var(--accent)] transition-all"
+                    className="w-full min-h-10 px-3.5 py-2.5 bg-panel border border-line rounded-control text-sm text-text font-sans focus:outline-none focus:border-accent transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-sans text-[var(--muted)] normal-case tracking-normal mb-1.5 font-semibold">
+                  <label className="block text-xs font-sans text-muted normal-case tracking-normal mb-1.5 font-semibold">
                     Email Resmi *
                   </label>
                   <input
@@ -1094,12 +1094,12 @@ export const AdminSettings: React.FC = () => {
                     value={newAccEmail}
                     onChange={(e) => setNewAccEmail(e.target.value)}
                     placeholder="alex@kapitech.id"
-                    className="w-full min-h-10 px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-sm text-[var(--text)] font-sans focus:outline-none focus:border-[var(--accent)] transition-all"
+                    className="w-full min-h-10 px-3.5 py-2.5 bg-panel border border-line rounded-control text-sm text-text font-sans focus:outline-none focus:border-accent transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-sans text-[var(--muted)] normal-case tracking-normal mb-1.5 font-semibold">
+                  <label className="block text-xs font-sans text-muted normal-case tracking-normal mb-1.5 font-semibold">
                     {language === 'id' ? 'Password Sementara' : 'Temporary Password'} *
                   </label>
                   <input
@@ -1108,18 +1108,18 @@ export const AdminSettings: React.FC = () => {
                     value={newAccPassword}
                     onChange={(e) => setNewAccPassword(e.target.value)}
                     placeholder="Minimal 6 karakter"
-                    className="w-full min-h-10 px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-sm text-[var(--text)] font-sans focus:outline-none focus:border-[var(--accent)] transition-all"
+                    className="w-full min-h-10 px-3.5 py-2.5 bg-panel border border-line rounded-control text-sm text-text font-sans focus:outline-none focus:border-accent transition-all"
                   />
                 </div>
               </div>
 
               {/* Granular Hak Akses Checkboxes */}
               <div>
-                <label className="block text-xs font-sans text-[var(--muted)] normal-case tracking-normal mb-2 font-semibold flex items-center justify-between">
+                <label className="block text-xs font-sans text-muted normal-case tracking-normal mb-2 font-semibold flex items-center justify-between">
                   <span>{language === 'id' ? 'Hak Akses Granular (RBAC Matrix)' : 'Granular Permissions Matrix'}</span>
-                  <span className="text-[10px] text-[var(--success)] lowercase">otomatis tersinkron dengan peran</span>
+                  <span className="text-[10px] text-success lowercase">otomatis tersinkron dengan peran</span>
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-[var(--bg)] border border-[var(--line)] rounded-card max-h-48 overflow-y-auto custom-scrollbar">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-bg border border-line rounded-card max-h-48 overflow-y-auto custom-scrollbar">
                   {[
                     { key: 'canManageInvoicing', label: 'Finansial & Invoice (Buat / Hapus)' },
                     { key: 'canViewInvoicing', label: 'Lihat Data & Laporan Keuangan' },
@@ -1137,7 +1137,7 @@ export const AdminSettings: React.FC = () => {
                   ].map((item) => (
                     <label 
                       key={item.key}
-                      className="flex items-center gap-2 p-2 rounded-control bg-[var(--panel)]/50 hover:bg-[var(--panel)] cursor-pointer text-xs font-sans transition-colors"
+                      className="flex items-center gap-2 p-2 rounded-control bg-panel/50 hover:bg-panel cursor-pointer text-xs font-sans transition-colors"
                     >
                       <input
                         type="checkbox"
@@ -1146,26 +1146,26 @@ export const AdminSettings: React.FC = () => {
                           ...newAccPermissions,
                           [item.key]: e.target.checked
                         })}
-                        className="w-4 h-4 rounded bg-[var(--bg)] border-[var(--line)] text-[var(--accent)] accent-[var(--accent)]"
+                        className="w-4 h-4 rounded bg-bg border-line text-accent accent-accent"
                       />
-                      <span className="text-[var(--text)] text-[11px] truncate">{item.label}</span>
+                      <span className="text-text text-[11px] truncate">{item.label}</span>
                     </label>
                   ))}
                 </div>
               </div>
 
               {/* Sticky Footer */}
-              <div className="sticky bottom-0 -mx-5 sm:-mx-6 -mb-5 sm:-mb-6 mt-4 bg-[var(--panel)]  px-5 sm:px-6 py-3.5 border-t border-[var(--line)] flex items-center justify-end gap-3 shrink-0">
+              <div className="sticky bottom-0 -mx-5 sm:-mx-6 -mb-5 sm:-mb-6 mt-4 bg-panel  px-5 sm:px-6 py-3.5 border-t border-line flex items-center justify-end gap-3 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsAddAccountModalOpen(false)}
-                  className="h-10 px-4 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] text-xs font-sans font-semibold transition-colors"
+                  className="h-10 px-4 rounded-control bg-panel text-muted hover:text-text text-xs font-sans font-semibold transition-colors"
                 >
                   {language === 'id' ? 'Batal' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all flex items-center gap-2"
+                  className="h-10 px-5 rounded-control bg-accent text-white text-xs font-sans font-semibold hover:bg-accent transition-all flex items-center gap-2"
                 >
                   <Save size={14} />
                   <span>{language === 'id' ? 'Simpan Akun Baru' : 'Save Account'}</span>
@@ -1180,19 +1180,19 @@ export const AdminSettings: React.FC = () => {
       {/* MODAL: EDIT PERMISSIONS (MOBILE FULLSCREEN + STICKY HEADER & FOOTER) */}
       {isEditPermsModalOpen && editingAccount && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-bg/80  overflow-y-auto">
-          <div className="w-full h-full sm:h-auto sm:max-h-[calc(100dvh-28px)] sm:max-w-xl bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-card flex flex-col overflow-hidden">
+          <div className="w-full h-full sm:h-auto sm:max-h-[calc(100dvh-28px)] sm:max-w-xl bg-panel border-0 sm:border sm:border-line rounded-card flex flex-col overflow-hidden">
             
             {/* Sticky Header */}
-            <div className="sticky top-0 z-20 bg-[var(--panel)]  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
+            <div className="sticky top-0 z-20 bg-panel  px-5 sm:px-6 py-4 border-b border-line flex items-center justify-between shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-card bg-[var(--warning)]/10 border border-[var(--warning)]/30 flex items-center justify-center text-[var(--warning)] shrink-0">
+                <div className="w-9 h-9 rounded-card bg-warning/10 border border-warning/30 flex items-center justify-center text-warning shrink-0">
                   <Sliders size={18} />
                 </div>
                 <div>
-                  <h3 className="text-base font-semibold font-sans text-[var(--text)]">
+                  <h3 className="text-base font-semibold font-sans text-text">
                     {language === 'id' ? 'Atur Hak Akses Granular' : 'Manage Granular Permissions'}
                   </h3>
-                  <p className="text-[11px] font-sans text-[var(--muted)]">
+                  <p className="text-[11px] font-sans text-muted">
                     {editingAccount.name} ({editingAccount.role})
                   </p>
                 </div>
@@ -1201,7 +1201,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsEditPermsModalOpen(false)}
-                className="w-8 h-8 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] flex items-center justify-center transition-colors shrink-0"
+                className="w-8 h-8 rounded-control bg-panel hover:bg-panel text-muted hover:text-text flex items-center justify-center transition-colors shrink-0"
               >
                 <X size={16} />
               </button>
@@ -1226,9 +1226,9 @@ export const AdminSettings: React.FC = () => {
               ].map((item) => (
                 <label 
                   key={item.key}
-                  className="flex items-center justify-between p-3 rounded-card bg-[var(--panel)] border border-[var(--line)] hover:border-[var(--line)] cursor-pointer text-xs font-sans transition-colors"
+                  className="flex items-center justify-between p-3 rounded-card bg-panel border border-line hover:border-line cursor-pointer text-xs font-sans transition-colors"
                 >
-                  <span className="text-[var(--text)] font-medium">{item.label}</span>
+                  <span className="text-text font-medium">{item.label}</span>
                   <input
                     type="checkbox"
                     checked={!!tempPermissions[item.key as keyof StakeholderPermissions]}
@@ -1236,25 +1236,25 @@ export const AdminSettings: React.FC = () => {
                       ...tempPermissions,
                       [item.key]: e.target.checked
                     })}
-                    className="w-4 h-4 rounded bg-[var(--bg)] border-[var(--line)] text-[var(--accent)] accent-[var(--accent)]"
+                    className="w-4 h-4 rounded bg-bg border-line text-accent accent-accent"
                   />
                 </label>
               ))}
             </div>
 
             {/* Sticky Footer */}
-            <div className="sticky bottom-0 bg-[var(--panel)]  px-5 sm:px-6 py-3.5 border-t border-[var(--line)] flex items-center justify-end gap-3 shrink-0">
+            <div className="sticky bottom-0 bg-panel  px-5 sm:px-6 py-3.5 border-t border-line flex items-center justify-end gap-3 shrink-0">
               <button
                 type="button"
                 onClick={() => setIsEditPermsModalOpen(false)}
-                className="h-10 px-4 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] text-xs font-sans font-semibold transition-colors"
+                className="h-10 px-4 rounded-control bg-panel text-muted hover:text-text text-xs font-sans font-semibold transition-colors"
               >
                 {language === 'id' ? 'Batal' : 'Cancel'}
               </button>
               <button
                 type="button"
                 onClick={handleSavePermissions}
-                className="h-10 px-5 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all flex items-center gap-2"
+                className="h-10 px-5 rounded-control bg-accent text-white text-xs font-sans font-semibold hover:bg-accent transition-all flex items-center gap-2"
               >
                 <Save size={14} />
                 <span>{language === 'id' ? 'Simpan Perubahan Hak Akses' : 'Save Permissions'}</span>
@@ -1267,16 +1267,16 @@ export const AdminSettings: React.FC = () => {
 
       {/* TAB 4: SECURITY & MFA POLICY */}
       {activeTab === 'security' && (
-        <div className="w-full bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 space-y-6">
-          <div className="flex items-center gap-3 pb-4 border-b border-[var(--line)]">
-            <div className="w-10 h-10 rounded-card bg-[var(--warning)]/10 border border-[var(--warning)]/30 flex items-center justify-center text-[var(--warning)] shrink-0">
+        <div className="w-full bg-panel border border-line rounded-card p-5 sm:p-6 space-y-6">
+          <div className="flex items-center gap-3 pb-4 border-b border-line">
+            <div className="w-10 h-10 rounded-card bg-warning/10 border border-warning/30 flex items-center justify-center text-warning shrink-0">
               <Lock size={20} />
             </div>
             <div>
-              <h2 className="text-base font-semibold font-sans text-[var(--text)]">
+              <h2 className="text-base font-semibold font-sans text-text">
                 {language === 'id' ? 'Kebijakan Keamanan, MFA & Password' : 'Security, MFA & Password Policy'}
               </h2>
-              <p className="text-xs text-[var(--muted)] font-sans">
+              <p className="text-xs text-muted font-sans">
                 {language === 'id'
                   ? 'Enkripsi SHA-256 tersimulasi, autentikasi multi-faktor, dan proteksi durasi sesi login.'
                   : 'SHA-256 secure hashing simulation, multi-factor authentication enforcement, and idle session limits.'}
@@ -1285,13 +1285,13 @@ export const AdminSettings: React.FC = () => {
           </div>
 
           <div className="space-y-4">
-            <div className="p-4 bg-[var(--panel)] border border-[var(--line)] rounded-card flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
+            <div className="p-4 bg-panel border border-line rounded-card flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
               <div className="space-y-1">
-                <div className="text-[var(--text)] font-sans font-semibold flex items-center gap-2 text-xs">
-                  <Smartphone size={15} className="text-[var(--success)] shrink-0" />
+                <div className="text-text font-sans font-semibold flex items-center gap-2 text-xs">
+                  <Smartphone size={15} className="text-success shrink-0" />
                   <span>{language === 'id' ? 'Wajibkan Multi-Factor Authentication (MFA)' : 'Enforce Multi-Factor Authentication (MFA)'}</span>
                 </div>
-                <p className="text-[var(--muted)] text-[11px] font-sans">
+                <p className="text-muted text-[11px] font-sans">
                   {language === 'id'
                     ? 'Wajibkan verifikasi OTP untuk Tier 1 (Top Management) dan Tier 4 (System Admin).'
                     : 'Mandate time-based OTP verification for Tier 1 Sponsors and Tier 4 IT Administrators.'}
@@ -1301,38 +1301,38 @@ export const AdminSettings: React.FC = () => {
                 type="button"
                 onClick={() => setMfaActive(!mfaActive)}
                 className={`px-3.5 py-1.5 rounded-control text-xs font-sans font-semibold transition-all self-start sm:self-auto min-h-10 ${
-                  mfaActive ? 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30' : 'bg-[var(--panel)] text-[var(--muted)]'
+                  mfaActive ? 'bg-success/10 text-success border border-success/30' : 'bg-panel text-muted'
                 }`}
               >
                 {mfaActive ? (language === 'id' ? 'AKTIF' : 'ACTIVE') : (language === 'id' ? 'NONAKTIF' : 'DISABLED')}
               </button>
             </div>
 
-            <div className="p-4 bg-[var(--panel)] border border-[var(--line)] rounded-card space-y-2">
-              <label className="block text-xs font-sans text-[var(--muted)] font-semibold">
+            <div className="p-4 bg-panel border border-line rounded-card space-y-2">
+              <label className="block text-xs font-sans text-muted font-semibold">
                 {language === 'id' ? 'Batas Waktu Ketidakaktifan Sesi (Menit)' : 'Session Inactivity Timeout (Minutes)'}
               </label>
               <input
                 type="number"
                 value={sessionTimeoutMin}
                 onChange={(e) => setSessionTimeoutMin(parseInt(e.target.value) || 60)}
-                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] font-sans focus:outline-none focus:border-[var(--accent)] min-h-10"
+                className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text font-sans focus:outline-none focus:border-accent min-h-10"
               />
-              <p className="text-[10px] text-[var(--muted)] font-sans">
+              <p className="text-[10px] text-muted font-sans">
                 {language === 'id'
                   ? 'Sesi login admin akan otomatis keluar jika tidak ada aktivitas dalam rentang waktu di atas.'
                   : 'Admin login session automatically terminates if no active interaction occurs within this threshold.'}
               </p>
             </div>
 
-            <form onSubmit={handleUpdateSecurity} className="space-y-3 pt-3 border-t border-[var(--line)]">
-              <h3 className="text-xs font-semibold text-[var(--text)] font-sans">
+            <form onSubmit={handleUpdateSecurity} className="space-y-3 pt-3 border-t border-line">
+              <h3 className="text-xs font-semibold text-text font-sans">
                 {language === 'id' ? 'Ganti Password Master' : 'Change Master Password'}
               </h3>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-sans text-[var(--muted)] mb-1 font-semibold">
+                  <label className="block text-xs font-sans text-muted mb-1 font-semibold">
                     {language === 'id' ? 'Password Baru (min 8 karakter)' : 'New Password (min 8 characters)'}
                   </label>
                   <input
@@ -1340,12 +1340,12 @@ export const AdminSettings: React.FC = () => {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                    className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent font-sans min-h-10"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-sans text-[var(--muted)] mb-1 font-semibold">
+                  <label className="block text-xs font-sans text-muted mb-1 font-semibold">
                     {language === 'id' ? 'Konfirmasi Password Baru' : 'Confirm New Password'}
                   </label>
                   <input
@@ -1353,13 +1353,13 @@ export const AdminSettings: React.FC = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                    className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent font-sans min-h-10"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-sans text-[var(--muted)] mb-1 font-semibold">
+                <label className="block text-xs font-sans text-muted mb-1 font-semibold">
                   {language === 'id' ? 'Password Saat Ini (Wajib Konfirmasi) *' : 'Current Password (Required for verification) *'}
                 </label>
                 <input
@@ -1368,7 +1368,7 @@ export const AdminSettings: React.FC = () => {
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   placeholder={language === 'id' ? 'Masukkan password admin saat ini...' : 'Enter your current admin password...'}
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent font-sans min-h-10"
                 />
               </div>
 
@@ -1376,7 +1376,7 @@ export const AdminSettings: React.FC = () => {
                 <button
                   type="submit"
                   disabled={securityLoading}
-                  className="px-5 py-2.5 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:brightness-110 transition-all flex items-center gap-2 min-h-10"
+                  className="px-5 py-2.5 rounded-control bg-accent text-white text-xs font-sans font-semibold hover:brightness-110 transition-all flex items-center gap-2 min-h-10"
                 >
                   <Save size={14} />
                   <span>{language === 'id' ? 'Update Password Terenkripsi' : 'Update Encrypted Password'}</span>
@@ -1392,22 +1392,22 @@ export const AdminSettings: React.FC = () => {
         <div className="w-full space-y-4">
           {canAccessServer && <ProductionReadinessCard language={language} />}
           {canAccessServer && (
-            <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)]">
-              <div className="text-[10px] font-sans normal-case tracking-normal text-[var(--muted)]">Backup Retention</div>
-              <div className="text-sm font-semibold text-[var(--text)] mt-1">{backupRetentionDays} days</div>
-              <p className="text-[11px] text-[var(--muted)] font-sans mt-1">Provider-managed backup retention reported by the server.</p>
+            <div className="p-4 rounded-card bg-panel border border-line">
+              <div className="text-[10px] font-sans normal-case tracking-normal text-muted">Backup Retention</div>
+              <div className="text-sm font-semibold text-text mt-1">{backupRetentionDays} days</div>
+              <p className="text-[11px] text-muted font-sans mt-1">Provider-managed backup retention reported by the server.</p>
             </div>
           )}
-          <div className="w-full max-w-4xl bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 space-y-6">
-          <div className="flex items-center gap-3 pb-4 border-b border-[var(--line)]">
-            <div className="w-10 h-10 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 flex items-center justify-center text-[var(--success)] shrink-0">
+          <div className="w-full max-w-4xl bg-panel border border-line rounded-card p-5 sm:p-6 space-y-6">
+          <div className="flex items-center gap-3 pb-4 border-b border-line">
+            <div className="w-10 h-10 rounded-card bg-success/10 border border-success/30 flex items-center justify-center text-success shrink-0">
               <Database size={20} />
             </div>
             <div>
-              <h2 className="text-base font-semibold font-sans text-[var(--text)]">
+              <h2 className="text-base font-semibold font-sans text-text">
                 {language === 'id' ? 'Integrasi API & Cloud' : 'API & Cloud Integrations'}
               </h2>
-              <p className="text-xs text-[var(--muted)] font-sans">
+              <p className="text-xs text-muted font-sans">
                 {language === 'id'
                   ? 'Webhook notifikasi masuk, server SMTP, dan konfigurasi region Cloud Run.'
                   : 'Inbound notification webhooks, transactional SMTP credentials, and Cloud Run container regions.'}
@@ -1416,7 +1416,7 @@ export const AdminSettings: React.FC = () => {
           </div>
 
           {apiSaveStatus && (
-            <div className="p-4 rounded-card text-xs font-sans flex items-start gap-2.5 bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)]">
+            <div className="p-4 rounded-card text-xs font-sans flex items-start gap-2.5 bg-success/10 border border-success/30 text-success">
               <Check size={16} className="shrink-0 mt-0.5" />
               <span>{apiSaveStatus}</span>
             </div>
@@ -1424,56 +1424,56 @@ export const AdminSettings: React.FC = () => {
 
           <div className="space-y-4 text-xs font-sans">
             <div>
-              <label className="block text-[var(--muted)] mb-1 font-semibold">
+              <label className="block text-muted mb-1 font-semibold">
                 {language === 'id' ? 'Webhook Notifikasi Prospek (Discord / Slack)' : 'Inbound Lead Webhook (Discord / Slack)'}
               </label>
               <input
                 type="text"
                 value={webhookUrl}
                 onChange={(e) => setWebhookUrl(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans min-h-10"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[var(--muted)] mb-1 font-semibold">
+                <label className="block text-muted mb-1 font-semibold">
                   {language === 'id' ? 'Host Server SMTP' : 'SMTP Server Host'}
                 </label>
                 <input
                   type="text"
                   value={smtpHost}
                   onChange={(e) => setSmtpHost(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans min-h-10"
                 />
               </div>
 
               <div>
-                <label className="block text-[var(--muted)] mb-1 font-semibold">
+                <label className="block text-muted mb-1 font-semibold">
                   {language === 'id' ? 'Port SMTP' : 'SMTP Port'}
                 </label>
                 <input
                   type="text"
                   value={smtpPort}
                   onChange={(e) => setSmtpPort(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans min-h-10"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[var(--muted)] mb-1 font-semibold">
+              <label className="block text-muted mb-1 font-semibold">
                 {language === 'id' ? 'Region Deployment Cloud Run' : 'Cloud Run Deployment Region'}
               </label>
               <input
                 type="text"
                 value={cloudRunRegion}
                 onChange={(e) => setCloudRunRegion(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans min-h-10"
               />
             </div>
-            <div className="pt-3 border-t border-[var(--line)]">
-              <p className="text-[11px] text-[var(--muted)] font-sans">
+            <div className="pt-3 border-t border-line">
+              <p className="text-[11px] text-muted font-sans">
                 {language === 'id'
                   ? 'Konfigurasi koneksi ini dikelola oleh environment dan server. Panel ini tidak menyimpan perubahan koneksi.'
                   : 'These connection values are managed by the environment and server. This panel does not persist connection changes.'}
@@ -1486,15 +1486,15 @@ export const AdminSettings: React.FC = () => {
 
       {/* TAB 6: AUDIT TRAIL */}
       {activeTab === 'audit' && canViewAuditLogs && (
-        <div className="w-full bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6">
+        <div className="w-full bg-panel border border-line rounded-card p-5 sm:p-6">
           
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 mb-6 pb-4 border-b border-[var(--line)]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 mb-6 pb-4 border-b border-line">
             <div>
-              <h2 className="text-base font-semibold font-sans text-[var(--text)] flex items-center gap-2">
-                <ShieldCheck size={18} className="text-[var(--accent)]" />
+              <h2 className="text-base font-semibold font-sans text-text flex items-center gap-2">
+                <ShieldCheck size={18} className="text-accent" />
                 <span>{language === 'id' ? 'Riwayat Audit Aktivitas & Keamanan' : 'Security & Activity Audit Trail'}</span>
               </h2>
-              <p className="text-xs text-[var(--muted)] font-sans mt-0.5">
+              <p className="text-xs text-muted font-sans mt-0.5">
                 {language === 'id'
                   ? 'Catatan terenkripsi dari aktivitas autentikasi, akses RBAC, dan perubahan data sistem.'
                   : 'Immutable encrypted trail of user authentication, RBAC transitions, and security operations.'}
@@ -1505,7 +1505,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 onClick={handleExportLogs}
                 disabled={logs.length === 0}
-                className="px-3.5 py-2 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center gap-1.5 disabled:opacity-50 min-h-10"
+                className="px-3.5 py-2 rounded-control bg-panel hover:bg-panel text-text border border-line text-xs font-sans transition-colors flex items-center gap-1.5 disabled:opacity-50 min-h-10"
               >
                 <Download size={13} />
                 <span>Export JSON</span>
@@ -1514,7 +1514,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 onClick={handleClearLogs}
                 disabled={logs.length === 0}
-                className="px-3.5 py-2 rounded-control bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 text-xs font-sans transition-colors flex items-center gap-1.5 disabled:opacity-50 min-h-10"
+                className="px-3.5 py-2 rounded-control bg-panel hover:bg-danger/10 text-muted hover:text-danger border border-line hover:border-danger/30 text-xs font-sans transition-colors flex items-center gap-1.5 disabled:opacity-50 min-h-10"
               >
                 <Trash2 size={13} />
                 <span>{language === 'id' ? 'Hapus Log' : 'Clear Logs'}</span>
@@ -1523,7 +1523,7 @@ export const AdminSettings: React.FC = () => {
           </div>
 
           {logs.length === 0 ? (
-            <div className="py-12 text-center text-[var(--muted)] text-xs font-sans">
+            <div className="py-12 text-center text-muted text-xs font-sans">
               {language === 'id' ? 'Belum ada log aktivitas keamanan yang tercatat.' : 'No security audit logs recorded yet.'}
             </div>
           ) : (
@@ -1531,25 +1531,25 @@ export const AdminSettings: React.FC = () => {
               {logs.map((log) => (
                 <div
                   key={log.id}
-                  className="p-3.5 rounded-card bg-[var(--panel)] border border-[var(--line)] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-sans"
+                  className="p-3.5 rounded-card bg-panel border border-line flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-sans"
                 >
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
                         log.severity === 'critical' 
-                          ? 'bg-[var(--danger)]/15 text-[var(--danger)] border border-[var(--danger)]/30' 
+                          ? 'bg-danger/15 text-danger border border-danger/30' 
                           : log.severity === 'warning' 
-                          ? 'bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/30' 
-                          : 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30'
+                          ? 'bg-warning/10 text-warning border border-warning/30' 
+                          : 'bg-success/10 text-success border border-success/30'
                       }`}>
                         {log.action}
                       </span>
-                      <span className="text-[var(--muted)] text-[11px] font-semibold">{log.actor}</span>
+                      <span className="text-muted text-[11px] font-semibold">{log.actor}</span>
                     </div>
-                    <p className="text-[var(--muted)] text-xs">{log.details}</p>
+                    <p className="text-muted text-xs">{log.details}</p>
                   </div>
 
-                  <div className="text-[10px] text-[var(--muted)] shrink-0 sm:text-right font-sans">
+                  <div className="text-[10px] text-muted shrink-0 sm:text-right font-sans">
                     <div>{new Date(log.timestamp).toLocaleTimeString()}</div>
                     <div>{new Date(log.timestamp).toLocaleDateString()}</div>
                   </div>
@@ -1569,8 +1569,8 @@ export const AdminSettings: React.FC = () => {
         description={confirmAction?.type === 'account' ? (language === 'id' ? `Akun ${confirmAction.name || ''} akan dihapus secara permanen.` : `Account ${confirmAction.name || ''} will be permanently deleted.`) : (language === 'id' ? 'Seluruh riwayat audit log keamanan akan dihapus.' : 'All security audit log history will be cleared.')}
       >
         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
-          <button type="button" onClick={() => setConfirmAction(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
-          <button type="button" onClick={() => confirmAction?.type === 'account' && confirmAction.id ? void confirmDeleteAccount(confirmAction.id, confirmAction.name || '') : confirmAction?.type === 'logs' ? void confirmClearLogs() : undefined} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
+          <button type="button" onClick={() => setConfirmAction(null)} className="min-h-10 px-4 rounded-control border border-line bg-panel text-xs text-muted">Cancel</button>
+          <button type="button" onClick={() => confirmAction?.type === 'account' && confirmAction.id ? void confirmDeleteAccount(confirmAction.id, confirmAction.name || '') : confirmAction?.type === 'logs' ? void confirmClearLogs() : undefined} className="min-h-10 px-4 rounded-control bg-danger text-white text-xs font-semibold">Delete</button>
         </div>
       </Modal>
 
