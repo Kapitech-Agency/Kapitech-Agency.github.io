@@ -129,7 +129,7 @@ export const AdminCrm: React.FC = () => {
   const funnelStats = useMemo(() => {
     const total = leads.length;
     if (total === 0) {
-      return { leadToScope: 82, scopeToPitch: 71, pitchToSow: 60, sowToWon: 75 };
+      return { leadToScope: 0, scopeToPitch: 0, pitchToSow: 0, sowToWon: 0 };
     }
     const pastNew = leads.filter(l => l.stage !== 'new').length;
     const pastContacted = leads.filter(l => ['proposal', 'negotiation', 'won', 'lost'].includes(l.stage)).length;
@@ -349,7 +349,7 @@ export const AdminCrm: React.FC = () => {
       case 'Web Development':
         return 'text-[var(--danger)] bg-[var(--accent)]/10 border-[var(--accent)]/30';
       case 'Mobile App':
-        return 'text-[var(--danger)] bg-[var(--danger)]/10 border-[var(--danger)]/30';
+        return 'text-[var(--info)] bg-[var(--info)]/10 border-[var(--info)]/30';
       case 'UI/UX Design':
         return 'text-[var(--info)] bg-[var(--info)]/10 border-[var(--info)]/30';
       case 'Branding & Identity':
@@ -659,7 +659,7 @@ export const AdminCrm: React.FC = () => {
                             draggable={canManageCrm}
                             onDragStart={canManageCrm ? (e) => handleDragStart(e, lead.id) : undefined}
                             onClick={() => handleOpenLeadDrawer(lead)}
-                            className={`draggable-card kanban-card bg-[var(--panel)] hover:bg-[var(--panel)] border hover:border-[var(--accent)]/60 rounded-card p-3 cursor-pointer transition-all group relative ${
+                            className={`draggable-card kanban-card bg-[var(--panel)] border hover:border-[var(--muted)] rounded-card p-3 cursor-pointer transition-colors group relative ${
                               isDragging ? 'opacity-40 scale-95 border-[var(--accent)] border-dashed' : 'border-[var(--line)]'
                             }`}
                           >
@@ -670,7 +670,7 @@ export const AdminCrm: React.FC = () => {
                               </span>
                               <div className="flex items-center gap-1">
                                 {getPriorityBadge(lead.priority)}
-                                <div className="text-[var(--muted)] group-hover:text-[var(--muted)] cursor-grab" data-drag-handle>
+                                <div className={`text-[var(--muted)] ${canManageCrm ? 'cursor-grab' : 'cursor-default'}`} data-drag-handle>
                                   <GripVertical size={13} />
                                 </div>
                               </div>
