@@ -1979,7 +1979,8 @@
 .ams-shell .ams-sidebar-collapsed .ams-sidebar-toggle { margin: 0; }
 .ams-shell .ams-page-header { min-width: 0; }
 .ams-shell .ams-page-header p { max-width: 72ch; }
-.ams-shell .ams-page-title { display:flex; align-items:center; gap:8px; min-width:0; }
+.ams-shell .ams-page-title { display:flex; align-items:center; gap:10px; min-width:0; }
+.ams-shell .ams-page-title > svg { width:20px; height:20px; flex:0 0 20px; stroke-width:1.8; }
 .ams-shell .ams-page-title > span { min-width:0; overflow-wrap:anywhere; }
 .ams-shell input, .ams-shell textarea, .ams-shell select { min-height:40px; }
 .ams-shell button, .ams-shell a[role="button"] { touch-action: manipulation; }
