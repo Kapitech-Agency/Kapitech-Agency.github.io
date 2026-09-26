@@ -29,6 +29,7 @@
   --color-accent: var(--accent);
   --color-accent-text: var(--accent-text);
   --color-accent-hover: var(--accent-hover);
+  --color-accent-pressed: var(--accent-pressed);
   --color-series-2: var(--series-2);
   --color-series-3: var(--series-3);
   --color-series-4: var(--series-4);
