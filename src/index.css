@@ -5,67 +5,22 @@
    KAPITECH AGENCY AMS & ENTERPRISE ECOSYSTEM - DESIGN TOKENS & COLOR ARCHITECTURE
    ========================================================================== */
 :root {
-  --accent-hover:#c40f34;
-  --accent-pressed:#a10c2b;
-  /* Surface & Background Elevation Layers (Linear/Vercel Dark System) */
-  --bg-app: #090A0F;
-  --bg-surface-base: #111318;
-  --bg-surface-elevated: #181B22;
-  --bg-surface-subtle: #21252F;
-
-  /* Borders & Glassmorphism */
-  --border-subtle: rgba(255, 255, 255, 0.07);
-  --border-medium: rgba(255, 255, 255, 0.12);
-  --border-active: rgba(229, 9, 20, 0.4);
-
-  /* Red Brand Accent (Refined Strategy) */
-  --primary-red: #E50914;
-  --primary-red-hover: #FF1E27;
-  --primary-red-glow: 0 0 16px rgba(229, 9, 20, 0.25);
-  --primary-red-subtle: rgba(229, 9, 20, 0.08);
-  --primary-red-border: rgba(229, 9, 20, 0.3);
-
-  /* Typography & Foreground Tokens */
-  --text-primary: #F8FAFC;
-  --text-secondary: #8A94A6;
-  --text-muted: #64748B;
-
-  /* Layout & Standard Radii */
-  --radius-modal: 16px;
-  --radius-card: 12px;
-  --radius-control: 8px;
-  --radius-pill: 9999px;
-
-  /* Legacy compatibility aliases */
-  --kapi-red-primary: #E50914;
-  --kapi-red-electric: #FF1E27;
-  --kapi-red-hover: #FF1E27;
-  --kapi-red-glow: rgba(229, 9, 20, 0.12);
-  --kapi-red-glow-hover: rgba(229, 9, 20, 0.25);
-  --kapi-red-border-hover: rgba(229, 9, 20, 0.5);
-
-  --kapi-bg-obsidian: #090A0F;
-  --kapi-bg-charcoal-deep: #111318;
-  --kapi-bg-card: #111318;
-  --kapi-bg-card-hover: #181B22;
-  
-  --kapi-border-subtle: rgba(255, 255, 255, 0.07);
-  --kapi-border-highlight: rgba(255, 255, 255, 0.12);
-
-  --kapi-text-white: #F8FAFC;
-  --kapi-text-slate: #8A94A6;
-  --kapi-text-muted: #64748B;
-
-  --kapi-radius-card: 12px;
-  --kapi-radius-pill: 9999px;
-  --kapi-radius-inner: 8px;
-
-  --kapi-ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
-  --kapi-transition-smooth: all 0.3s var(--kapi-ease-spring);
+  --bg:#f4f4f7; --panel:#ffffff; --line:#e3e3ea; --text:#16161c; --muted:#6c6c7a;
+  --accent:#dc143c; --accent-text:#c40f34;
+  --series-2:#12a672; --series-3:#3b6fe0; --series-4:#8a8a98;
+  --success:#12a672; --warning:#b7791f; --danger:#d92d20; --info:#3b6fe0;
+  --accent-hover:#c40f34; --accent-pressed:#a10c2b;
+}
+:root[data-theme="dark"] {
+  --bg:#09090c; --panel:#0f0f14; --line:#20202a; --text:#f3f3f6; --muted:#8b8b99;
+  --accent:#dc143c; --accent-text:#ff4d6d;
+  --series-2:#34d399; --series-3:#5b8cff; --series-4:#b9b9c6;
+  --success:#34d399; --warning:#f5a524; --danger:#f97066; --info:#5b8cff;
+  --accent-hover:#c40f34; --accent-pressed:#a10c2b;
 }
 
 @theme inline {
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --color-bg: var(--bg);
   --color-panel: var(--panel);
   --color-line: var(--line);
@@ -84,9 +39,7 @@
   --radius-chip: 6px;
   --radius-control: 8px;
   --radius-card: 12px;
-  --font-display: "Space Grotesk", sans-serif;
-  --font-heading: "Outfit", "Inter", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   
   /* Primary Accent: Refined Brand Red */
   --color-brand-red: #E50914;
@@ -118,8 +71,8 @@
   }
 
   body {
-    background-color: var(--kapi-bg-obsidian);
-    color: var(--kapi-text-slate);
+    background-color: var(--bg);
+    color: var(--text);
     font-family: var(--font-sans);
     overflow-x: hidden;
     width: 100%;
@@ -133,7 +86,7 @@
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    outline: 2px solid #E60023;
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 
