@@ -2066,47 +2066,6 @@
   background: transparent;
 }
 
-/* Keep the funnel as a true rounded card after the KPI-strip flattening rules. */
-.ams-shell .ams-crm-kpi > .ams-crm-funnel-card.bg-\[var\(--panel\)\] {
-  background: var(--panel);
-  border-radius: var(--radius-card);
-}
-
-.ams-shell .ams-crm-toolbar,
-.ams-shell .ams-inbox-toolbar {
-  border-radius: var(--radius-card);
-  padding: 12px;
-}
-
-.ams-shell .ams-crm-toolbar input,
-.ams-shell .ams-inbox-toolbar input {
-  background: var(--bg) !important;
-}
-
-.ams-shell .ams-crm-toolbar .ams-control,
-.ams-shell .ams-inbox-toolbar .ams-control {
-  background: var(--bg) !important;
-}
-
-
-.ams-shell .ams-inbox-filter-controls {
-  gap: 8px;
-  align-items: center;
-}
-
-.ams-shell .ams-inbox-filter-controls > div {
-  flex: 0 0 auto;
-}
-
-.ams-shell .ams-inbox-workspace {
-  gap: 16px;
-}
-
-.ams-shell .ams-inbox-list-pane,
-.ams-shell .ams-inbox-reader-pane {
-  border-color: var(--line);
-}
-
 @media (max-width: 899px) {
   .ams-shell .ams-leads-page .ams-dashboard-header,
   .ams-shell .ams-inbox-page .ams-dashboard-header {
