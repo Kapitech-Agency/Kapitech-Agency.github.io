@@ -94,7 +94,7 @@ export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
         anchorRef={triggerRef}
         onClose={() => setIsOpen(false)}
         align="left"
-        className="ams-dropdown-surface z-50 min-w-[150px] max-w-[calc(100vw-16px)] p-1 font-sans text-xs"
+        className="ams-dropdown-surface z-40 min-w-[150px] max-w-[calc(100vw-16px)] max-h-[min(320px,calc(100dvh-16px))] overflow-y-auto overscroll-contain p-1 font-sans text-xs"
       >
         <motion.div
           initial={{ opacity: 0, y: 3 }}
