@@ -49,7 +49,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
       sampleRow = 'Alexander Wright,Horizon Ventures,alex@horizon.com,+62 811-2233-4455,Web Development,75000000,new,high\n';
     } else if (targetModule === 'projects') {
       headers = 'Project Name,Client Name,Company,Email,Service Category,Budget IDR,Start Date,Target End Date,Team Lead\n';
-      sampleRow = 'Fintech Mobile App,Marcus Thorne,Lumina Corp,m@lumina.com,Mobile App,95000000,2026-09-01,2026-10-30,Lead Full-Stack Tech\n';
+      sampleRow = 'Fintech Web Application,Marcus Thorne,Lumina Corp,m@lumina.com,Web Application,95000000,2026-09-01,2026-10-30,Lead Full-Stack Tech\n';
     } else if (targetModule === 'invoices') {
       headers = 'Invoice Number,Client Name,Company,Email,Line Item Desc,Amount IDR,Status,Issue Date,Due Date\n';
       sampleRow = 'KAPI-INV-2026-901,Alexander Wright,Horizon Ventures,alex@horizon.com,Sprint 1 Frontend Architecture,37500000,sent,2026-09-01,2026-09-15\n';
