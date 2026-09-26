@@ -400,16 +400,7 @@ export const AdminCmsServices: React.FC = () => {
       </div>
 
       {/* Service Detail / Inspection Modal */}
-      {selectedServiceForDetail && (
-        <div className="fixed inset-0 z-50 bg-bg/90  flex items-center justify-center p-4">
-          <div className="bg-panel border border-line rounded-card w-full max-w-2xl p-4 sm:p-6 relative max-h-[calc(100dvh-24px)] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-150">
-            <button
-              onClick={() => setSelectedServiceForDetail(null)}
-              className="absolute top-4 right-4 p-1.5 rounded-control text-muted hover:text-fg bg-panel border border-line"
-            >
-              <X size={16} />
-            </button>
-
+      <Modal open={!!selectedServiceForDetail} onClose={() => setSelectedServiceForDetail(null)} size="lg" title={selectedServiceForDetail?.title || 'Service detail'} description={selectedServiceForDetail?.heroSubtitle || selectedServiceForDetail?.heroSubtitleId}>
             <div className="flex items-center gap-2 font-sans text-xs text-accent font-semibold mb-2">
               <span>{selectedServiceForDetail.category}</span>
               <span>•</span>
@@ -637,9 +628,7 @@ export const AdminCmsServices: React.FC = () => {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </Modal>
 
     </div>
   );
