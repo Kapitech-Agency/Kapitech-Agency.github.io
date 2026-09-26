@@ -344,7 +344,7 @@ export const AdminCrm: React.FC = () => {
   const getPillarColor = (pillar: CrmServicePillar) => {
     switch (pillar) {
       case 'Web Development':
-        return 'text-danger bg-accent/10 border-accent/30';
+        return 'text-accent-text bg-accent/10 border-accent/30';
       case 'Mobile App':
         return 'text-info bg-info/10 border-info/30';
       case 'UI/UX Design':
