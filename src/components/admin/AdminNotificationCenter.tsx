@@ -27,7 +27,14 @@ export const AdminNotificationCenter: React.FC = () => {
     setLoading(true);
     const res = await api.notifications.getAll();
     if (res.success && Array.isArray(res.data?.notifications)) {
-      setItems(res.data.notifications as ServerNotification[]);
+      setItems((res.data.notifications as Array<ServerNotification & { read?: boolean; timestamp?: string }>)
+        .map((notification) => ({
+          ...notification,
+          isRead: typeof notification.isRead === 'boolean'
+            ? notification.isRead
+            : Boolean(notification.read),
+          createdAt: notification.createdAt || notification.timestamp
+        })));
       setError(null);
     } else {
       setError(language === 'id' ? 'Notifikasi tidak dapat dimuat.' : 'Notifications could not be loaded.');
