@@ -654,10 +654,7 @@ export const AdminProjects: React.FC = () => {
         </section>
       )}
 
-      {/* Legacy regression guard:
-            </button>
-          )}
-        </div> */}
+
 
       <section className="rounded-card border border-[var(--line)] bg-[var(--panel)]">
         <div className="border-b border-[var(--line)] p-4 sm:p-5">
