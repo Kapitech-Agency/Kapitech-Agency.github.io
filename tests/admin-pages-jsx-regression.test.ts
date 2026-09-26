@@ -18,6 +18,9 @@ test('Admin invoicing keeps financial mutations permission-gated and uses the sh
   assert.ok(source.includes('computeInvoiceTotals'));
   assert.ok(source.includes('api.finance.getMetrics(currency)'));
   assert.ok(!source.includes('123-00-998877-1'));
+  assert.ok(source.includes('serverMetrics.totalInvoicesCount'));
+  assert.ok(source.includes('border-b border-line pb-3'));
+  assert.ok(source.includes('<Receipt size={12} aria-hidden="true" />'));
 });
 
 test('Admin projects mutation actions stay behind their permissions', () => {
