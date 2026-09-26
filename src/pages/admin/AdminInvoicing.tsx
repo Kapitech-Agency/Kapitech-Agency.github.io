@@ -772,8 +772,6 @@ export const AdminInvoicing: React.FC = () => {
                     />
                   ) : (
                     <>
-                  ) : (
-                    <>
                   <div className="hidden overflow-x-auto rounded-card border border-line bg-panel md:block">
                     <table className="w-full min-w-[980px] text-left text-xs">
                       <thead>
@@ -871,8 +869,6 @@ export const AdminInvoicing: React.FC = () => {
                     />
                   ) : (
                     <>
-              ) : (
-                <>
                   <div className="hidden overflow-x-auto rounded-card border border-line bg-panel md:block">
                     <table className="w-full min-w-[760px] text-left text-xs">
                       <thead>
@@ -917,7 +913,8 @@ export const AdminInvoicing: React.FC = () => {
                     </>
                   )}
                 </>
-              )}            </div>
+              )}
+            </div>
           </section>
         </>
       )}
