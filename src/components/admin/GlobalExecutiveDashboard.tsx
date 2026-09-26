@@ -149,7 +149,7 @@ const Metric = ({
           <Icon size={16} strokeWidth={1.8} />
         </span>
       </div>
-      <div className="mt-3 text-2xl font-medium leading-8 tracking-tight tabular-nums text-fg">{value}</div>
+      <div className="mt-3 text-2xl font-medium leading-8 tracking-[-0.02em] tabular-nums text-fg">{value}</div>
       <div className="mt-1 min-h-4 text-xs leading-4 text-muted">{context}</div>
     </div>
   );
@@ -317,7 +317,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             <span aria-hidden="true">/</span>
             <span className="text-fg">Dashboard</span>
           </div>
-          <h1 className="mt-2 text-xl font-semibold leading-7 tracking-tight text-fg">Executive overview</h1>
+          <h1 className="mt-2 text-xl font-semibold leading-7 tracking-[-0.01em] text-fg">Executive overview</h1>
           <p className="mt-1 max-w-2xl text-xs leading-5 text-muted">
             A live operational view of revenue, pipeline, delivery, and items that need attention.
           </p>
