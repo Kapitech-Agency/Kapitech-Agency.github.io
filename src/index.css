@@ -2048,6 +2048,19 @@
   border-radius: 0;
 }
 
+/* The funnel is a standalone operational card inside the flat KPI strip. */
+.ams-shell .ams-crm-kpi > .ams-crm-funnel-card {
+  border-radius: var(--radius-card);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 16px;
+}
+@media (min-width: 640px) {
+  .ams-shell .ams-crm-kpi > .ams-crm-funnel-card {
+    padding: 20px;
+  }
+}
+
 .ams-shell .ams-crm-kpi .bg-\[var\(--panel\)\],
 .ams-shell .ams-inbox-kpi .bg-\[var\(--panel\)\] {
   background: transparent;
