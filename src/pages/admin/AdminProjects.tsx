@@ -585,7 +585,7 @@ export const AdminProjects: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div className="space-y-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-[var(--accent)]/15 text-[var(--danger)] border border-[var(--accent)]/30 text-[10px] font-sans font-semibold normal-case tracking-normal">
+                <span className="px-2.5 py-0.5 rounded-full bg-[var(--accent)]/15 text-[var(--accent-text)] border border-[var(--accent)]/30 text-[10px] font-sans font-semibold normal-case tracking-normal">
                   {selectedProject.serviceCategory}
                 </span>
                 <span className="text-xs font-sans text-[var(--muted)]">
