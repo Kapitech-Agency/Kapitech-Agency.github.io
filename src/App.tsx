@@ -5,7 +5,7 @@
 
 import React, { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, MotionConfig } from 'motion/react';
 import { LanguageProvider, useLanguage } from './lib/LanguageContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -244,11 +244,13 @@ export default function App() {
   }, []);
 
   return (
-    <LanguageProvider>
-      <Router>
+    <MotionConfig reducedMotion="user">
+      <LanguageProvider>
+        <Router>
         <ScrollToTop />
-        <AppShell />
-      </Router>
-    </LanguageProvider>
+          <AppShell />
+        </Router>
+      </LanguageProvider>
+    </MotionConfig>
   );
 }
