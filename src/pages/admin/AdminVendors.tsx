@@ -277,7 +277,7 @@ export const AdminVendors: React.FC = () => {
       {/* Top Header */}
       <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-semibold font-sans text-[var(--text)] tracking-tight">{language === 'id' ? 'Direktori Vendor & Kontraktor' : 'Vendor & Talent Directory'}</h1>
+          <h1 className="ams-page-title flex items-center gap-2.5"><Users className="text-[var(--accent-text)] shrink-0" size={22} /><span>{language === 'id' ? 'Direktori Vendor & Kontraktor' : 'Vendor & Talent Directory'}</span></h1>
           <p className="text-[13px] leading-[18px] font-sans text-[var(--muted)] mt-1 max-w-3xl">
             {language === 'id'
               ? 'Database mitra agensi, freelance spesialis terverifikasi, tarif per jam, dan evaluasi performa SLA.'
