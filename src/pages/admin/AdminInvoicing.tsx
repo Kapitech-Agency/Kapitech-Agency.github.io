@@ -643,13 +643,14 @@ export const AdminInvoicing: React.FC = () => {
       ) : (
         <>
           <section aria-labelledby="finance-snapshot-title">
-            <div className="mb-3 flex items-end justify-between gap-3 border-b border-line pb-3">
+            <div className="flex items-end justify-between gap-3">
               <div>
                 <h2 id="finance-snapshot-title" className="text-sm font-semibold text-fg">{language === 'id' ? 'Ringkasan finansial' : 'Financial snapshot'}</h2>
                 <p className="mt-1 text-xs text-muted">{currency} ledger based on current server-calculated metrics.</p>
               </div>
               {serverMetrics && <span className="text-[11px] tabular-nums text-muted">{serverMetrics.totalInvoicesCount} invoices</span>}
             </div>
+            <div className="mt-3 h-px w-full bg-line" aria-hidden="true" />
 
             <div className="grid grid-cols-2 gap-y-6 border-y border-line py-5 sm:grid-cols-3 min-[1100px]:grid-cols-6">
               {[
@@ -763,6 +764,10 @@ export const AdminInvoicing: React.FC = () => {
             <div className="mt-3">
               {tab === 'invoices' ? (
                 <>
+                  {filteredExpenses.length === 0 ? (
+                    <EmptyState title={language === 'id' ? 'Belum ada pengeluaran' : 'No expenses found'} description={expenseTypeFilter !== 'all' ? 'No actual expense records match this filter.' : 'Only actual expense records are shown. No placeholder rows are used.'} action={canManageInvoices ? <button type="button" onClick={() => setExpenseModalOpen(true)} className={primaryClass}><Plus size={14} />Record expense</button> : undefined} />
+                  ) : (
+                    <>
                   <div className="hidden overflow-x-auto rounded-card border border-line bg-panel md:block">
                     <table className="w-full min-w-[980px] text-left text-xs">
                       <thead>
@@ -776,9 +781,7 @@ export const AdminInvoicing: React.FC = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredInvoices.length === 0 ? (
-                          <tr><td colSpan={6} className="p-4"><EmptyState title={language === 'id' ? 'Tidak ada invoice' : 'No invoices found'} description={search || statusFilter !== 'all' ? 'Try adjusting the search or status filter.' : 'Create an invoice when a real billing record is ready.'} action={canManageInvoices ? <button type="button" onClick={openCreateInvoice} className={primaryClass}><Plus size={14} />Create invoice</button> : undefined} /></td></tr>
-                        ) : filteredInvoices.map((invoice) => {
+                        {filteredInvoices.map((invoice) => {
                           const balance = Number(invoice.balanceDue ?? (invoice.total - (invoice.amountPaid || 0)));
                           const project = projects.find((item) => item.id === invoice.projectId);
                           return (
@@ -822,9 +825,7 @@ export const AdminInvoicing: React.FC = () => {
                   </div>
 
                   <div className="space-y-3 md:hidden">
-                    {filteredInvoices.length === 0 ? (
-                      <EmptyState title={language === 'id' ? 'Tidak ada invoice' : 'No invoices found'} description="No real invoice records match the current filters." />
-                    ) : filteredInvoices.map((invoice) => {
+                    {filteredInvoices.map((invoice) => {
                       const balance = Number(invoice.balanceDue ?? (invoice.total - (invoice.amountPaid || 0)));
                       return (
                         <article key={invoice.id} className="rounded-card border border-line bg-panel p-4">
@@ -851,6 +852,8 @@ export const AdminInvoicing: React.FC = () => {
                       );
                     })}
                   </div>
+                    </>
+                  )}
                 </>
               ) : (
                 <>
@@ -867,9 +870,7 @@ export const AdminInvoicing: React.FC = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredExpenses.length === 0 ? (
-                          <tr><td colSpan={6} className="p-4"><EmptyState title={language === 'id' ? 'Belum ada pengeluaran' : 'No expenses found'} description="Only actual expense records are shown. No placeholder rows are used." action={canManageInvoices ? <button type="button" onClick={() => setExpenseModalOpen(true)} className={primaryClass}><Plus size={14} />Record expense</button> : undefined} /></td></tr>
-                        ) : filteredExpenses.map((expense) => (
+                        {filteredExpenses.map((expense) => (
                           <tr key={expense.id} className="border-t border-line transition-colors hover:bg-bg">
                             <td className="px-4 py-3 tabular-nums text-muted">{expense.date}</td>
                             <td className="px-4 py-3"><div className="font-medium text-fg">{expense.type || 'OpEx'}</div><div className="mt-1 text-[11px] text-muted">{expense.category}</div></td>
@@ -886,7 +887,7 @@ export const AdminInvoicing: React.FC = () => {
                   </div>
 
                   <div className="space-y-3 md:hidden">
-                    {filteredExpenses.length === 0 ? <EmptyState title={language === 'id' ? 'Belum ada pengeluaran' : 'No expenses found'} description="No actual expense records match this filter." /> : filteredExpenses.map((expense) => (
+                    {filteredExpenses.map((expense) => (
                       <article key={expense.id} className="rounded-card border border-line bg-panel p-4">
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0"><p className="text-sm font-medium text-fg">{expense.description}</p><p className="mt-1 text-xs text-muted">{expense.category} · {expense.type || 'OpEx'}</p></div>
@@ -897,6 +898,8 @@ export const AdminInvoicing: React.FC = () => {
                       </article>
                     ))}
                   </div>
+                    </>
+                  )}
                 </>
               )}
             </div>
