@@ -724,18 +724,17 @@ export const AdminInvoicing: React.FC = () => {
                 </div>
                 <span className="rounded-badge bg-accent/10 px-2 py-1 text-[11px] font-semibold text-accent-text">{serverMetrics?.profitMargin || '0'}% margin</span>
               </div>
-              <div className="mt-5 grid grid-cols-2 divide-x divide-y divide-line border-y border-line py-0 sm:grid-cols-4 sm:divide-y-0">
-                {[
-                  { label: 'Revenue', value: serverMetrics ? formatAmount(serverMetrics.totalRevenueCollected, currency) : '—', tone: 'text-accent-text' },
-                  { label: 'Expenses', value: serverMetrics ? formatAmount(serverMetrics.totalExpense, currency) : '—', tone: 'text-danger' },
-                  { label: 'Operating profit', value: serverMetrics ? formatAmount(serverMetrics.netProfit, currency) : '—', tone: 'text-success' },
-                  { label: 'Outstanding', value: serverMetrics ? formatAmount(serverMetrics.totalOutstanding, currency) : '—', tone: 'text-warning' }
-                ].map((item) => (
-                  <div key={item.label} className="min-w-0 border-line px-3 first:pl-0 last:pr-0 sm:border-l sm:px-4 sm:first:border-l-0">
-                    <p className="text-xs text-muted">{item.label}</p>
-                    <p className={'mt-2 truncate text-sm font-medium tabular-nums ' + item.tone}>{item.value}</p>
-                  </div>
-                ))}
+              <div className="mt-5 overflow-x-auto rounded-control border border-line">
+                <table className="w-full min-w-[640px] table-fixed text-left">
+                  <tbody>
+                    <tr>
+                      <td className="w-1/4 border-r border-line px-4 py-4 align-top sm:px-5"><p className="text-xs text-muted">Revenue</p><p className="mt-2 truncate text-sm font-medium tabular-nums text-accent-text">{serverMetrics ? formatAmount(serverMetrics.totalRevenueCollected, currency) : '—'}</p></td>
+                      <td className="w-1/4 border-r border-line px-4 py-4 align-top sm:px-5"><p className="text-xs text-muted">Expenses</p><p className="mt-2 truncate text-sm font-medium tabular-nums text-danger">{serverMetrics ? formatAmount(serverMetrics.totalExpense, currency) : '—'}</p></td>
+                      <td className="w-1/4 border-r border-line px-4 py-4 align-top sm:px-5"><p className="text-xs text-muted">Operating profit</p><p className="mt-2 truncate text-sm font-medium tabular-nums text-success">{serverMetrics ? formatAmount(serverMetrics.netProfit, currency) : '—'}</p></td>
+                      <td className="w-1/4 px-4 py-4 align-top sm:px-5"><p className="text-xs text-muted">Outstanding</p><p className="mt-2 truncate text-sm font-medium tabular-nums text-warning">{serverMetrics ? formatAmount(serverMetrics.totalOutstanding, currency) : '—'}</p></td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
               <div className="mt-4 grid grid-cols-2 divide-x divide-y divide-line border-t border-line pt-0 sm:grid-cols-3 sm:divide-y-0">
                 <div className="min-w-0 px-3 py-4 sm:pl-4"><p className="text-xs text-muted">Collection rate</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{currencyInvoices.length ? derivedMetrics.collectionRate + '%' : '—'}</p></div>
@@ -849,7 +848,7 @@ export const AdminInvoicing: React.FC = () => {
                   ) : (
                     <>
                   <div className="overflow-x-auto rounded-card border border-line bg-panel">
-                    <table className="w-full min-w-[980px] text-left text-xs">
+                    <table className="w-full min-w-[1040px] border-collapse text-left text-xs">
                       <thead>
                         <tr>
                           <th className="px-4 py-3 font-medium text-muted">Invoice</th>
@@ -929,7 +928,7 @@ export const AdminInvoicing: React.FC = () => {
                   ) : (
                     <>
                   <div className="overflow-x-auto rounded-card border border-line bg-panel">
-                    <table className="w-full min-w-[760px] text-left text-xs">
+                    <table className="w-full min-w-[820px] border-collapse text-left text-xs">
                       <thead>
                         <tr>
                           <th className="px-4 py-3 font-medium text-muted">Date</th>
