@@ -1,1470 +1,1145 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  DollarSign, 
-  Plus, 
-  Search, 
-  Filter, 
-  TrendingUp, 
-  TrendingDown, 
-  Receipt, 
-  Calendar, 
-  Building2, 
-  User, 
-  Mail, 
-  CheckCircle2, 
-  Clock, 
-  AlertCircle, 
-  FileText, 
-  Download, 
-  Edit3, 
-  Trash2, 
-  Send, 
-  ExternalLink,
-  CreditCard,
-  Layers,
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  AlertCircle,
   ArrowUpRight,
-  ShieldCheck,
+  CalendarDays,
   Check,
+  CheckCircle2,
+  ChevronRight,
+  CreditCard,
+  DollarSign,
+  Download,
+  Edit3,
+  FileText,
+  Filter,
+  Plus,
+  Receipt,
+  RefreshCw,
+  Search,
+  ShieldCheck,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  UserRound,
+  WalletCards,
   X
 } from 'lucide-react';
-import { AgencyInvoice, AgencyExpense, InvoiceStatus } from '../../lib/financeStore';
-import { formatAmount, formatIDR, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
+import { AgencyExpense, AgencyInvoice, InvoiceLineItem, InvoiceStatus, computeInvoiceTotals, computeFinancialMetrics, getMonthlyCashFlowSeries } from '../../lib/financeStore';
+import { CurrencyCode, CURRENCY_EVENT, getActiveCurrency, setActiveCurrency, formatAmount } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
-import { useDragToScroll } from '../../lib/useDragToScroll';
-import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 import { Modal } from '../../components/ui/Modal';
 import { InvoiceStatusDropdown } from '../../components/ui/InvoiceStatusDropdown';
-import { AgencyProject } from '../../lib/projectStore';
+import { TrendChart } from '../../components/charts/DashboardCharts';
 import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
 import { api } from '../../lib/apiClient';
 
+type SortKey = 'updated' | 'due' | 'amount_high' | 'amount_low' | 'invoice';
+type Tab = 'invoices' | 'expenses';
+type FinanceClient = {
+  id: string;
+  name: string;
+  company: string;
+  email: string;
+  phone: string;
+};
+type FinanceProject = {
+  id: string;
+  name: string;
+  clientName?: string;
+  clientCompany?: string;
+  clientEmail?: string;
+  clientId?: string;
+};
+
+type FinanceExpense = AgencyExpense & {
+  currency?: CurrencyCode;
+  projectId?: string;
+  status?: string;
+};
+
+type ServerMetrics = {
+  currency: CurrencyCode;
+  totalRevenueCollected: number;
+  totalBilled: number;
+  totalOutstanding: number;
+  totalExpense: number;
+  netProfit: number;
+  profitMargin: string;
+  totalInvoicesCount: number;
+  paidCount: number;
+  partiallyPaidCount: number;
+  overdueCount: number;
+  draftCount: number;
+};
+
+const emptyLineItem = (): InvoiceLineItem => ({
+  id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : 'line-' + Date.now(),
+  description: '',
+  quantity: 1,
+  unitPrice: 0,
+  amount: 0
+});
+
+const actionClass = 'inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-line bg-transparent px-3 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50';
+const primaryClass = 'inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control bg-accent px-3.5 text-xs font-semibold text-white transition-colors hover:bg-accent/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50';
+const fieldClass = 'min-h-10 w-full rounded-control border border-line bg-bg px-3 text-xs text-fg outline-none transition-colors placeholder:text-muted focus:border-accent';
+
+const statusLabel: Record<InvoiceStatus, string> = {
+  draft: 'Draft',
+  sent: 'Sent',
+  partially_paid: 'Partially paid',
+  paid: 'Paid',
+  overdue: 'Overdue',
+  cancelled: 'Cancelled'
+};
+
+const statusTone: Record<InvoiceStatus, string> = {
+  draft: 'bg-bg text-muted border-line',
+  sent: 'bg-info/10 text-info border-info/20',
+  partially_paid: 'bg-warning/10 text-warning border-warning/20',
+  paid: 'bg-success/10 text-success border-success/20',
+  overdue: 'bg-danger/10 text-danger border-danger/20',
+  cancelled: 'bg-danger/10 text-danger border-danger/20'
+};
+
+const StatusBadge = ({ status }: { status: InvoiceStatus }) => (
+  <span className={'inline-flex items-center gap-1.5 rounded-badge border px-2 py-1 text-[11px] font-semibold ' + statusTone[status]}>
+    {status === 'paid' ? <CheckCircle2 size={12} /> : status === 'overdue' ? <AlertCircle size={12} /> : status === 'partially_paid' ? <WalletCards size={12} /> : status === 'cancelled' ? <X size={12} /> : <FileText size={12} />}
+    {statusLabel[status]}
+  </span>
+);
+
+const EmptyState = ({ title, description, action }: { title: string; description: string; action?: React.ReactNode }) => (
+  <div className="flex min-h-[180px] flex-col items-center justify-center rounded-card border border-line bg-bg px-5 py-8 text-center">
+    <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line bg-panel text-muted">
+      <Receipt size={18} strokeWidth={1.8} />
+    </div>
+    <p className="mt-3 text-sm font-medium text-fg">{title}</p>
+    <p className="mt-1 max-w-[48ch] text-xs leading-5 text-muted">{description}</p>
+    {action && <div className="mt-4">{action}</div>}
+  </div>
+);
+
 export const AdminInvoicing: React.FC = () => {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const session = getAdminSession();
-  const userRole = session?.user?.role || 'Tier 1: Top Management / Sponsor';
   const canViewFinancials = hasAdminPermission('canViewFinancials');
   const canManageInvoices = hasAdminPermission('canManageInvoices');
-  const canApproveBudgets = hasAdminPermission('canApproveBudgets');
-  const canCreateInvoice = canManageInvoices;
-  const canDeleteInvoice = userRole.startsWith('Tier 1') || session?.user?.stakeholderType === 'Master';
+  const canDeleteInvoice = session?.user?.role?.startsWith('Tier 1') || session?.user?.stakeholderType === 'Master';
+
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
-  const [serverMetrics, setServerMetrics] = useState<any>({ totalRevenueCollected: 0, totalOutstanding: 0, totalExpense: 0, netProfit: 0, profitMargin: '0' });
+  const [tab, setTab] = useState<Tab>('invoices');
   const [invoices, setInvoices] = useState<AgencyInvoice[]>([]);
-  const [expenses, setExpenses] = useState<AgencyExpense[]>([]);
-  const [activeTab, setActiveTab] = useState<'invoices' | 'expenses'>('invoices');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [expenses, setExpenses] = useState<FinanceExpense[]>([]);
+  const [clients, setClients] = useState<FinanceClient[]>([]);
+  const [projects, setProjects] = useState<FinanceProject[]>([]);
+  const [serverMetrics, setServerMetrics] = useState<ServerMetrics | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<{ tone: 'success' | 'danger'; message: string } | null>(null);
 
-  // Drag-to-scroll hook for horizontal table view
-  const tableScrollRef = useDragToScroll<HTMLDivElement>();
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [sort, setSort] = useState<SortKey>('updated');
+  const [expenseTypeFilter, setExpenseTypeFilter] = useState('all');
 
-  // Modal State for Invoice
-  const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
-  const [confirmAction, setConfirmAction] = useState<{ type: 'invoice' | 'expense'; id: string; label?: string } | null>(null);
+  const [invoiceModalOpen, setInvoiceModalOpen] = useState(false);
   const [editingInvoice, setEditingInvoice] = useState<AgencyInvoice | null>(null);
-  
-  // Invoice Form Fields
-  const [selectedProjectId, setSelectedProjectId] = useState<string>('');
-  const [availableProjects, setAvailableProjects] = useState<AgencyProject[]>([]);
+  const [savingInvoice, setSavingInvoice] = useState(false);
+  const [invoiceNumber, setInvoiceNumber] = useState('');
+  const [clientId, setClientId] = useState('');
+  const [projectId, setProjectId] = useState('');
   const [clientName, setClientName] = useState('');
   const [clientCompany, setClientCompany] = useState('');
   const [clientEmail, setClientEmail] = useState('');
   const [clientPhone, setClientPhone] = useState('');
-  const [itemDesc, setItemDesc] = useState('');
-  const [itemAmount, setItemAmount] = useState<number>(0);
+  const [invoiceCurrency, setInvoiceCurrency] = useState<CurrencyCode>(currency);
+  const [invoiceItems, setInvoiceItems] = useState<InvoiceLineItem[]>([emptyLineItem()]);
+  const [discountPercent, setDiscountPercent] = useState(0);
+  const [taxPercent, setTaxPercent] = useState(11);
+  const [invoiceStatus, setInvoiceStatus] = useState<InvoiceStatus>('draft');
   const [issueDate, setIssueDate] = useState('');
-  const [dueDate, setDueDate] = useState(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
-  const [taxPercent, setTaxPercent] = useState<number>(11);
-  const [invoiceStatus, setInvoiceStatus] = useState<InvoiceStatus>('sent');
+  const [dueDate, setDueDate] = useState('');
+  const [paymentTerms, setPaymentTerms] = useState('');
   const [invoiceNotes, setInvoiceNotes] = useState('');
 
-  // Modal State for Expense
-  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
-  const [expCategory, setExpCategory] = useState<AgencyExpense['category']>('Software & Cloud');
-  const [expDesc, setExpDesc] = useState('');
-  const [expAmount, setExpAmount] = useState<number>(0);
-  const [expDate, setExpDate] = useState(new Date().toISOString().split('T')[0]);
+  const [expenseModalOpen, setExpenseModalOpen] = useState(false);
+  const [savingExpense, setSavingExpense] = useState(false);
+  const [expenseType, setExpenseType] = useState<'OpEx' | 'CapEx' | 'Rentals'>('OpEx');
+  const [expenseCategory, setExpenseCategory] = useState<AgencyExpense['category']>('Software & Cloud');
+  const [expenseDescription, setExpenseDescription] = useState('');
+  const [expenseAmount, setExpenseAmount] = useState(0);
+  const [expenseDate, setExpenseDate] = useState(new Date().toISOString().slice(0, 10));
 
-  // Invoice Detail / Printable Preview Modal
-  const [previewInvoice, setPreviewInvoice] = useState<AgencyInvoice | null>(null);
-
-  // Modal State for Recording Partial / Full Payment
-  const [paymentModalInvoice, setPaymentModalInvoice] = useState<AgencyInvoice | null>(null);
-  const [paymentAmount, setPaymentAmount] = useState<number>(0);
+  const [paymentInvoice, setPaymentInvoice] = useState<AgencyInvoice | null>(null);
+  const [paymentAmount, setPaymentAmount] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState<'bank_transfer' | 'credit_card' | 'cash' | 'other'>('bank_transfer');
-  const [paymentRef, setPaymentRef] = useState<string>('');
-  const [paymentDate, setPaymentDate] = useState<string>(new Date().toISOString().split('T')[0]);
-  const [paymentNotes, setPaymentNotes] = useState<string>('');
+  const [paymentReference, setPaymentReference] = useState('');
+  const [paymentDate, setPaymentDate] = useState(new Date().toISOString().slice(0, 10));
+  const [paymentNotes, setPaymentNotes] = useState('');
+  const [savingPayment, setSavingPayment] = useState(false);
 
-  const loadData = async () => {
-    const [invoiceRes, expenseRes, metricsRes] = await Promise.all([api.finance.getInvoices(), api.finance.getExpenses(), api.finance.getMetrics()]);
-    if (invoiceRes.success && Array.isArray(invoiceRes.data?.invoices)) setInvoices(invoiceRes.data.invoices as AgencyInvoice[]);
-    if (expenseRes.success && Array.isArray(expenseRes.data?.expenses)) setExpenses(expenseRes.data.expenses as AgencyExpense[]);
-    if (metricsRes.success && metricsRes.data?.metrics) setServerMetrics(metricsRes.data.metrics);
+  const [detailInvoice, setDetailInvoice] = useState<AgencyInvoice | null>(null);
+  const [confirmAction, setConfirmAction] = useState<{ type: 'invoice' | 'expense'; id: string; label: string } | null>(null);
+
+  const showNotice = (tone: 'success' | 'danger', message: string) => {
+    setNotice({ tone, message });
+    window.setTimeout(() => setNotice((current) => current?.message === message ? null : current), 3500);
+  };
+
+  const loadData = async (silent = false) => {
+    if (silent) setRefreshing(true);
+    else setLoading(true);
+    setError(null);
+    try {
+      const [invoiceRes, expenseRes, metricsRes, clientRes, projectRes] = await Promise.all([
+        api.finance.getInvoices(),
+        api.finance.getExpenses(),
+        api.finance.getMetrics(currency),
+        api.clients.getAll(),
+        api.projects.getAll()
+      ]);
+
+      if (!invoiceRes.success || !Array.isArray(invoiceRes.data?.invoices)) {
+        throw new Error(invoiceRes.error || 'Unable to load invoices.');
+      }
+      if (!expenseRes.success || !Array.isArray(expenseRes.data?.expenses)) {
+        throw new Error(expenseRes.error || 'Unable to load expenses.');
+      }
+      if (!metricsRes.success || !metricsRes.data?.metrics) {
+        throw new Error(metricsRes.error || 'Unable to load financial metrics.');
+      }
+
+      setInvoices(invoiceRes.data.invoices as AgencyInvoice[]);
+      setExpenses(invoiceRes.data.expenses as FinanceExpense[]);
+      setServerMetrics(metricsRes.data.metrics as ServerMetrics);
+      if (clientRes.success && Array.isArray(clientRes.data?.clients)) {
+        setClients(clientRes.data.clients as FinanceClient[]);
+      }
+      if (projectRes.success && Array.isArray(projectRes.data?.projects)) {
+        setProjects(projectRes.data.projects as FinanceProject[]);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Financial data is temporarily unavailable.');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
   };
 
   useEffect(() => {
-    void loadData();
-
-    const handleCurrencyChange = (e: any) => {
-      setCurrency(e.detail?.currency || getActiveCurrency());
-    };
-    window.addEventListener(CURRENCY_EVENT, handleCurrencyChange);
-    return () => {
-      window.removeEventListener(CURRENCY_EVENT, handleCurrencyChange);
-    };
-  }, []);
-
-  const metrics = useMemo(() => ({
-    totalRevenue: Number(serverMetrics.totalRevenueCollected || 0),
-    totalExpenses: Number(serverMetrics.totalExpense || 0),
-    netProfit: Number(serverMetrics.netProfit || 0),
-    totalOutstanding: Number(serverMetrics.totalOutstanding || 0),
-    profitMargin: Number(serverMetrics.profitMargin || 0)
-  }), [serverMetrics]);
-
-  const filteredInvoices = useMemo(() => {
-    return invoices.filter(inv => {
-      const matchesSearch = 
-        inv.invoiceNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        inv.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        inv.clientCompany.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesFilter = filterStatus === 'all' || inv.status === filterStatus;
-      return matchesSearch && matchesFilter;
-    });
-  }, [invoices, searchQuery, filterStatus]);
-
-  const showToast = (msg: string) => {
-    setStatusMessage(msg);
-    setTimeout(() => setStatusMessage(null), 3500);
-  };
-
-  const handleOpenEditInvoice = (invoice: AgencyInvoice) => {
-    setEditingInvoice(invoice);
-    setSelectedProjectId(invoice.projectId || '');
-    setClientName(invoice.clientName || ''); setClientCompany(invoice.clientCompany || '');
-    setClientEmail(invoice.clientEmail || ''); setClientPhone(invoice.clientPhone || '');
-    setItemDesc(invoice.items?.[0]?.description || ''); setItemAmount(Number(invoice.items?.[0]?.unitPrice || 0));
-    setIssueDate(invoice.issueDate || ''); setDueDate(invoice.dueDate || '');
-    setTaxPercent(Number(invoice.taxPercent || 0)); setInvoiceStatus(invoice.status || 'draft'); setInvoiceNotes(invoice.notes || '');
-    setIsInvoiceModalOpen(true);
-  };
-
-  const handleSelectProjectChange = (projectId: string) => {
-    setSelectedProjectId(projectId);
-    const project = availableProjects.find((item) => item.id === projectId);
-    if (!project) return;
-    setClientName(project.clientName || project.client || '');
-    setClientCompany(project.clientCompany || project.client || '');
-    setClientEmail(project.clientEmail || '');
-    setItemDesc(project.name || project.title || '');
-    setItemAmount(Number(project.budget || 0));
-  };
-
-  const handleOpenCreateInvoice = async () => {
-    setAvailableProjects([]);
-    setSelectedProjectId('');
-    setClientName(''); setClientCompany(''); setClientEmail(''); setClientPhone('');
-    setItemDesc(''); setItemAmount(0); setIssueDate(''); setDueDate('');
-    setTaxPercent(11); setInvoiceNotes('');
-    setEditingInvoice(null);
-    setIsInvoiceModalOpen(true);
-  };
-
-  const handleSaveInvoice = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!clientName.trim() || !clientCompany.trim() || !itemDesc.trim()) return;
-    const payload = {
-      clientName: clientName.trim(), clientCompany: clientCompany.trim(), clientEmail: clientEmail.trim(), clientPhone: clientPhone.trim(),
-      projectId: selectedProjectId || undefined,
-      items: [{ description: itemDesc.trim(), quantity: 1, unitPrice: Math.max(0, Number(itemAmount) || 0) }],
-      taxPercent: Number(taxPercent) || 0,
-      discountPercent: 0,
-      currency,
-      status: invoiceStatus,
-      issueDate: issueDate || undefined,
-      dueDate: dueDate || undefined,
-      notes: invoiceNotes.trim()
-    };
-    const res = editingInvoice ? await api.finance.updateInvoice(editingInvoice.id, payload) : await api.finance.createInvoice(payload);
-    if (!res.success) { showToast(res.error || 'Invoice could not be saved.'); return; }
-    await loadData(); setIsInvoiceModalOpen(false);
-    showToast(language === 'id' ? 'Invoice berhasil disimpan.' : 'Invoice saved successfully.');
-  };
-
-  const handleDeleteInvoice = (id: string, invNum: string) => setConfirmAction({ type: 'invoice', id, label: invNum });
-
-  const confirmDeleteInvoice = async (id: string) => {
-    const res = await api.finance.deleteInvoice(id);
-    if (!res.success) showToast(res.error || 'Invoice gagal dihapus.');
-    else { await loadData(); showToast(language === 'id' ? 'Invoice dihapus.' : 'Invoice deleted.'); }
-    setConfirmAction(null);
-  };
-
-  const handleOpenPaymentModal = (inv: AgencyInvoice) => {
-    setPaymentModalInvoice(inv);
-    setPaymentAmount(Number(inv.balanceDue ?? inv.total ?? 0));
-    setPaymentMethod('bank_transfer'); setPaymentRef(''); setPaymentDate(new Date().toISOString().slice(0,10)); setPaymentNotes('');
-  };
-
-  const handleRecordPaymentSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!paymentModalInvoice) return;
-    if (paymentAmount <= 0) {
-      showToast(language === 'id' ? 'Nominal pembayaran harus lebih besar dari 0' : 'Payment amount must be greater than 0');
+    if (!canViewFinancials) {
+      setLoading(false);
       return;
     }
-    const updated = await api.finance.payInvoice(paymentModalInvoice.id, {
-      amount: paymentAmount,
-      date: paymentDate,
-      method: paymentMethod,
-      reference: paymentRef,
-      notes: paymentNotes
+    void loadData();
+  }, [canViewFinancials, currency]);
+
+  useEffect(() => {
+    const handleCurrencyChange = (event: Event) => {
+      const detail = (event as CustomEvent<{ currency?: CurrencyCode }>).detail;
+      if (detail?.currency) setCurrency(detail.currency);
+    };
+    window.addEventListener(CURRENCY_EVENT, handleCurrencyChange);
+    return () => window.removeEventListener(CURRENCY_EVENT, handleCurrencyChange);
+  }, []);
+
+  const currencyInvoices = useMemo(
+    () => invoices.filter((invoice) => invoice.currency === currency),
+    [invoices, currency]
+  );
+
+  const currencyExpenses = useMemo(
+    () => expenses.filter((expense) => (expense.currency || 'IDR') === currency),
+    [expenses, currency]
+  );
+
+  const derivedMetrics = useMemo(
+    () => computeFinancialMetrics(currencyInvoices, currencyExpenses),
+    [currencyInvoices, currencyExpenses]
+  );
+
+  const cashFlow = useMemo(
+    () => getMonthlyCashFlowSeries(currencyInvoices, currencyExpenses),
+    [currencyInvoices, currencyExpenses]
+  );
+
+  const hasTrendData = cashFlow.some((point) => point.inflow !== 0 || point.outflow !== 0);
+
+  const filteredInvoices = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    const result = currencyInvoices.filter((invoice) => {
+      const searchable = [
+        invoice.invoiceNumber,
+        invoice.clientName,
+        invoice.clientCompany,
+        invoice.clientEmail,
+        projects.find((project) => project.id === invoice.projectId)?.name || ''
+      ].join(' ').toLowerCase();
+      const matchesSearch = !query || searchable.includes(query);
+      const matchesStatus = statusFilter === 'all' || invoice.status === statusFilter;
+      return matchesSearch && matchesStatus;
     });
-    if (updated.success) {
-      await loadData();
-      showToast(language === 'id' ? `Pembayaran dicatat untuk ${updated.data?.invoice?.invoiceNumber || paymentModalInvoice.invoiceNumber}` : `Payment recorded for ${updated.data?.invoice?.invoiceNumber || paymentModalInvoice.invoiceNumber}`);
-      setPaymentModalInvoice(null);
+
+    return [...result].sort((a, b) => {
+      if (sort === 'amount_high') return b.total - a.total;
+      if (sort === 'amount_low') return a.total - b.total;
+      if (sort === 'due') return String(a.dueDate).localeCompare(String(b.dueDate));
+      if (sort === 'invoice') return a.invoiceNumber.localeCompare(b.invoiceNumber);
+      return String(b.updatedAt || '').localeCompare(String(a.updatedAt || ''));
+    });
+  }, [currencyInvoices, search, statusFilter, sort, projects]);
+
+  const filteredExpenses = useMemo(() => {
+    if (expenseTypeFilter === 'all') return currencyExpenses;
+    return currencyExpenses.filter((expense) => (expense.type || 'OpEx') === expenseTypeFilter);
+  }, [currencyExpenses, expenseTypeFilter]);
+
+  const invoiceTotals = useMemo(
+    () => computeInvoiceTotals(invoiceItems, taxPercent, discountPercent),
+    [invoiceItems, taxPercent, discountPercent]
+  );
+
+  const resetInvoiceForm = () => {
+    setEditingInvoice(null);
+    setInvoiceNumber('');
+    setClientId('');
+    setProjectId('');
+    setClientName('');
+    setClientCompany('');
+    setClientEmail('');
+    setClientPhone('');
+    setInvoiceCurrency(currency);
+    setInvoiceItems([emptyLineItem()]);
+    setDiscountPercent(0);
+    setTaxPercent(11);
+    setInvoiceStatus('draft');
+    setIssueDate(new Date().toISOString().slice(0, 10));
+    setDueDate(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10));
+    setPaymentTerms('');
+    setInvoiceNotes('');
+  };
+
+  const openCreateInvoice = () => {
+    resetInvoiceForm();
+    setInvoiceModalOpen(true);
+  };
+
+  const openEditInvoice = (invoice: AgencyInvoice) => {
+    setEditingInvoice(invoice);
+    setInvoiceNumber(invoice.invoiceNumber);
+    setClientId(String((invoice as AgencyInvoice & { clientId?: string }).clientId || ''));
+    setProjectId(invoice.projectId || '');
+    setClientName(invoice.clientName || '');
+    setClientCompany(invoice.clientCompany || '');
+    setClientEmail(invoice.clientEmail || '');
+    setClientPhone(invoice.clientPhone || '');
+    setInvoiceCurrency(invoice.currency);
+    setInvoiceItems(invoice.items.length ? invoice.items.map((item) => ({ ...item })) : [emptyLineItem()]);
+    setDiscountPercent(Number(invoice.discountPercent || 0));
+    setTaxPercent(Number(invoice.taxPercent || 0));
+    setInvoiceStatus(invoice.status);
+    setIssueDate(invoice.issueDate || '');
+    setDueDate(invoice.dueDate || '');
+    setPaymentTerms(invoice.paymentTerms || '');
+    setInvoiceNotes(invoice.notes || '');
+    setInvoiceModalOpen(true);
+  };
+
+  const selectClient = (id: string) => {
+    setClientId(id);
+    const client = clients.find((item) => item.id === id);
+    if (!client) return;
+    setClientName(client.name);
+    setClientCompany(client.company);
+    setClientEmail(client.email);
+    setClientPhone(client.phone);
+  };
+
+  const selectProject = (id: string) => {
+    setProjectId(id);
+    const project = projects.find((item) => item.id === id);
+    if (!project) return;
+    if (project.clientId) selectClient(project.clientId);
+    if (!clientName) setClientName(project.clientName || '');
+    if (!clientCompany) setClientCompany(project.clientCompany || '');
+  };
+
+  const updateLineItem = (index: number, patch: Partial<InvoiceLineItem>) => {
+    setInvoiceItems((current) => current.map((item, itemIndex) => {
+      if (itemIndex !== index) return item;
+      const next = { ...item, ...patch };
+      const quantity = Math.max(0, Number(next.quantity) || 0);
+      const unitPrice = Math.max(0, Number(next.unitPrice) || 0);
+      return { ...next, quantity, unitPrice, amount: Math.round(quantity * unitPrice) };
+    }));
+  };
+
+  const handleSaveInvoice = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!canManageInvoices || savingInvoice) return;
+
+    const validItems = invoiceItems
+      .filter((item) => item.description.trim() && Number(item.quantity) > 0 && Number(item.unitPrice) >= 0)
+      .map((item) => ({
+        ...item,
+        description: item.description.trim(),
+        quantity: Number(item.quantity),
+        unitPrice: Number(item.unitPrice),
+        amount: Math.round(Number(item.quantity) * Number(item.unitPrice))
+      }));
+
+    if (!clientName.trim() || !clientCompany.trim() || validItems.length === 0) {
+      showNotice('danger', language === 'id' ? 'Klien, perusahaan, dan minimal satu line item wajib diisi.' : 'Client, company, and at least one line item are required.');
+      return;
+    }
+
+    setSavingInvoice(true);
+    try {
+      const payload = {
+        invoiceNumber: invoiceNumber.trim() || undefined,
+        clientId: clientId || undefined,
+        clientName: clientName.trim(),
+        clientCompany: clientCompany.trim(),
+        clientEmail: clientEmail.trim(),
+        clientPhone: clientPhone.trim(),
+        projectId: projectId || undefined,
+        items: validItems,
+        taxPercent: Math.min(100, Math.max(0, Number(taxPercent) || 0)),
+        discountPercent: Math.min(100, Math.max(0, Number(discountPercent) || 0)),
+        currency: invoiceCurrency,
+        status: invoiceStatus === 'partially_paid' || invoiceStatus === 'paid' || invoiceStatus === 'cancelled' ? (editingInvoice?.status || 'draft') : invoiceStatus,
+        issueDate: issueDate || undefined,
+        dueDate: dueDate || undefined,
+        paymentTerms: paymentTerms.trim(),
+        notes: invoiceNotes.trim()
+      };
+
+      const result = editingInvoice
+        ? await api.finance.updateInvoice(editingInvoice.id, payload)
+        : await api.finance.createInvoice(payload);
+
+      if (!result.success) throw new Error(result.error || 'Invoice could not be saved.');
+      setInvoiceModalOpen(false);
+      showNotice('success', language === 'id' ? 'Invoice berhasil disimpan.' : 'Invoice saved successfully.');
+      await loadData(true);
+    } catch (err) {
+      showNotice('danger', err instanceof Error ? err.message : 'Invoice could not be saved.');
+    } finally {
+      setSavingInvoice(false);
     }
   };
 
-  const handleSaveExpense = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!expDesc.trim() || !expAmount) return;
-    const res = await api.finance.createExpense({ category: expCategory, description: expDesc.trim(), amount: Number(expAmount), date: expDate, currency });
-    if (!res.success) { showToast(res.error || 'Expense could not be saved.'); return; }
-    await loadData(); setIsExpenseModalOpen(false); setExpDesc('');
-    showToast(language === 'id' ? 'Pengeluaran berhasil dicatat.' : 'Expense recorded successfully.');
+  const updateInvoiceStatus = async (invoice: AgencyInvoice, nextStatus: InvoiceStatus) => {
+    if (!canManageInvoices || invoice.status === nextStatus || nextStatus === 'cancelled') return;
+    const result = await api.finance.updateInvoice(invoice.id, { status: nextStatus });
+    if (!result.success) {
+      showNotice('danger', result.error || 'Invoice status could not be updated.');
+      return;
+    }
+    showNotice('success', language === 'id' ? 'Status invoice diperbarui.' : 'Invoice status updated.');
+    await loadData(true);
   };
 
-  const handleDeleteExpense = (id: string) => setConfirmAction({ type: 'expense', id });
+  const openPayment = (invoice: AgencyInvoice) => {
+    const balance = Number(invoice.balanceDue ?? (invoice.total - (invoice.amountPaid || 0)));
+    setPaymentInvoice(invoice);
+    setPaymentAmount(Math.max(0, balance));
+    setPaymentMethod('bank_transfer');
+    setPaymentReference('');
+    setPaymentDate(new Date().toISOString().slice(0, 10));
+    setPaymentNotes('');
+  };
 
-  const confirmDeleteExpense = async (id: string) => {
-    const res = await api.finance.deleteExpense(id);
-    if (!res.success) showToast(res.error || 'Expense gagal dihapus.');
-    else { await loadData(); showToast(language === 'id' ? 'Pengeluaran dihapus.' : 'Expense deleted.'); }
+  const handlePayment = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!paymentInvoice || !canManageInvoices || savingPayment) return;
+    const balance = Number(paymentInvoice.balanceDue ?? (paymentInvoice.total - (paymentInvoice.amountPaid || 0)));
+    const amount = Number(paymentAmount);
+    if (!Number.isFinite(amount) || amount <= 0 || amount > balance) {
+      showNotice('danger', language === 'id' ? 'Nominal pembayaran harus lebih dari 0 dan tidak boleh melebihi sisa tagihan.' : 'Payment must be greater than 0 and cannot exceed the remaining balance.');
+      return;
+    }
+
+    setSavingPayment(true);
+    try {
+      const result = await api.finance.payInvoice(paymentInvoice.id, {
+        amount,
+        date: paymentDate,
+        method: paymentMethod,
+        reference: paymentReference.trim(),
+        notes: paymentNotes.trim()
+      });
+      if (!result.success) throw new Error(result.error || 'Payment could not be recorded.');
+      setPaymentInvoice(null);
+      showNotice('success', language === 'id' ? 'Pembayaran berhasil dicatat.' : 'Payment recorded successfully.');
+      await loadData(true);
+    } catch (err) {
+      showNotice('danger', err instanceof Error ? err.message : 'Payment could not be recorded.');
+    } finally {
+      setSavingPayment(false);
+    }
+  };
+
+  const handleSaveExpense = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!canManageInvoices || savingExpense) return;
+    const amount = Number(expenseAmount);
+    if (!expenseDescription.trim() || !Number.isFinite(amount) || amount <= 0) {
+      showNotice('danger', language === 'id' ? 'Deskripsi dan nominal pengeluaran wajib diisi.' : 'Description and a valid expense amount are required.');
+      return;
+    }
+
+    setSavingExpense(true);
+    try {
+      const result = await api.finance.createExpense({
+        type: expenseType,
+        category: expenseCategory,
+        description: expenseDescription.trim(),
+        amount,
+        date: expenseDate,
+        currency
+      });
+      if (!result.success) throw new Error(result.error || 'Expense could not be saved.');
+      setExpenseModalOpen(false);
+      setExpenseDescription('');
+      setExpenseAmount(0);
+      showNotice('success', language === 'id' ? 'Pengeluaran berhasil dicatat.' : 'Expense recorded successfully.');
+      await loadData(true);
+    } catch (err) {
+      showNotice('danger', err instanceof Error ? err.message : 'Expense could not be saved.');
+    } finally {
+      setSavingExpense(false);
+    }
+  };
+
+  const confirmDelete = async () => {
+    if (!confirmAction) return;
+    const result = confirmAction.type === 'invoice'
+      ? await api.finance.deleteInvoice(confirmAction.id)
+      : await api.finance.deleteExpense(confirmAction.id);
+    if (!result.success) {
+      showNotice('danger', result.error || 'Action could not be completed.');
+    } else {
+      showNotice('success', confirmAction.type === 'invoice'
+        ? (language === 'id' ? 'Invoice dibatalkan.' : 'Invoice cancelled.')
+        : (language === 'id' ? 'Pengeluaran dibatalkan.' : 'Expense voided.'));
+      await loadData(true);
+    }
     setConfirmAction(null);
   };
 
-  const getStatusBadge = (status: InvoiceStatus) => {
-    switch (status) {
-      case 'paid':
-        return (
-          <span className="px-2.5 py-1 rounded-control bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30 text-[10px] font-sans font-semibold flex items-center gap-1.5">
-            <CheckCircle2 size={12} />
-            <span>PAID</span>
-          </span>
-        );
-      case 'sent':
-        return (
-          <span className="px-2.5 py-1 rounded-control bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 text-[10px] font-sans font-semibold flex items-center gap-1.5">
-            <Send size={12} />
-            <span>SENT</span>
-          </span>
-        );
-      case 'overdue':
-        return (
-          <span className="px-2.5 py-1 rounded-control bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 text-[10px] font-sans font-semibold flex items-center gap-1.5 animate-pulse">
-            <AlertCircle size={12} />
-            <span>OVERDUE</span>
-          </span>
-        );
-      case 'draft':
-      default:
-        return (
-          <span className="px-2.5 py-1 rounded-control bg-[var(--panel-hover)] text-[var(--muted)] border border-[var(--line)] text-[10px] font-sans font-semibold flex items-center gap-1.5">
-            <Clock size={12} />
-            <span>DRAFT</span>
-          </span>
-        );
-    }
-  };
+  const openPrintPreview = (invoice: AgencyInvoice) => setDetailInvoice(invoice);
+
+  const statusOptions = [
+    { value: 'all', label: language === 'id' ? 'Semua status' : 'All statuses' },
+    { value: 'draft', label: 'Draft' },
+    { value: 'sent', label: 'Sent' },
+    { value: 'partially_paid', label: language === 'id' ? 'Sebagian dibayar' : 'Partially paid' },
+    { value: 'paid', label: language === 'id' ? 'Lunas' : 'Paid' },
+    { value: 'overdue', label: language === 'id' ? 'Jatuh tempo' : 'Overdue' },
+    { value: 'cancelled', label: language === 'id' ? 'Dibatalkan' : 'Cancelled' }
+  ];
+
+  const sortOptions = [
+    { value: 'updated', label: language === 'id' ? 'Terakhir diperbarui' : 'Recently updated' },
+    { value: 'due', label: language === 'id' ? 'Jatuh tempo' : 'Due date' },
+    { value: 'amount_high', label: language === 'id' ? 'Nominal tertinggi' : 'Highest amount' },
+    { value: 'amount_low', label: language === 'id' ? 'Nominal terendah' : 'Lowest amount' },
+    { value: 'invoice', label: language === 'id' ? 'Nomor invoice' : 'Invoice number' }
+  ];
+
+  const expenseTypeOptions = [
+    { value: 'all', label: language === 'id' ? 'Semua tipe' : 'All types' },
+    { value: 'OpEx', label: 'OpEx' },
+    { value: 'CapEx', label: 'CapEx' },
+    { value: 'Rentals', label: 'Rentals' }
+  ];
 
   if (!canViewFinancials) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-8 bg-[var(--panel)] border border-[var(--line)] rounded-card max-w-xl mx-auto my-12 animate-in fade-in duration-200">
-        <div className="w-16 h-16 rounded-card bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--danger)] flex items-center justify-center mb-4">
-          <ShieldCheck size={32} />
-        </div>
-        <h2 className="text-xl font-sans font-semibold text-[var(--text)] mb-2">
-          {language === 'id' ? 'Akses Terbatas: Finansial & Invoicing' : 'Restricted Access: Financials & Invoicing'}
-        </h2>
-        <p className="text-sm text-[var(--muted)] mb-6 leading-relaxed">
-          {language === 'id' 
-            ? `Akun Anda (${session?.user?.name || session?.user?.username}) terdaftar dengan peran "${session?.user?.role}". Akses modul keuangan, pembukuan invoice, dan data billing dibatasi khusus untuk Eksekutif / Manajemen Sponsor Kapitech.`
-            : `Your account (${session?.user?.name || session?.user?.username}) is registered as "${session?.user?.role}". Financial ledger, invoices, and billing metrics are restricted to Executive Stakeholders / Sponsors.`}
-        </p>
-        <div className="px-4 py-2.5 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--muted)]">
-          {language === 'id' ? 'Hubungi Executive Sponsor untuk peningkatan otorisasi hak akses.' : 'Contact an Executive Sponsor for elevated authorization.'}
-        </div>
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <section className="w-full max-w-xl rounded-card border border-line bg-panel p-6 text-center sm:p-8">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-control border border-danger/30 bg-danger/10 text-danger">
+            <ShieldCheck size={22} />
+          </div>
+          <h1 className="mt-4 text-xl font-semibold text-fg">{language === 'id' ? 'Akses finansial terbatas' : 'Financial access restricted'}</h1>
+          <p className="mt-2 text-xs leading-5 text-muted">
+            {language === 'id' ? 'Akun Anda tidak memiliki izin untuk melihat data Finance & Invoicing.' : 'Your account does not have permission to view Finance & Invoicing data.'}
+          </p>
+        </section>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      
-      {/* 1. Header & Actions */}
-      <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-sans font-semibold text-[var(--text)] flex items-center gap-3">
-            <Receipt className="text-[var(--danger)]" size={26} />
-            <span>{t('admin.fin.title')}</span>
-          </h1>
-          <p className="text-xs text-[var(--muted)] mt-1">
-            {t('admin.fin.subtitle')}
+    <div className="min-h-full pb-8">
+      <header className="ams-dashboard-header mb-6 flex flex-col gap-4 border-b border-line pb-5 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 text-xs text-muted">
+            <span>Kapitech AMS</span>
+            <span aria-hidden="true">/</span>
+            <span className="text-fg">Finance &amp; Invoicing</span>
+          </div>
+          <h1 className="mt-2 text-xl font-semibold leading-7 tracking-tight text-fg">{language === 'id' ? 'Keuangan &amp; Invoicing' : 'Finance &amp; Invoicing'}</h1>
+          <p className="mt-1 max-w-2xl text-xs leading-5 text-muted">
+            {language === 'id' ? 'Pantau kas masuk, piutang, pengeluaran, dan invoice dari data keuangan aktual.' : 'Monitor collected revenue, receivables, expenses, and invoices from current financial data.'}
           </p>
         </div>
-
-        <div className="flex flex-wrap items-center gap-2.5">
-          <button
-            onClick={() => setIsExpenseModalOpen(true)}
-            disabled={!canManageInvoices}
-            className="min-h-10 px-4 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-sans font-medium border border-[var(--line)] transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Plus size={14} />
-            <span>{t('admin.fin.recordExpense')}</span>
+        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+          <div className="inline-flex min-h-10 items-center rounded-control border border-line bg-panel p-1" aria-label="Finance currency">
+            {(['IDR', 'USD'] as CurrencyCode[]).map((item) => (
+              <button
+                key={item}
+                type="button"
+                onClick={() => setActiveCurrency(item)}
+                aria-pressed={currency === item}
+                className={'min-h-8 rounded-chip px-3 text-xs font-semibold transition-colors ' + (currency === item ? 'bg-accent text-white' : 'text-muted hover:text-fg')}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+          <button type="button" onClick={() => void loadData(true)} disabled={refreshing} className={actionClass}>
+            <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} />
+            {refreshing ? (language === 'id' ? 'Memuat' : 'Refreshing') : (language === 'id' ? 'Segarkan' : 'Refresh')}
           </button>
-
           {canManageInvoices && (
-            <button
-              onClick={handleOpenCreateInvoice}
-              className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-medium transition-colors flex items-center justify-center gap-1.5"
-            >
-              <Plus size={14} />
-              <span>{t('admin.fin.createInvoice')}</span>
-            </button>
+            <>
+              <button type="button" onClick={() => setExpenseModalOpen(true)} className={actionClass}>
+                <Plus size={14} />
+                {language === 'id' ? 'Catat pengeluaran' : 'Record expense'}
+              </button>
+              <button type="button" onClick={openCreateInvoice} className={primaryClass}>
+                <Plus size={14} />
+                {language === 'id' ? 'Buat invoice' : 'Create invoice'}
+              </button>
+            </>
           )}
         </div>
-      </div>
+      </header>
 
-      {statusMessage && (
-        <div className="p-3.5 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] text-xs font-sans flex items-center gap-2">
-          <Check size={14} />
-          <span>{statusMessage}</span>
+      {notice && (
+        <div className={'mb-6 flex items-start gap-2 rounded-card border px-4 py-3 text-xs ' + (notice.tone === 'success' ? 'border-success/30 bg-success/10 text-success' : 'border-danger/30 bg-danger/10 text-danger')} role="status">
+          {notice.tone === 'success' ? <Check size={15} /> : <AlertCircle size={15} />}
+          <span>{notice.message}</span>
         </div>
       )}
 
-      {/* 2. Key Financial KPIs (1 col mobile, 2 col tablet, 4 col desktop) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        
-        {/* Metric 1: Collected Revenue */}
-        <div className="bg-[var(--panel)] border border-[var(--line)] p-4 rounded-card flex flex-col justify-between h-full group hover:border-[var(--line)] transition-all">
-          <div>
-            <div className="flex items-center justify-between text-[var(--muted)] mb-2">
-              <span className="text-xs font-sans normal-case font-semibold">{t('admin.fin.revenuePaid')}</span>
-              <div className="w-8 h-8 rounded-control bg-[var(--success)]/10 border border-[var(--success)]/30 flex items-center justify-center text-[var(--success)]">
-                <DollarSign size={16} />
+      {error && (
+        <section className="mb-6 flex flex-col gap-3 rounded-card border border-danger/40 bg-danger/10 px-4 py-3 sm:flex-row sm:items-center sm:justify-between" role="alert">
+          <p className="text-xs leading-5 text-fg">{error}</p>
+          <button type="button" onClick={() => void loadData(true)} className={actionClass}>Retry</button>
+        </section>
+      )}
+
+      {loading ? (
+        <div className="space-y-6" aria-label="Loading finance">
+          <div className="grid grid-cols-2 gap-3 min-[900px]:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => <div key={index} className="h-28 animate-pulse rounded-card border border-line bg-panel" />)}
+          </div>
+          <div className="h-56 animate-pulse rounded-card border border-line bg-panel" />
+          <div className="h-72 animate-pulse rounded-card border border-line bg-panel" />
+        </div>
+      ) : (
+        <>
+          <section aria-labelledby="finance-snapshot-title">
+            <div className="mb-3 flex items-end justify-between gap-3">
+              <div>
+                <h2 id="finance-snapshot-title" className="text-sm font-semibold text-fg">{language === 'id' ? 'Ringkasan finansial' : 'Financial snapshot'}</h2>
+                <p className="mt-1 text-xs text-muted">{currency} ledger based on current server-calculated metrics.</p>
+              </div>
+              {serverMetrics && <span className="text-[11px] tabular-nums text-muted">{serverMetrics.totalInvoicesCount} invoices</span>}
+            </div>
+
+            <div className="grid grid-cols-2 gap-y-6 border-y border-line py-5 sm:grid-cols-3 min-[1100px]:grid-cols-6">
+              {[
+                { label: language === 'id' ? 'Pendapatan diterima' : 'Revenue collected', value: serverMetrics ? formatAmount(serverMetrics.totalRevenueCollected, currency) : '—', context: serverMetrics ? serverMetrics.paidCount + ' paid invoices' : '—', icon: DollarSign, tone: 'text-accent-text' },
+                { label: language === 'id' ? 'Piutang' : 'Outstanding', value: serverMetrics ? formatAmount(serverMetrics.totalOutstanding, currency) : '—', context: serverMetrics ? serverMetrics.overdueCount + ' overdue' : '—', icon: WalletCards, tone: 'text-warning' },
+                { label: language === 'id' ? 'Pengeluaran' : 'Expenses', value: serverMetrics ? formatAmount(serverMetrics.totalExpense, currency) : '—', context: currencyExpenses.length + ' records', icon: TrendingDown, tone: 'text-danger' },
+                { label: language === 'id' ? 'Laba operasi' : 'Operating profit', value: serverMetrics ? formatAmount(serverMetrics.netProfit, currency) : '—', context: serverMetrics ? serverMetrics.profitMargin + '% margin' : '—', icon: TrendingUp, tone: 'text-success' },
+                { label: 'OpEx', value: formatAmount(derivedMetrics.opExExpenses, currency), context: 'Operating expense', icon: CreditCard, tone: 'text-info' },
+                { label: 'CapEx', value: formatAmount(derivedMetrics.capExExpenses, currency), context: 'Capital expense', icon: ArrowUpRight, tone: 'text-muted' }
+              ].map((metric) => (
+                <div key={metric.label} className="min-w-0 px-1">
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="text-xs leading-4 text-muted">{metric.label}</span>
+                    <metric.icon size={16} className={'shrink-0 ' + metric.tone} strokeWidth={1.8} />
+                  </div>
+                  <div className="mt-3 truncate text-lg font-medium leading-7 tracking-tight tabular-nums text-fg sm:text-xl">{metric.value}</div>
+                  <div className="mt-1 min-h-4 text-[11px] leading-4 text-muted">{metric.context}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="mt-6 grid gap-3 min-[1100px]:grid-cols-12" aria-labelledby="financial-flow-title">
+            <div className="rounded-card border border-line bg-panel p-4 sm:p-5 min-[1100px]:col-span-7">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h2 id="financial-flow-title" className="text-sm font-semibold text-fg">{language === 'id' ? 'Financial operating summary' : 'Financial operating summary'}</h2>
+                  <p className="mt-1 text-xs leading-5 text-muted">Collected revenue → expenses → operating result.</p>
+                </div>
+                <span className="rounded-badge bg-accent/10 px-2 py-1 text-[11px] font-semibold text-accent-text">{serverMetrics?.profitMargin || '0'}% margin</span>
+              </div>
+              <div className="mt-5 grid grid-cols-1 gap-px overflow-hidden rounded-control border border-line bg-line sm:grid-cols-4">
+                {[
+                  { label: 'Revenue', value: serverMetrics ? formatAmount(serverMetrics.totalRevenueCollected, currency) : '—', tone: 'text-accent-text' },
+                  { label: 'Expenses', value: serverMetrics ? formatAmount(serverMetrics.totalExpense, currency) : '—', tone: 'text-danger' },
+                  { label: 'Operating profit', value: serverMetrics ? formatAmount(serverMetrics.netProfit, currency) : '—', tone: 'text-success' },
+                  { label: 'Outstanding', value: serverMetrics ? formatAmount(serverMetrics.totalOutstanding, currency) : '—', tone: 'text-warning' }
+                ].map((item) => (
+                  <div key={item.label} className="min-w-0 bg-panel p-3.5">
+                    <p className="text-xs text-muted">{item.label}</p>
+                    <p className={'mt-2 truncate text-sm font-medium tabular-nums ' + item.tone}>{item.value}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-3 border-t border-line pt-4 sm:grid-cols-3">
+                <div><p className="text-xs text-muted">Collection rate</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{currencyInvoices.length ? derivedMetrics.collectionRate + '%' : '—'}</p></div>
+                <div><p className="text-xs text-muted">Monthly burn rate</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{derivedMetrics.monthlyBurnRate ? formatAmount(derivedMetrics.monthlyBurnRate, currency) : '—'}</p></div>
+                <div><p className="text-xs text-muted">Cash runway</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{derivedMetrics.cashRunwayMonths == null ? 'Not available' : derivedMetrics.cashRunwayMonths + ' mo'}</p></div>
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-sans font-semibold text-[var(--text)] tracking-tight">
-              {formatAmount(metrics.totalPaidRevenue, currency)}
-            </div>
-          </div>
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[var(--line)] text-[11px] font-sans">
-            <span className="text-[var(--muted)]">{metrics.paidCount} {language === 'id' ? 'Invoice Lunas' : 'Paid Invoices'}</span>
-            <span className="text-[var(--success)] font-semibold">{metrics.collectionRate}% {language === 'id' ? 'Tertagih' : 'Collected'}</span>
-          </div>
-        </div>
 
-        {/* Metric 2: Outstanding */}
-        <div className="bg-[var(--panel)] border border-[var(--line)] p-5 rounded-card flex flex-col justify-between h-full group hover:border-[var(--line)] transition-all">
-          <div>
-            <div className="flex items-center justify-between text-[var(--muted)] mb-2">
-              <span className="text-xs font-sans normal-case font-semibold">{t('admin.fin.outstanding')}</span>
-              <div className="w-8 h-8 rounded-control bg-[var(--danger)]/10 border border-[var(--danger)]/30 flex items-center justify-center text-[var(--danger)]">
-                <Clock size={16} />
+            <div className="rounded-card border border-line bg-panel p-4 sm:p-5 min-[1100px]:col-span-5">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h2 className="text-sm font-semibold text-fg">{language === 'id' ? 'Arus kas tercatat' : 'Recorded cash flow'}</h2>
+                  <p className="mt-1 text-xs leading-5 text-muted">Only periods with actual payment and expense data are shown.</p>
+                </div>
+                <TrendingUp size={16} className="text-muted" strokeWidth={1.8} />
+              </div>
+              <div className="mt-4">
+                {hasTrendData ? (
+                  <TrendChart
+                    data={cashFlow.filter((point) => point.inflow !== 0 || point.outflow !== 0).map((point) => ({ label: point.month, primary: point.inflow, secondary: point.outflow, tertiary: point.net }))}
+                    primaryLabel="Revenue"
+                    secondaryLabel="Expenses"
+                    primaryFormat={(value) => formatAmount(value, currency, true)}
+                    ariaLabel="Recorded revenue and expenses over available periods."
+                  />
+                ) : (
+                  <EmptyState title={language === 'id' ? 'Belum ada data tren' : 'No trend data yet'} description={language === 'id' ? 'Chart tidak dibuat ketika tidak ada pembayaran atau pengeluaran aktual.' : 'A chart is not shown when there are no recorded payments or expenses.'} />
+                )}
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-sans font-semibold text-[var(--text)] tracking-tight">
-              {formatAmount(metrics.totalOutstanding, currency)}
-            </div>
-          </div>
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[var(--line)] text-[11px] font-sans">
-            <span className="text-[var(--muted)]">{metrics.sentCount} {language === 'id' ? 'Invoice Tertunda' : 'Pending Invoices'}</span>
-            <span className="text-[var(--danger)] font-semibold">{language === 'id' ? 'Menunggu Pelunasan' : 'Awaiting Settlement'}</span>
-          </div>
-        </div>
+          </section>
 
-        {/* Metric 3: Total Expenses */}
-        <div className="bg-[var(--panel)] border border-[var(--line)] p-5 rounded-card flex flex-col justify-between h-full group hover:border-[var(--line)] transition-all">
-          <div>
-            <div className="flex items-center justify-between text-[var(--muted)] mb-2">
-              <span className="text-xs font-sans normal-case font-semibold">{t('admin.fin.expenses')}</span>
-              <div className="w-8 h-8 rounded-control bg-[var(--danger)]/10 border border-[var(--danger)]/30 flex items-center justify-center text-[var(--danger)]">
-                <TrendingDown size={16} />
+          <section className="mt-6" aria-labelledby="finance-workspace-title">
+            <div className="rounded-card border border-line bg-panel p-3 sm:p-4">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div className="inline-flex w-fit items-center rounded-control border border-line bg-bg p-1">
+                  <button type="button" onClick={() => setTab('invoices')} className={'inline-flex min-h-9 items-center gap-1.5 rounded-chip px-3 text-xs font-medium ' + (tab === 'invoices' ? 'bg-accent text-white' : 'text-muted hover:text-fg')}>
+                    <Receipt size={14} />
+                    {language === 'id' ? 'Invoice' : 'Invoices'} <span className="tabular-nums opacity-80">({currencyInvoices.length})</span>
+                  </button>
+                  <button type="button" onClick={() => setTab('expenses')} className={'inline-flex min-h-9 items-center gap-1.5 rounded-chip px-3 text-xs font-medium ' + (tab === 'expenses' ? 'bg-accent text-white' : 'text-muted hover:text-fg')}>
+                    <CreditCard size={14} />
+                    {language === 'id' ? 'Pengeluaran' : 'Expenses'} <span className="tabular-nums opacity-80">({currencyExpenses.length})</span>
+                  </button>
+                </div>
+
+                {tab === 'invoices' ? (
+                  <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-[minmax(220px,1fr)_168px_190px] lg:w-auto lg:min-w-[620px]">
+                    <label className="relative min-w-0">
+                      <span className="sr-only">Search invoices</span>
+                      <Search size={14} className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-muted" />
+                      <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={language === 'id' ? 'Cari invoice, klien, proyek...' : 'Search invoice, client, project...'} className={fieldClass + ' pl-9 pr-3'} />
+                    </label>
+                    <CustomSelect value={statusFilter} onChange={setStatusFilter} options={statusOptions} className="w-full min-w-0" triggerClassName="h-10 min-h-10 w-full sm:h-9 sm:min-h-9" aria-label="Invoice status filter" />
+                    <CustomSelect value={sort} onChange={(value) => setSort(value as SortKey)} options={sortOptions} className="w-full min-w-0" triggerClassName="h-10 min-h-10 w-full whitespace-nowrap sm:h-9 sm:min-h-9" aria-label="Invoice sort" />
+                  </div>
+                ) : (
+                  <div className="flex w-full justify-end lg:w-auto lg:min-w-[190px]">
+                    <CustomSelect value={expenseTypeFilter} onChange={setExpenseTypeFilter} options={expenseTypeOptions} className="w-full sm:w-[190px]" triggerClassName="h-10 min-h-10 w-full sm:h-9 sm:min-h-9" aria-label="Expense type filter" />
+                  </div>
+                )}
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-sans font-semibold text-[var(--text)] tracking-tight">
-              {formatAmount(metrics.totalExpenses, currency)}
+
+            <div className="mt-3">
+              {tab === 'invoices' ? (
+                <>
+                  <div className="hidden overflow-x-auto rounded-card border border-line bg-panel md:block">
+                    <table className="w-full min-w-[980px] text-left text-xs">
+                      <thead>
+                        <tr>
+                          <th className="px-4 py-3 font-medium text-muted">Invoice</th>
+                          <th className="px-4 py-3 font-medium text-muted">Client / project</th>
+                          <th className="px-4 py-3 font-medium text-muted">Issue / due</th>
+                          <th className="px-4 py-3 text-right font-medium text-muted">Amount</th>
+                          <th className="px-4 py-3 font-medium text-muted">Status</th>
+                          <th className="px-4 py-3 text-right font-medium text-muted">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredInvoices.length === 0 ? (
+                          <tr><td colSpan={6} className="p-4"><EmptyState title={language === 'id' ? 'Tidak ada invoice' : 'No invoices found'} description={search || statusFilter !== 'all' ? 'Try adjusting the search or status filter.' : 'Create an invoice when a real billing record is ready.'} action={canManageInvoices ? <button type="button" onClick={openCreateInvoice} className={primaryClass}><Plus size={14} />Create invoice</button> : undefined} /></td></tr>
+                        ) : filteredInvoices.map((invoice) => {
+                          const balance = Number(invoice.balanceDue ?? (invoice.total - (invoice.amountPaid || 0)));
+                          const project = projects.find((item) => item.id === invoice.projectId);
+                          return (
+                            <tr key={invoice.id} className="border-t border-line transition-colors hover:bg-bg">
+                              <td className="px-4 py-3 align-top">
+                                <button type="button" onClick={() => openPrintPreview(invoice)} className="font-medium text-fg hover:text-accent-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">{invoice.invoiceNumber}</button>
+                                <p className="mt-1 text-[11px] text-muted">{invoice.currency}</p>
+                              </td>
+                              <td className="px-4 py-3 align-top">
+                                <p className="font-medium text-fg">{invoice.clientCompany || invoice.clientName}</p>
+                                <p className="mt-1 text-[11px] text-muted">{invoice.clientName}{project ? ' · ' + project.name : ''}</p>
+                              </td>
+                              <td className="px-4 py-3 align-top tabular-nums text-muted">
+                                <p>{invoice.issueDate}</p>
+                                <p className={'mt-1 text-[11px] ' + (invoice.status === 'overdue' ? 'text-danger' : 'text-muted')}>Due {invoice.dueDate}</p>
+                              </td>
+                              <td className="px-4 py-3 text-right align-top">
+                                <p className="font-medium tabular-nums text-fg">{formatAmount(invoice.total, invoice.currency)}</p>
+                                <p className="mt-1 text-[11px] tabular-nums text-muted">{balance > 0 ? 'Due ' + formatAmount(balance, invoice.currency) : 'Settled'}</p>
+                              </td>
+                              <td className="px-4 py-3 align-top">
+                                {canManageInvoices && invoice.status !== 'cancelled' ? (
+                                  <InvoiceStatusDropdown status={invoice.status} onChange={(next) => void updateInvoiceStatus(invoice, next)} />
+                                ) : <StatusBadge status={invoice.status} />}
+                              </td>
+                              <td className="px-4 py-3 text-right align-top">
+                                <div className="flex items-center justify-end gap-1.5">
+                                  {canManageInvoices && invoice.status !== 'paid' && invoice.status !== 'cancelled' && balance > 0 && (
+                                    <button type="button" onClick={() => openPayment(invoice)} className="inline-flex min-h-9 items-center gap-1 rounded-control border border-success/30 bg-success/10 px-2.5 text-[11px] font-semibold text-success hover:bg-success/15" title="Record payment"><CreditCard size={13} />Pay</button>
+                                  )}
+                                  <button type="button" onClick={() => openPrintPreview(invoice)} className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-control border border-line bg-transparent text-muted hover:bg-bg hover:text-fg" aria-label="View invoice"><FileText size={14} /></button>
+                                  {canManageInvoices && invoice.status !== 'cancelled' && <button type="button" onClick={() => openEditInvoice(invoice)} className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-control border border-line bg-transparent text-muted hover:bg-bg hover:text-fg" aria-label="Edit invoice"><Edit3 size={14} /></button>}
+                                  {canDeleteInvoice && invoice.status !== 'cancelled' && <button type="button" onClick={() => setConfirmAction({ type: 'invoice', id: invoice.id, label: invoice.invoiceNumber })} className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-control border border-line bg-transparent text-muted hover:border-danger/30 hover:bg-danger/10 hover:text-danger" aria-label="Cancel invoice"><Trash2 size={14} /></button>}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="space-y-3 md:hidden">
+                    {filteredInvoices.length === 0 ? (
+                      <EmptyState title={language === 'id' ? 'Tidak ada invoice' : 'No invoices found'} description="No real invoice records match the current filters." />
+                    ) : filteredInvoices.map((invoice) => {
+                      const balance = Number(invoice.balanceDue ?? (invoice.total - (invoice.amountPaid || 0)));
+                      return (
+                        <article key={invoice.id} className="rounded-card border border-line bg-panel p-4">
+                          <div className="flex items-start justify-between gap-3">
+                            <button type="button" onClick={() => openPrintPreview(invoice)} className="min-w-0 text-left">
+                              <p className="truncate text-sm font-medium text-fg">{invoice.invoiceNumber}</p>
+                              <p className="mt-1 truncate text-xs text-muted">{invoice.clientCompany || invoice.clientName}</p>
+                            </button>
+                            <StatusBadge status={invoice.status} />
+                          </div>
+                          <div className="mt-4 grid grid-cols-2 gap-3 border-y border-line py-3">
+                            <div><p className="text-[11px] text-muted">Amount</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{formatAmount(invoice.total, invoice.currency)}</p></div>
+                            <div><p className="text-[11px] text-muted">Balance</p><p className="mt-1 text-sm font-medium tabular-nums text-warning">{balance > 0 ? formatAmount(balance, invoice.currency) : 'Settled'}</p></div>
+                            <div><p className="text-[11px] text-muted">Issue</p><p className="mt-1 text-xs tabular-nums text-fg">{invoice.issueDate}</p></div>
+                            <div><p className="text-[11px] text-muted">Due</p><p className={'mt-1 text-xs tabular-nums ' + (invoice.status === 'overdue' ? 'text-danger' : 'text-fg')}>{invoice.dueDate}</p></div>
+                          </div>
+                          <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
+                            {canManageInvoices && invoice.status !== 'paid' && invoice.status !== 'cancelled' && balance > 0 && <button type="button" onClick={() => openPayment(invoice)} className={actionClass}><CreditCard size={13} />Pay</button>}
+                            <button type="button" onClick={() => openPrintPreview(invoice)} className={actionClass}><FileText size={13} />View</button>
+                            {canManageInvoices && invoice.status !== 'cancelled' && <button type="button" onClick={() => openEditInvoice(invoice)} className={actionClass}><Edit3 size={13} />Edit</button>}
+                            {canDeleteInvoice && invoice.status !== 'cancelled' && <button type="button" onClick={() => setConfirmAction({ type: 'invoice', id: invoice.id, label: invoice.invoiceNumber })} className={actionClass}><Trash2 size={13} />Cancel</button>}
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="hidden overflow-x-auto rounded-card border border-line bg-panel md:block">
+                    <table className="w-full min-w-[760px] text-left text-xs">
+                      <thead>
+                        <tr>
+                          <th className="px-4 py-3 font-medium text-muted">Date</th>
+                          <th className="px-4 py-3 font-medium text-muted">Type / category</th>
+                          <th className="px-4 py-3 font-medium text-muted">Description</th>
+                          <th className="px-4 py-3 text-right font-medium text-muted">Amount</th>
+                          <th className="px-4 py-3 font-medium text-muted">Recorded by</th>
+                          <th className="px-4 py-3 text-right font-medium text-muted">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredExpenses.length === 0 ? (
+                          <tr><td colSpan={6} className="p-4"><EmptyState title={language === 'id' ? 'Belum ada pengeluaran' : 'No expenses found'} description="Only actual expense records are shown. No placeholder rows are used." action={canManageInvoices ? <button type="button" onClick={() => setExpenseModalOpen(true)} className={primaryClass}><Plus size={14} />Record expense</button> : undefined} /></td></tr>
+                        ) : filteredExpenses.map((expense) => (
+                          <tr key={expense.id} className="border-t border-line transition-colors hover:bg-bg">
+                            <td className="px-4 py-3 tabular-nums text-muted">{expense.date}</td>
+                            <td className="px-4 py-3"><div className="font-medium text-fg">{expense.type || 'OpEx'}</div><div className="mt-1 text-[11px] text-muted">{expense.category}</div></td>
+                            <td className="px-4 py-3 text-fg">{expense.description}</td>
+                            <td className="px-4 py-3 text-right font-medium tabular-nums text-fg">{formatAmount(expense.amount, expense.currency || currency)}</td>
+                            <td className="px-4 py-3 text-muted">{expense.recordedBy}</td>
+                            <td className="px-4 py-3 text-right">
+                              {canManageInvoices && <button type="button" onClick={() => setConfirmAction({ type: 'expense', id: expense.id, label: expense.description })} className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-control border border-line text-muted hover:border-danger/30 hover:bg-danger/10 hover:text-danger" aria-label="Void expense"><Trash2 size={14} /></button>}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="space-y-3 md:hidden">
+                    {filteredExpenses.length === 0 ? <EmptyState title={language === 'id' ? 'Belum ada pengeluaran' : 'No expenses found'} description="No actual expense records match this filter." /> : filteredExpenses.map((expense) => (
+                      <article key={expense.id} className="rounded-card border border-line bg-panel p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0"><p className="text-sm font-medium text-fg">{expense.description}</p><p className="mt-1 text-xs text-muted">{expense.category} · {expense.type || 'OpEx'}</p></div>
+                          <p className="shrink-0 text-sm font-medium tabular-nums text-fg">{formatAmount(expense.amount, expense.currency || currency)}</p>
+                        </div>
+                        <div className="mt-3 flex items-center justify-between border-t border-line pt-3 text-[11px] text-muted"><span>{expense.date}</span><span>{expense.recordedBy}</span></div>
+                        {canManageInvoices && <div className="mt-3 flex justify-end"><button type="button" onClick={() => setConfirmAction({ type: 'expense', id: expense.id, label: expense.description })} className={actionClass}><Trash2 size={13} />Void expense</button></div>}
+                      </article>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </section>
+        </>
+      )}
+
+      <Modal
+        open={invoiceModalOpen}
+        onClose={() => !savingInvoice && setInvoiceModalOpen(false)}
+        size="xl"
+        title={editingInvoice ? 'Edit invoice' : 'Create invoice'}
+        description="Save only billing information that belongs to a real client/project record."
+        closeOnOutsideClick={!savingInvoice}
+        footer={
+          <>
+            <button type="button" onClick={() => setInvoiceModalOpen(false)} className={actionClass} disabled={savingInvoice}>Cancel</button>
+            <button type="submit" form="finance-invoice-form" className={primaryClass} disabled={savingInvoice}>{savingInvoice ? 'Saving...' : 'Save invoice'}</button>
+          </>
+        }
+      >
+        <form id="finance-invoice-form" onSubmit={handleSaveInvoice} className="space-y-5">
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="sm:col-span-2">
+              <label className="mb-1.5 block text-xs font-medium text-muted">Invoice number</label>
+              <input value={invoiceNumber} onChange={(event) => setInvoiceNumber(event.target.value)} className={fieldClass} placeholder="Leave blank to generate automatically" />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-muted">Currency</label>
+              <CustomSelect value={invoiceCurrency} onChange={(value) => setInvoiceCurrency(value as CurrencyCode)} options={[{ value: 'IDR', label: 'IDR' }, { value: 'USD', label: 'USD' }]} className="w-full" triggerClassName="h-10 min-h-10 w-full" />
             </div>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[var(--line)] text-[11px] font-sans">
-            <span className="text-[var(--muted)]">{expenses.length} {language === 'id' ? 'Catatan' : 'Records'}</span>
-            <span className="text-[var(--danger)] font-semibold">Infrastructure & Ops</span>
-          </div>
-        </div>
 
-        {/* Metric 4: Net Operating Profit */}
-        <div className="bg-[var(--panel)] border border-[var(--line)] p-5 rounded-card flex flex-col justify-between h-full group hover:border-[var(--line)] transition-all">
-          <div>
-            <div className="flex items-center justify-between text-[var(--muted)] mb-2">
-              <span className="text-xs font-sans normal-case font-semibold">{t('admin.fin.netProfit')}</span>
-              <div className="w-8 h-8 rounded-control bg-[var(--series-3)]/10 border border-[var(--series-3)]/30 flex items-center justify-center text-[var(--series-3)]">
-                <TrendingUp size={16} />
-              </div>
-            </div>
-            <div className="text-2xl sm:text-3xl font-sans font-semibold text-[var(--text)] tracking-tight">
-              {formatAmount(metrics.netOperatingProfit, currency)}
-            </div>
-          </div>
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[var(--line)] text-[11px] font-sans">
-            <span className="text-[var(--muted)]">Margin</span>
-            <span className="text-[var(--series-3)] font-semibold">
-              {metrics.totalPaidRevenue > 0 ? Math.round((metrics.netOperatingProfit / metrics.totalPaidRevenue) * 100) : 0}% Net
-            </span>
-          </div>
-        </div>
-
-      </div>
-
-      {/* 3. Tab Bar & Filter Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--panel)] border border-[var(--line)] p-3 sm:p-4 rounded-card">
-        
-        {/* Left: Tab Switcher */}
-        <div className="flex items-center gap-1.5 bg-[var(--panel)] p-1 rounded-card border border-[var(--line)] shrink-0">
-          <button
-            onClick={() => setActiveTab('invoices')}
-            className={`px-3.5 py-1.5 rounded-control text-xs font-sans transition-all flex items-center gap-1.5 ${
-              activeTab === 'invoices'
-                ? 'bg-[var(--accent)] text-[var(--text)] font-semibold'
-                : 'text-[var(--muted)] hover:text-[var(--text)]'
-            }`}
-          >
-            <Receipt size={14} />
-            <span>{t('admin.fin.invoicesList')} ({invoices.length})</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('expenses')}
-            className={`px-3.5 py-1.5 rounded-control text-xs font-sans transition-all flex items-center gap-1.5 ${
-              activeTab === 'expenses'
-                ? 'bg-[var(--accent)] text-[var(--text)] font-semibold'
-                : 'text-[var(--muted)] hover:text-[var(--text)]'
-            }`}
-          >
-            <CreditCard size={14} />
-            <span>{t('admin.fin.expensesList')} ({expenses.length})</span>
-          </button>
-        </div>
-
-        {/* Right: Search & Status Filter */}
-        {activeTab === 'invoices' && (
-          <div className="flex flex-nowrap items-center gap-2 flex-1 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0 sm:justify-end">
-            <div className="relative shrink-0 w-[240px] sm:flex-1 sm:max-w-xs">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={14} />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={language === 'id' ? 'Cari no invoice, klien...' : 'Search invoice number, client...'}
-                className="w-full pl-8 pr-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] placeholder-[var(--muted)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 font-sans"
+          <div className="grid gap-4 rounded-card border border-line bg-bg p-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-muted">Client record</label>
+              <CustomSelect
+                value={clientId}
+                onChange={selectClient}
+                options={[{ value: '', label: 'Manual client details' }, ...clients.map((client) => ({ value: client.id, label: client.company + ' · ' + client.name }))]}
+                className="w-full"
+                triggerClassName="h-10 min-h-10 w-full"
               />
             </div>
-
-            <CustomSelect
-              className="shrink-0 w-[160px]"
-              value={filterStatus}
-              onChange={(val) => setFilterStatus(val)}
-              options={[
-                { value: 'all', label: language === 'id' ? 'Semua Status' : 'All Status' },
-                { value: 'paid', label: language === 'id' ? 'Lunas' : 'Paid' },
-                { value: 'partially_paid', label: language === 'id' ? 'Sebagian (Partial)' : 'Partially Paid' },
-                { value: 'approved', label: language === 'id' ? 'Disetujui' : 'Approved' },
-                { value: 'sent', label: language === 'id' ? 'Terkirim' : 'Sent' },
-                { value: 'overdue', label: language === 'id' ? 'Jatuh Tempo' : 'Overdue' },
-                { value: 'draft', label: 'Draft' }
-              ]}
-            />
-          </div>
-        )}
-      </div>
-
-      {/* 4. Table / Content Stream */}
-      {activeTab === 'invoices' ? (
-        <>
-          {/* Mobile View: High-Efficiency Invoice Cards (Zero Horizontal Scrolling) */}
-          <div className="md:hidden space-y-3">
-            {filteredInvoices.length === 0 ? (
-              <div className="p-8 text-center bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs font-sans text-[var(--muted)]">
-                {language === 'id' ? 'Tidak ada invoice yang sesuai kriteria.' : 'No invoices found matching criteria.'}
-              </div>
-            ) : (
-              filteredInvoices.map((inv) => (
-                <div 
-                  key={inv.id}
-                  className="bg-[var(--panel)] border border-[var(--line)] hover:border-[var(--line)] rounded-card p-4 space-y-3.5 transition-colors"
-                >
-                  {/* Card Header: Invoice # & Status */}
-                  <div className="flex items-center justify-between gap-2">
-                    <button 
-                      onClick={() => setPreviewInvoice(inv)} 
-                      className="font-semibold text-[var(--text)] font-sans text-sm hover:text-[var(--danger)] flex items-center gap-1.5 transition-colors"
-                    >
-                      <span>{inv.invoiceNumber}</span>
-                      <ExternalLink size={12} className="text-[var(--muted)]" />
-                    </button>
-                    <div className="shrink-0">
-                      <InvoiceStatusDropdown
-                        status={inv.status}
-                        onChange={(newStatus) => {
-                          void api.finance.updateInvoice(inv.id, { status: newStatus }).then((res) => { if (res.success) { void loadData(); } else showToast(res.error || 'Status update failed.'); });
-                          showToast(`Status updated to ${newStatus.toUpperCase()}`);
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Client & Dates */}
-                  <div className="bg-[var(--panel)]/60 rounded-card p-3 border border-[var(--line)] space-y-1.5 text-xs font-sans">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[var(--muted)] text-[11px]">{language === 'id' ? 'Klien:' : 'Client:'}</span>
-                      <span className="font-semibold text-[var(--text)] text-right">{inv.clientName}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[var(--muted)] text-[11px]">{language === 'id' ? 'Perusahaan:' : 'Company:'}</span>
-                      <span className="text-[var(--text)] text-right truncate max-w-[180px]">{inv.clientCompany}</span>
-                    </div>
-                    <div className="flex items-center justify-between pt-1 border-t border-[var(--line)] text-[11px]">
-                      <span className="text-[var(--muted)]">Issue: {inv.issueDate}</span>
-                      <span className="text-[var(--danger)] font-semibold">Due: {inv.dueDate}</span>
-                    </div>
-                  </div>
-
-                  {/* Amount & Actions */}
-                  <div className="flex items-center justify-between pt-1">
-                    <div>
-                      <div className="text-[10px] normal-case font-sans text-[var(--muted)]">{language === 'id' ? 'Total Tagihan' : 'Total Amount'}</div>
-                      <div className="text-base font-semibold text-[var(--success)] font-sans">
-                        {formatAmount(inv.total, currency)}
-                      </div>
-                      <div className="text-[10px] font-sans text-[var(--muted)]">
-                        incl. {inv.taxPercent}% PPN
-                      </div>
-                      {((inv.amountPaid && inv.amountPaid > 0) || inv.status === 'partially_paid') && (
-                        <div className="mt-1.5 space-y-1">
-                          <div className="flex items-center gap-2 text-[10px] font-sans">
-                            <span className="text-[var(--success)]">Paid: {formatAmount(inv.amountPaid || 0, currency)}</span>
-                            <span className="text-[var(--warning)] font-semibold">Due: {formatAmount(inv.balanceDue ?? (inv.total - (inv.amountPaid || 0)), currency)}</span>
-                          </div>
-                          <div className="w-28 bg-[var(--panel)] h-1.5 rounded-full overflow-hidden">
-                            <div 
-                              className="bg-[var(--success)] h-full rounded-full transition-all" 
-                              style={{ width: `${Math.min(100, Math.round(((inv.amountPaid || 0) / inv.total) * 100))}%` }}
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-1.5">
-                      {inv.status !== 'paid' && (
-                        <button
-                          onClick={() => handleOpenPaymentModal(inv)}
-                          className="min-h-10 px-2.5 rounded-control bg-[var(--success)]/10 hover:bg-[var(--success)]/20 text-[var(--success)] border border-[var(--success)]/30 text-xs font-sans flex items-center justify-center gap-1 transition-colors"
-                          title="Record Payment"
-                        >
-                          <CreditCard size={13} />
-                          <span className="text-[11px] font-semibold">Pay</span>
-                        </button>
-                      )}
-                      <button
-                        onClick={() => setPreviewInvoice(inv)}
-                        className="min-h-10 px-3 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans flex items-center justify-center gap-1 transition-colors"
-                        title="Preview & Print Invoice"
-                      >
-                        <FileText size={13} />
-                        <span>{language === 'id' ? 'Lihat' : 'View'}</span>
-                      </button>
-                      <button
-                        onClick={() => handleOpenEditInvoice(inv)}
-                        className="min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors"
-                        title="Edit Invoice"
-                      >
-                        <Edit3 size={14} />
-                      </button>
-                      {canDeleteInvoice && (
-                        <button
-                          onClick={() => handleDeleteInvoice(inv.id, inv.invoiceNumber)}
-                          className="min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 flex items-center justify-center transition-colors"
-                          title="Delete Invoice"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-
-          {/* Desktop View: Full Data Table with Edge Shadows */}
-          <ScrollShadowContainer
-            externalRef={tableScrollRef}
-            shadowBg="surface"
-            shadowSize="md"
-            className="hidden md:block rounded-card overflow-hidden"
-            scrollClassName="ams-table-scroll bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-x-auto select-none"
-          >
-            <table className="w-full text-left text-xs font-sans min-w-[750px]">
-              <thead className="sticky top-0 z-10 bg-[var(--panel)]">
-                <tr className="border-b border-[var(--line)] bg-[var(--panel)] text-[var(--muted)]">
-                  <th className="py-3 px-4 font-semibold normal-case text-[10px]">Invoice #</th>
-                  <th className="py-3 px-4 font-semibold normal-case text-[10px]">{language === 'id' ? 'Klien & Perusahaan' : 'Client & Company'}</th>
-                  <th className="py-3 px-4 font-semibold normal-case text-[10px]">{language === 'id' ? 'Tanggal / Jatuh Tempo' : 'Issue / Due Date'}</th>
-                  <th className="py-3 px-4 font-semibold normal-case text-[10px]">{language === 'id' ? 'Nominal' : 'Amount'}</th>
-                  <th className="py-3 px-4 font-semibold normal-case text-[10px]">Status</th>
-                  <th className="py-3 px-4 font-semibold normal-case text-[10px] text-right">{language === 'id' ? 'Aksi' : 'Actions'}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--line)]">
-                {filteredInvoices.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="py-12 text-center text-[var(--muted)]">
-                      {language === 'id' ? 'Tidak ada invoice yang sesuai kriteria.' : 'No invoices found matching criteria.'}
-                    </td>
-                  </tr>
-                ) : (
-                  filteredInvoices.map((inv) => (
-                    <tr key={inv.id} className="hover:bg-panel transition-colors group">
-                      <td className="py-3 px-4 font-semibold text-[var(--text)] font-sans">
-                        <button 
-                          onClick={() => setPreviewInvoice(inv)} 
-                          className="hover:text-[var(--danger)] flex items-center gap-1.5"
-                        >
-                          <span>{inv.invoiceNumber}</span>
-                          <ExternalLink size={11} className="text-[var(--muted)] group-hover:text-[var(--danger)]" />
-                        </button>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="font-semibold text-[var(--text)]">{inv.clientName}</div>
-                        <div className="text-[11px] text-[var(--muted)]">{inv.clientCompany}</div>
-                      </td>
-                      <td className="py-3 px-4 text-[var(--muted)]">
-                        <div>Issue: {inv.issueDate}</div>
-                        <div className="text-[10px] text-[var(--muted)]">Due: {inv.dueDate}</div>
-                      </td>
-                      <td className="py-3 px-4 font-semibold text-[var(--success)] font-sans">
-                        {formatAmount(inv.total, currency)}
-                        <div className="text-[10px] font-sans text-[var(--muted)] font-normal">
-                          incl. {inv.taxPercent}% PPN
-                        </div>
-                        {((inv.amountPaid && inv.amountPaid > 0) || inv.status === 'partially_paid') && (
-                          <div className="mt-1 space-y-1">
-                            <div className="flex items-center gap-2 text-[10px] font-sans font-normal">
-                              <span className="text-[var(--success)]">Paid: {formatAmount(inv.amountPaid || 0, currency)}</span>
-                              <span className="text-[var(--warning)] font-semibold">Bal: {formatAmount(inv.balanceDue ?? (inv.total - (inv.amountPaid || 0)), currency)}</span>
-                            </div>
-                            <div className="w-24 bg-[var(--panel)] h-1.5 rounded-full overflow-hidden">
-                              <div 
-                                className="bg-[var(--success)] h-full rounded-full transition-all" 
-                                style={{ width: `${Math.min(100, Math.round(((inv.amountPaid || 0) / inv.total) * 100))}%` }}
-                              />
-                            </div>
-                          </div>
-                        )}
-                      </td>
-                      <td className="py-3 px-4">
-                        <InvoiceStatusDropdown
-                          status={inv.status}
-                          onChange={(newStatus) => {
-                            void api.finance.updateInvoice(inv.id, { status: newStatus }).then((res) => { if (res.success) void loadData(); else showToast(res.error || 'Status update failed.'); });
-                            showToast(`Status updated to ${newStatus.toUpperCase()}`);
-                          }}
-                        />
-                      </td>
-                      <td className="py-3 px-4 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
-                          {inv.status !== 'paid' && (
-                            <button
-                              onClick={() => handleOpenPaymentModal(inv)}
-                              className="min-h-10 px-2.5 rounded-control bg-[var(--success)]/10 hover:bg-[var(--success)]/20 text-[var(--success)] border border-[var(--success)]/30 text-xs font-sans flex items-center justify-center gap-1 transition-colors"
-                              title="Record Payment"
-                            >
-                              <CreditCard size={13} />
-                              <span className="text-[11px] font-semibold">Pay</span>
-                            </button>
-                          )}
-                          <button
-                            onClick={() => setPreviewInvoice(inv)}
-                            className="min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors"
-                            title="Preview & Print Invoice"
-                          >
-                            <FileText size={14} />
-                          </button>
-                          <button
-                            onClick={() => handleOpenEditInvoice(inv)}
-                            className="min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors"
-                            title="Edit Invoice"
-                          >
-                            <Edit3 size={14} />
-                          </button>
-                          {canDeleteInvoice && (
-                            <button
-                              onClick={() => handleDeleteInvoice(inv.id, inv.invoiceNumber)}
-                              className="min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 flex items-center justify-center transition-colors"
-                              title="Delete Invoice"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </ScrollShadowContainer>
-        </>
-      ) : (
-        /* Expenses List */
-        <>
-          {/* Mobile View: High-Efficiency Expense Cards */}
-          <div className="md:hidden space-y-3">
-            {expenses.length === 0 ? (
-              <div className="p-8 text-center bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs font-sans text-[var(--muted)]">
-                {language === 'id' ? 'Belum ada data pengeluaran operasional.' : 'No operational expenses recorded.'}
-              </div>
-            ) : (
-              expenses.map((exp) => (
-                <div 
-                  key={exp.id}
-                  className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-4 space-y-3"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-1 rounded-control bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/20 text-[10px] font-sans font-semibold">
-                      {exp.category}
-                    </span>
-                    <span className="text-[11px] font-sans text-[var(--muted)]">{exp.date}</span>
-                  </div>
-
-                  <div className="text-[var(--text)] font-medium text-sm font-sans">{exp.description}</div>
-
-                  <div className="flex items-center justify-between pt-2 border-t border-[var(--line)]">
-                    <div>
-                      <div className="text-[10px] font-sans text-[var(--muted)]">{language === 'id' ? 'Nominal Pengeluaran' : 'Expense Amount'}</div>
-                      <div className="text-base font-semibold text-[var(--danger)] font-sans">
-                        {formatAmount(exp.amount, currency)}
-                      </div>
-                      <div className="text-[10px] font-sans text-[var(--muted)]">
-                        {language === 'id' ? 'Oleh: ' : 'By: '} {exp.recordedBy}
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => handleDeleteExpense(exp.id)}
-                      className="min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 flex items-center justify-center transition-colors"
-                      title="Delete Record"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-
-          {/* Desktop View: Full Expense Table */}
-          <div 
-            ref={tableScrollRef}
-            className="hidden md:block bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-x-auto select-none"
-          >
-            <table className="w-full text-left text-xs font-sans min-w-[650px]">
-              <thead className="sticky top-0 z-10 bg-[var(--panel)]">
-                <tr className="border-b border-[var(--line)] bg-[var(--panel)] text-[var(--muted)]">
-                  <th className="py-3 px-4 font-semibold normal-case text-[10px]">{language === 'id' ? 'Tanggal' : 'Date'}</th>
-                  <th className="py-3 px-4 font-semibold normal-case text-[10px]">{language === 'id' ? 'Kategori' : 'Category'}</th>
-                  <th className="py-3 px-4 font-semibold normal-case text-[10px]">{language === 'id' ? 'Deskripsi' : 'Description'}</th>
-                  <th className="py-3 px-4 font-semibold normal-case text-[10px]">{language === 'id' ? 'Nominal' : 'Amount'}</th>
-                  <th className="py-3 px-4 font-semibold normal-case text-[10px]">{language === 'id' ? 'Dicatat Oleh' : 'Recorded By'}</th>
-                  <th className="py-3 px-4 font-semibold normal-case text-[10px] text-right">{language === 'id' ? 'Aksi' : 'Action'}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--line)]">
-                {expenses.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="p-0">
-                      <div className="ams-empty-state p-8 text-center bg-[var(--panel)] border border-[var(--line)] rounded-card flex flex-col items-center">
-                        <Receipt size={22} className="text-[var(--muted)] mb-2" />
-                        <p className="text-sm font-semibold text-[var(--text)] text-center">
-                          {language === 'id' ? 'Tidak ada pengeluaran yang sesuai kriteria.' : 'No expenses found matching criteria.'}
-                        </p>
-                        <p className="mt-1 text-xs text-[var(--muted)] text-center">
-                          {language === 'id' ? 'Coba ubah filter atau catat pengeluaran baru.' : 'Try adjusting the filters or record a new expense.'}
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : expenses.map((exp) => (
-                  <tr key={exp.id} className="hover:bg-panel transition-colors">
-                    <td className="py-3 px-4 text-[var(--muted)]">{exp.date}</td>
-                    <td className="py-3 px-4">
-                      <span className="px-2 py-0.5 rounded bg-[var(--panel)] text-[var(--warning)] border border-[var(--warning)]/20 text-[10px]">
-                        {exp.category}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 font-medium text-[var(--text)]">{exp.description}</td>
-                    <td className="py-3 px-4 font-semibold text-[var(--danger)] font-sans">
-                      {formatAmount(exp.amount, currency)}
-                    </td>
-                    <td className="py-3 px-4 text-[var(--muted)]">{exp.recordedBy}</td>
-                    <td className="py-3 px-4 text-right">
-                      <button
-                        onClick={() => handleDeleteExpense(exp.id)}
-                        className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 inline-flex items-center justify-center transition-colors min-h-10 min-w-10"
-                        title="Delete Record"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </>
-      )}
-
-      {/* 5. Create / Edit Invoice Modal (Mobile Fullscreen + Sticky Header) */}
-      {isInvoiceModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl flex flex-col overflow-hidden">
-            
-            {/* Sticky Header */}
-            <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
-              <h3 className="font-sans font-semibold text-[var(--text)] text-base sm:text-lg flex items-center gap-2">
-                <Receipt className="text-[var(--danger)]" size={20} />
-                <span>{editingInvoice ? 'Edit Client Invoice' : 'Create New Invoice'}</span>
-              </h3>
-              <button 
-                onClick={() => setIsInvoiceModalOpen(false)} 
-                className="w-8 h-8 rounded-control text-[var(--muted)] hover:text-[var(--text)] bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
-              >
-                <X size={16} />
-              </button>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-muted">Project</label>
+              <CustomSelect
+                value={projectId}
+                onChange={selectProject}
+                options={[{ value: '', label: 'No project linked' }, ...projects.map((project) => ({ value: project.id, label: project.name }))]}
+                className="w-full"
+                triggerClassName="h-10 min-h-10 w-full"
+              />
             </div>
-
-            <form onSubmit={handleSaveInvoice} className="flex-1 flex flex-col overflow-hidden">
-              {/* Scrollable Body */}
-              <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs font-sans custom-scrollbar">
-                {!editingInvoice && availableProjects.length > 0 && (
-                  <div className="p-3 bg-[var(--bg)] border border-[var(--line)] rounded-card space-y-1.5">
-                    <label className="block text-[var(--muted)] font-semibold flex items-center justify-between">
-                      <span>{language === 'id' ? 'Tautkan ke Proyek yang Disetujui (Approved)' : 'Link to Approved Project'}</span>
-                      <span className="text-[10px] text-[var(--success)] font-sans">Status: Approved / In Progress</span>
-                    </label>
-                    <CustomSelect
-                      value={selectedProjectId}
-                      onChange={handleSelectProjectChange}
-                      options={[
-                        { value: '', label: language === 'id' ? '-- Buat Invoice Lepas (Ad-Hoc) --' : '-- Standalone Ad-Hoc Invoice --' },
-                        ...availableProjects
-                          .filter(p => p.status === 'in_progress' || p.status === 'completed' || p.status === 'review')
-                          .map(p => ({
-                            value: p.id,
-                            label: `${p.name} (${p.clientCompany}) • Budget: ${formatAmount(p.budget, currency)}`
-                          }))
-                      ]}
-                    />
-                  </div>
-                )}
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[var(--muted)] mb-1 font-semibold">Client Name *</label>
-                    <input
-                      type="text"
-                      value={clientName}
-                      onChange={(e) => setClientName(e.target.value)}
-                      required
-                      placeholder="e.g. Marcus Thorne"
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[var(--muted)] mb-1 font-semibold">Company Name *</label>
-                    <input
-                      type="text"
-                      value={clientCompany}
-                      onChange={(e) => setClientCompany(e.target.value)}
-                      required
-                      placeholder="e.g. Lumina Real Estate"
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[var(--muted)] mb-1 font-semibold">Email Address</label>
-                    <input
-                      type="email"
-                      value={clientEmail}
-                      onChange={(e) => setClientEmail(e.target.value)}
-                      placeholder="client@company.com"
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[var(--muted)] mb-1 font-semibold">Phone / WhatsApp</label>
-                    <input
-                      type="text"
-                      value={clientPhone}
-                      onChange={(e) => setClientPhone(e.target.value)}
-                      placeholder="+62 811-XXXX-XXXX"
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
-                    />
-                  </div>
-                </div>
-
-                <div className="p-4 bg-[var(--bg)] border border-[var(--line)] rounded-card space-y-3">
-                  <label className="block text-[var(--text)] font-semibold">Line Item & Milestone Valuation</label>
-                  <div>
-                    <label className="block text-[var(--muted)] mb-1">Deliverable Description</label>
-                    <textarea
-                      rows={2}
-                      value={itemDesc}
-                      onChange={(e) => setItemDesc(e.target.value)}
-                      className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[var(--muted)] mb-1">Amount (IDR Rupiah)</label>
-                      <input
-                        type="number"
-                        value={itemAmount}
-                        onChange={(e) => setItemAmount(Number(e.target.value))}
-                        className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 min-h-10"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[var(--muted)] mb-1">PPN / Tax % (e.g. 11%)</label>
-                      <input
-                        type="number"
-                        value={taxPercent}
-                        onChange={(e) => setTaxPercent(Number(e.target.value))}
-                        className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 min-h-10"
-                      />
-                    </div>
-                  </div>
-                  <div className="pt-2 text-right text-[var(--success)] font-semibold font-sans text-sm">
-                    Total Payable: {formatIDR(itemAmount + Math.round((itemAmount * taxPercent) / 100))}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div>
-                    <label className="block text-[var(--muted)] mb-1 font-semibold">Issue Date</label>
-                    <input
-                      type="date"
-                      value={issueDate}
-                      onChange={(e) => setIssueDate(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[var(--muted)] mb-1 font-semibold">Due Date</label>
-                    <input
-                      type="date"
-                      value={dueDate}
-                      onChange={(e) => setDueDate(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[var(--muted)] mb-1 font-semibold">Status</label>
-                    <CustomSelect
-                      value={invoiceStatus}
-                      onChange={(val) => setInvoiceStatus(val as InvoiceStatus)}
-                      options={[
-                        { value: 'draft', label: 'Draft', badge: 'Draft', badgeColor: 'bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)]' },
-                        { value: 'sent', label: 'Sent', badge: 'Sent', badgeColor: 'bg-[var(--info)]/10 text-[var(--info)] border border-[var(--info)]/20' },
-                        { value: 'paid', label: 'Paid', badge: 'Paid', badgeColor: 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/20' },
-                        { value: 'overdue', label: 'Overdue', badge: 'Overdue', badgeColor: 'bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/20' }
-                      ]}
-                      className="w-full"
-                      triggerClassName="w-full justify-between"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[var(--muted)] mb-1 font-semibold">Bank Wire Instructions / Notes</label>
-                  <textarea
-                    rows={2}
-                    value={invoiceNotes}
-                    onChange={(e) => setInvoiceNotes(e.target.value)}
-                    className="w-full px-3 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
-                  />
-                </div>
-              </div>
-
-              {/* Sticky Footer */}
-              <div className="sticky bottom-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-3.5 border-t border-[var(--line)] flex items-center justify-end gap-2.5 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setIsInvoiceModalOpen(false)}
-                  className="min-h-10 px-4 rounded-control bg-[var(--bg)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans font-medium transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="min-h-10 px-5 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-all"
-                >
-                  Save Invoice
-                </button>
-              </div>
-            </form>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-muted">Client name *</label>
+              <input required value={clientName} onChange={(event) => setClientName(event.target.value)} className={fieldClass} />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-muted">Company *</label>
+              <input required value={clientCompany} onChange={(event) => setClientCompany(event.target.value)} className={fieldClass} />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-muted">Email</label>
+              <input type="email" value={clientEmail} onChange={(event) => setClientEmail(event.target.value)} className={fieldClass} />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-muted">Phone</label>
+              <input value={clientPhone} onChange={(event) => setClientPhone(event.target.value)} className={fieldClass} />
+            </div>
           </div>
-        </div>
-      )}
 
-      {/* 6. Record Expense Modal (Mobile Fullscreen + Sticky Header) */}
-      {isExpenseModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-md flex flex-col overflow-hidden">
-            
-            {/* Sticky Header */}
-            <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
-              <h3 className="font-sans font-semibold text-[var(--text)] text-base flex items-center gap-2">
-                <CreditCard className="text-[var(--danger)]" size={18} />
-                <span>Record Studio Expense</span>
-              </h3>
-              <button 
-                onClick={() => setIsExpenseModalOpen(false)} 
-                className="w-8 h-8 rounded-control text-[var(--muted)] hover:text-[var(--text)] bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
-              >
-                <X size={16} />
-              </button>
+          <section className="rounded-card border border-line bg-panel">
+            <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
+              <div><h3 className="text-sm font-semibold text-fg">Line items</h3><p className="mt-1 text-[11px] text-muted">Totals are calculated from the existing finance utility.</p></div>
+              <button type="button" onClick={() => setInvoiceItems((items) => [...items, emptyLineItem()])} className={actionClass}><Plus size={13} />Add item</button>
             </div>
-
-            <form onSubmit={handleSaveExpense} className="flex-1 flex flex-col overflow-hidden">
-              {/* Scrollable Body */}
-              <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-3.5 text-xs font-sans custom-scrollbar">
-                <div>
-                  <label className="block text-[var(--muted)] mb-1 font-semibold">Expense Category</label>
-                  <CustomSelect
-                    value={expCategory}
-                    onChange={(val) => setExpCategory(val as any)}
-                    options={[
-                      { value: 'Software & Cloud', label: 'Software & Cloud (Vercel, AWS, Figma)' },
-                      { value: 'Salaries & Contractors', label: 'Salaries & Contractors' },
-                      { value: 'Office & Hardware', label: 'Office & Hardware' },
-                      { value: 'Marketing & Ads', label: 'Marketing & Ads' },
-                      { value: 'Legal & Admin', label: 'Legal & Admin' }
-                    ]}
-                    className="w-full"
-                    triggerClassName="w-full justify-between"
-                  />
+            <div className="space-y-3 p-4">
+              {invoiceItems.map((item, index) => (
+                <div key={item.id} className="grid gap-3 rounded-control border border-line bg-bg p-3 sm:grid-cols-[minmax(0,1fr)_90px_150px_40px]">
+                  <div><label className="mb-1.5 block text-[11px] text-muted">Description *</label><input required value={item.description} onChange={(event) => updateLineItem(index, { description: event.target.value })} className={fieldClass} /></div>
+                  <div><label className="mb-1.5 block text-[11px] text-muted">Qty</label><input type="number" min="0" step="1" value={item.quantity} onChange={(event) => updateLineItem(index, { quantity: Number(event.target.value) })} className={fieldClass} /></div>
+                  <div><label className="mb-1.5 block text-[11px] text-muted">Unit price</label><input type="number" min="0" step="1" value={item.unitPrice} onChange={(event) => updateLineItem(index, { unitPrice: Number(event.target.value) })} className={fieldClass} /></div>
+                  <div className="flex items-end"><button type="button" disabled={invoiceItems.length === 1} onClick={() => setInvoiceItems((items) => items.filter((_, itemIndex) => itemIndex !== index))} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:border-danger/30 hover:bg-danger/10 hover:text-danger disabled:opacity-40" aria-label="Remove line item"><Trash2 size={14} /></button></div>
                 </div>
+              ))}
+            </div>
+          </section>
 
-                <div>
-                  <label className="block text-[var(--muted)] mb-1 font-semibold">Description *</label>
-                  <input
-                    type="text"
-                    value={expDesc}
-                    onChange={(e) => setExpDesc(e.target.value)}
-                    required
-                    placeholder="e.g. Google Cloud Run cluster billing"
-                    className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[var(--muted)] mb-1 font-semibold">Amount (IDR)</label>
-                    <input
-                      type="number"
-                      value={expAmount}
-                      onChange={(e) => setExpAmount(Number(e.target.value))}
-                      required
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[var(--muted)] mb-1 font-semibold">Date</label>
-                    <input
-                      type="date"
-                      value={expDate}
-                      onChange={(e) => setExpDate(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
-                    />
-                  </div>
-                </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div><label className="mb-1.5 block text-xs font-medium text-muted">Discount %</label><input type="number" min="0" max="100" step="0.01" value={discountPercent} onChange={(event) => setDiscountPercent(Number(event.target.value))} className={fieldClass} /></div>
+                <div><label className="mb-1.5 block text-xs font-medium text-muted">Tax %</label><input type="number" min="0" max="100" step="0.01" value={taxPercent} onChange={(event) => setTaxPercent(Number(event.target.value))} className={fieldClass} /></div>
               </div>
-
-              {/* Sticky Footer */}
-              <div className="sticky bottom-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-3.5 border-t border-[var(--line)] flex items-center justify-end gap-2.5 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setIsExpenseModalOpen(false)}
-                  className="min-h-10 px-4 rounded-control bg-[var(--bg)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans font-medium transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="min-h-10 px-5 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-all"
-                >
-                  Save Expense
-                </button>
+              <div className="grid grid-cols-2 gap-3">
+                <div><label className="mb-1.5 block text-xs font-medium text-muted">Issue date</label><input type="date" value={issueDate} onChange={(event) => setIssueDate(event.target.value)} className={fieldClass} /></div>
+                <div><label className="mb-1.5 block text-xs font-medium text-muted">Due date</label><input type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} className={fieldClass} /></div>
               </div>
-            </form>
+              <div><label className="mb-1.5 block text-xs font-medium text-muted">Payment terms</label><input value={paymentTerms} onChange={(event) => setPaymentTerms(event.target.value)} className={fieldClass} placeholder="e.g. Net 14" /></div>
+              <div><label className="mb-1.5 block text-xs font-medium text-muted">Notes</label><textarea value={invoiceNotes} onChange={(event) => setInvoiceNotes(event.target.value)} rows={4} className={fieldClass + ' py-2.5'} /></div>
+            </div>
+            <div className="rounded-card border border-line bg-bg p-4">
+              <div className="flex items-center justify-between"><span className="text-xs text-muted">Subtotal</span><span className="tabular-nums text-sm text-fg">{formatAmount(invoiceTotals.subtotal, invoiceCurrency)}</span></div>
+              <div className="mt-2 flex items-center justify-between"><span className="text-xs text-muted">Discount</span><span className="tabular-nums text-sm text-fg">- {formatAmount(invoiceTotals.discountAmount, invoiceCurrency)}</span></div>
+              <div className="mt-2 flex items-center justify-between"><span className="text-xs text-muted">Tax</span><span className="tabular-nums text-sm text-fg">{formatAmount(invoiceTotals.taxAmount, invoiceCurrency)}</span></div>
+              <div className="mt-4 flex items-end justify-between gap-4 border-t border-line pt-4"><span className="text-sm font-semibold text-fg">Total</span><span className="text-lg font-medium tabular-nums text-fg">{formatAmount(invoiceTotals.total, invoiceCurrency)}</span></div>
+              <div className="mt-4"><label className="mb-1.5 block text-xs font-medium text-muted">Status</label><CustomSelect value={invoiceStatus} onChange={(value) => setInvoiceStatus(value as InvoiceStatus)} options={[{ value: 'draft', label: 'Draft' }, { value: 'sent', label: 'Sent' }, { value: 'overdue', label: 'Overdue' }]} className="w-full" triggerClassName="h-10 min-h-10 w-full" /></div>
+              {editingInvoice && <p className="mt-3 text-[11px] leading-4 text-muted">Paid and partially paid status is controlled by recorded payments. Cancelled invoices cannot be edited.</p>}
+            </div>
           </div>
-        </div>
-      )}
-
-      {/* 6b. Record Payment Modal */}
-      {paymentModalInvoice && (
-        <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-lg relative overflow-hidden flex flex-col max-h-[calc(100dvh-24px)]">
-            {/* Modal Header */}
-            <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/20 flex items-center justify-center text-[var(--success)]">
-                  <CreditCard size={16} />
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-[var(--text)] font-sans">
-                    {language === 'id' ? 'Catat Pembayaran Klien' : 'Record Client Payment'}
-                  </h3>
-                  <p className="text-[11px] font-sans text-[var(--muted)]">
-                    {paymentModalInvoice.invoiceNumber} • {paymentModalInvoice.clientName}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setPaymentModalInvoice(null)}
-                className="w-8 h-8 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] flex items-center justify-center transition-colors border border-[var(--line)]"
-              >
-                <X size={15} />
-              </button>
-            </div>
-
-            {/* Modal Form */}
-            <form onSubmit={handleRecordPaymentSubmit} className="flex flex-col flex-1 overflow-y-auto">
-              <div className="p-5 sm:p-6 space-y-4 text-xs font-sans">
-                {/* Summary Box */}
-                <div className="bg-[var(--panel)] p-4 rounded-card border border-[var(--line)] space-y-2">
-                  <div className="flex items-center justify-between text-[var(--muted)]">
-                    <span>{language === 'id' ? 'Total Invoice:' : 'Total Invoice:'}</span>
-                    <span className="text-[var(--text)] font-semibold">{formatAmount(paymentModalInvoice.total, currency)}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-[var(--muted)]">
-                    <span>{language === 'id' ? 'Sudah Dibayar:' : 'Already Paid:'}</span>
-                    <span className="text-[var(--success)] font-semibold">{formatAmount(paymentModalInvoice.amountPaid || 0, currency)}</span>
-                  </div>
-                  <div className="flex items-center justify-between pt-2 border-t border-[var(--line)]">
-                    <span className="text-[var(--text)] font-semibold">{language === 'id' ? 'Sisa Tagihan (Balance Due):' : 'Remaining Balance Due:'}</span>
-                    <span className="text-[var(--warning)] font-semibold text-sm font-sans">
-                      {formatAmount(paymentModalInvoice.balanceDue ?? (paymentModalInvoice.total - (paymentModalInvoice.amountPaid || 0)), currency)}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Amount to Record */}
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label className="text-[var(--text)] font-semibold">
-                      {language === 'id' ? 'Nominal Pembayaran Diterima (IDR)' : 'Payment Amount Received (IDR)'}
-                    </label>
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const rem = paymentModalInvoice.balanceDue ?? (paymentModalInvoice.total - (paymentModalInvoice.amountPaid || 0));
-                          setPaymentAmount(rem > 0 ? rem : paymentModalInvoice.total);
-                        }}
-                        className="px-2 py-0.5 rounded bg-[var(--success)]/10 hover:bg-[var(--success)]/20 text-[var(--success)] border border-[var(--success)]/30 text-[10px]"
-                      >
-                        100% Full
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const rem = paymentModalInvoice.balanceDue ?? (paymentModalInvoice.total - (paymentModalInvoice.amountPaid || 0));
-                          setPaymentAmount(Math.round(rem / 2));
-                        }}
-                        className="px-2 py-0.5 rounded bg-[var(--info)]/10 hover:bg-[var(--info)]/20 text-[var(--info)] border border-[var(--info)]/30 text-[10px]"
-                      >
-                        50% DP
-                      </button>
-                    </div>
-                  </div>
-                  <input
-                    type="number"
-                    value={paymentAmount}
-                    onChange={(e) => setPaymentAmount(Number(e.target.value))}
-                    required
-                    min={1}
-                    max={paymentModalInvoice.total}
-                    className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] text-sm focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 font-semibold font-sans"
-                  />
-                </div>
-
-                {/* Method & Date */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[var(--muted)] mb-1 font-semibold">
-                      {language === 'id' ? 'Metode Transfer' : 'Payment Method'}
-                    </label>
-                    <CustomSelect
-                      value={paymentMethod}
-                      onChange={(val) => setPaymentMethod(val as any)}
-                      options={[
-                        { value: 'bank_transfer', label: 'Bank Wire / Transfer (BCA/Mandiri)' },
-                        { value: 'credit_card', label: 'Corporate Card' },
-                        { value: 'cash', label: 'Cash Settlement' },
-                        { value: 'other', label: 'Other / Escrow' }
-                      ]}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[var(--muted)] mb-1 font-semibold">
-                      {language === 'id' ? 'Tanggal Pembayaran' : 'Payment Date'}
-                    </label>
-                    <input
-                      type="date"
-                      value={paymentDate}
-                      onChange={(e) => setPaymentDate(e.target.value)}
-                      required
-                      className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
-                    />
-                  </div>
-                </div>
-
-                {/* Reference ID */}
-                <div>
-                  <label className="block text-[var(--muted)] mb-1 font-semibold">
-                    {language === 'id' ? 'Nomor Referensi Transaksi / Bukti Transfer' : 'Transaction Reference / Wire Ref'}
-                  </label>
-                  <input
-                    type="text"
-                    value={paymentRef}
-                    onChange={(e) => setPaymentRef(e.target.value)}
-                    placeholder="e.g. BCA-WS-99882312 or MANDIRI-TRX-102"
-                    className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
-                  />
-                </div>
-
-                {/* Notes */}
-                <div>
-                  <label className="block text-[var(--muted)] mb-1 font-semibold">
-                    {language === 'id' ? 'Catatan Tambahan (Opsional)' : 'Internal Notes (Optional)'}
-                  </label>
-                  <input
-                    type="text"
-                    value={paymentNotes}
-                    onChange={(e) => setPaymentNotes(e.target.value)}
-                    placeholder="e.g. Received via Bank Mandiri 123-00-998877-1"
-                    className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
-                  />
-                </div>
-              </div>
-
-              {/* Modal Footer */}
-              <div className="sticky bottom-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-3.5 border-t border-[var(--line)] flex items-center justify-end gap-2.5 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setPaymentModalInvoice(null)}
-                  className="h-10 px-4 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans font-medium transition-colors min-h-10"
-                >
-                  {language === 'id' ? 'Batal' : 'Cancel'}
-                </button>
-                <button
-                  type="submit"
-                  className="h-10 px-5 rounded-control bg-[var(--success)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-colors min-h-10 flex items-center gap-1.5"
-                >
-                  <Check size={14} />
-                  <span>{language === 'id' ? 'Simpan Pembayaran' : 'Confirm Payment'}</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* 7. Printable Invoice Preview Slide-Over / Modal (Mobile Fullscreen + Sticky Header) */}
-      {previewInvoice && (
-        <div className="fixed inset-0 z-50 bg-black/85  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl font-sans relative flex flex-col overflow-hidden">
-            
-            {/* Sticky Header for Preview Modal */}
-            <div className="sticky top-0 z-20 bg-[var(--panel)] px-4 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-control bg-[var(--bg)] flex items-center justify-center p-1">
-                  <img src="/favicon.png" alt="Kapitech" className="w-full h-full object-contain" />
-                </div>
-                <div>
-                  <span className="text-sm font-semibold font-sans tracking-tight text-zinc-900 block">KAPITECH INVOICE</span>
-                  <span className="text-[11px] font-sans text-zinc-500">{previewInvoice.invoiceNumber}</span>
-                </div>
-              </div>
-              <button
-                onClick={() => setPreviewInvoice(null)}
-                className="p-1.5 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 transition-colors"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            {/* Scrollable Printable Content */}
-            <div className="p-6 sm:p-8 overflow-y-auto flex-1 custom-scrollbar">
-              {/* Invoice Printable Header */}
-              <div className="flex justify-between items-start border-b border-zinc-200 pb-6 mb-6">
-                <div>
-                  <span className="text-lg font-semibold font-sans tracking-tight text-zinc-900">PT Kapitech Digital Indonesia</span>
-                  <p className="text-xs text-zinc-500 max-w-xs mt-1 leading-relaxed">
-                    Linea Residence Block G No. 5, Paku Jaya, South Tangerang, Banten 15220, Indonesia
-                  </p>
-                </div>
-
-                <div className="text-right">
-                  <span className="text-2xl font-semibold font-sans text-zinc-900 block">INVOICE</span>
-                  <span className="text-sm font-sans text-zinc-600 font-semibold block">{previewInvoice.invoiceNumber}</span>
-                  <span className="text-xs font-sans px-2 py-0.5 rounded normal-case font-semibold mt-2 inline-block bg-zinc-100 text-zinc-800">
-                    Status: {previewInvoice.status.toUpperCase()}
-                  </span>
-                </div>
-              </div>
-
-              {/* Billed To */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 text-xs">
-                <div>
-                  <span className="text-[var(--muted)] normal-case font-sans font-semibold block mb-1">Billed To:</span>
-                  <strong className="text-sm text-zinc-900 block">{previewInvoice.clientName}</strong>
-                  <span className="text-zinc-700 block">{previewInvoice.clientCompany}</span>
-                  <span className="text-zinc-500 block">{previewInvoice.clientEmail}</span>
-                  {previewInvoice.clientPhone && <span className="text-zinc-500 block">{previewInvoice.clientPhone}</span>}
-                </div>
-                <div className="sm:text-right">
-                  <span className="text-[var(--muted)] normal-case font-sans font-semibold block mb-1">Invoice Details:</span>
-                  <div><strong>Issue Date:</strong> {previewInvoice.issueDate}</div>
-                  <div><strong>Payment Due:</strong> {previewInvoice.dueDate}</div>
-                  <div><strong>Currency:</strong> IDR (Indonesian Rupiah)</div>
-                </div>
-              </div>
-
-              {/* Items Table */}
-              <div className="overflow-x-auto mb-6">
-                <table className="w-full text-xs text-left border-collapse min-w-[320px]">
-                  <thead>
-                    <tr className="border-b-2 border-zinc-900 text-zinc-900 font-sans normal-case text-[10px]">
-                      <th className="py-2">Description</th>
-                      <th className="py-2 text-right">Qty</th>
-                      <th className="py-2 text-right">Price</th>
-                      <th className="py-2 text-right">Total</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-zinc-200">
-                    {previewInvoice.items.map((item, idx) => (
-                      <tr key={idx}>
-                        <td className="py-3 font-medium text-zinc-800">{item.description}</td>
-                        <td className="py-3 text-right font-sans">{item.quantity}</td>
-                        <td className="py-3 text-right font-sans">{formatIDR(item.unitPrice)}</td>
-                        <td className="py-3 text-right font-sans font-semibold">{formatIDR(item.amount)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Totals Calculation & Payments Ledger */}
-              <div className="flex flex-col sm:flex-row sm:justify-between gap-4 mb-6 text-xs font-sans">
-                {previewInvoice.payments && previewInvoice.payments.length > 0 ? (
-                  <div className="flex-1 bg-zinc-50 border border-zinc-200 rounded-card p-3">
-                    <span className="text-[10px] font-semibold text-zinc-900 normal-case block mb-2">Recorded Payment Ledger:</span>
-                    <div className="space-y-1.5">
-                      {previewInvoice.payments.map((p, idx) => (
-                        <div key={idx} className="flex justify-between items-center text-[11px] text-zinc-700">
-                          <span>{p.date} • {p.method.replace('_', ' ')} {p.reference ? `(${p.reference})` : ''}</span>
-                          <span className="font-semibold text-[var(--success)]">{formatIDR(p.amount)}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex-1" />
-                )}
-
-                <div className="w-64 space-y-1.5 text-right">
-                  <div className="flex justify-between text-zinc-600">
-                    <span>Subtotal:</span>
-                    <span>{formatIDR(previewInvoice.subtotal)}</span>
-                  </div>
-                  <div className="flex justify-between text-zinc-600">
-                    <span>PPN ({previewInvoice.taxPercent}%):</span>
-                    <span>{formatIDR(previewInvoice.taxAmount)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm font-semibold text-zinc-900 pt-2 border-t border-zinc-900 font-sans">
-                    <span>Total Amount:</span>
-                    <span className="text-zinc-900">{formatIDR(previewInvoice.total)}</span>
-                  </div>
-                  {previewInvoice.amountPaid && previewInvoice.amountPaid > 0 ? (
-                    <>
-                      <div className="flex justify-between text-[var(--success)] font-semibold pt-1">
-                        <span>Total Paid:</span>
-                        <span>- {formatIDR(previewInvoice.amountPaid)}</span>
-                      </div>
-                      <div className="flex justify-between text-sm font-semibold text-[var(--danger)] pt-1 border-t border-dashed border-zinc-300">
-                        <span>Balance Due:</span>
-                        <span>{formatIDR(previewInvoice.balanceDue ?? (previewInvoice.total - previewInvoice.amountPaid))}</span>
-                      </div>
-                    </>
-                  ) : null}
-                </div>
-              </div>
-
-              {/* Bank details & Signoff */}
-              <div className="bg-zinc-50 p-4 rounded-card text-xs text-zinc-600 border border-zinc-200">
-                <strong className="text-zinc-900 block mb-1">Bank Payment Wire Instructions:</strong>
-                <p className="font-sans text-[11px] leading-relaxed">
-                  Bank Mandiri Indonesia (Cabang Serpong)<br />
-                  Account Number: <strong className="text-zinc-900">123-00-998877-1</strong><br />
-                  Beneficiary: <strong className="text-zinc-900">PT KAPITECH DIGITAL INDONESIA</strong>
-                </p>
-                {previewInvoice.notes && <p className="mt-2 text-zinc-500 italic">{previewInvoice.notes}</p>}
-              </div>
-            </div>
-
-            {/* Sticky Footer for Preview Modal */}
-            <div className="sticky bottom-0 z-20 bg-white/95  px-6 py-3.5 border-t border-zinc-200 flex items-center justify-between text-xs shrink-0">
-              <span className="text-[var(--muted)] font-sans">kapitech.id • Finance Division</span>
-              <button
-                onClick={() => window.print()}
-                className="min-h-10 px-4 rounded-control bg-[var(--bg)] text-[var(--text)] font-sans font-semibold text-xs flex items-center gap-1.5 hover:bg-zinc-800 transition-colors"
-              >
-                <Download size={14} />
-                <span>Print / Save PDF</span>
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
-
-      <Modal open={!!confirmAction} onClose={() => setConfirmAction(null)} size="sm" title={confirmAction?.type === 'invoice' ? 'Delete invoice?' : 'Delete expense?'} description={confirmAction?.type === 'invoice' ? `Invoice ${confirmAction?.label || ''} will be permanently removed.` : 'This expense record will be permanently removed.'}>
-        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
-          <button type="button" onClick={() => setConfirmAction(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
-          <button type="button" onClick={() => confirmAction?.type === 'invoice' ? void confirmDeleteInvoice(confirmAction.id) : confirmAction && void confirmDeleteExpense(confirmAction.id)} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
-        </div>
+        </form>
       </Modal>
 
+      <Modal
+        open={expenseModalOpen}
+        onClose={() => !savingExpense && setExpenseModalOpen(false)}
+        size="md"
+        title="Record expense"
+        description="Record an actual expense against the selected currency ledger."
+        closeOnOutsideClick={!savingExpense}
+        footer={
+          <>
+            <button type="button" onClick={() => setExpenseModalOpen(false)} className={actionClass} disabled={savingExpense}>Cancel</button>
+            <button type="submit" form="finance-expense-form" className={primaryClass} disabled={savingExpense}>{savingExpense ? 'Saving...' : 'Save expense'}</button>
+          </>
+        }
+      >
+        <form id="finance-expense-form" onSubmit={handleSaveExpense} className="space-y-4">
+          <div><label className="mb-1.5 block text-xs font-medium text-muted">Type</label><CustomSelect value={expenseType} onChange={(value) => setExpenseType(value as 'OpEx' | 'CapEx' | 'Rentals')} options={[{ value: 'OpEx', label: 'OpEx' }, { value: 'CapEx', label: 'CapEx' }, { value: 'Rentals', label: 'Rentals' }]} className="w-full" triggerClassName="h-10 min-h-10 w-full" /></div>
+          <div><label className="mb-1.5 block text-xs font-medium text-muted">Category</label><CustomSelect value={expenseCategory} onChange={(value) => setExpenseCategory(value as AgencyExpense['category'])} options={['Software & Cloud','Salaries & Contractors','Office & Hardware','Office & Rentals','Marketing & Ads','Legal & Admin','CapEx Equipment'].map((value) => ({ value, label: value }))} className="w-full" triggerClassName="h-10 min-h-10 w-full" /></div>
+          <div><label className="mb-1.5 block text-xs font-medium text-muted">Description *</label><input required value={expenseDescription} onChange={(event) => setExpenseDescription(event.target.value)} className={fieldClass} /></div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><label className="mb-1.5 block text-xs font-medium text-muted">Amount</label><input required type="number" min="0.01" step="0.01" value={expenseAmount} onChange={(event) => setExpenseAmount(Number(event.target.value))} className={fieldClass} /></div>
+            <div><label className="mb-1.5 block text-xs font-medium text-muted">Date</label><input required type="date" value={expenseDate} onChange={(event) => setExpenseDate(event.target.value)} className={fieldClass} /></div>
+          </div>
+        </form>
+      </Modal>
+
+      <Modal
+        open={!!paymentInvoice}
+        onClose={() => !savingPayment && setPaymentInvoice(null)}
+        size="md"
+        title="Record payment"
+        description={paymentInvoice ? paymentInvoice.invoiceNumber + ' · ' + paymentInvoice.clientCompany : undefined}
+        closeOnOutsideClick={!savingPayment}
+        footer={
+          <>
+            <button type="button" onClick={() => setPaymentInvoice(null)} className={actionClass} disabled={savingPayment}>Cancel</button>
+            <button type="submit" form="finance-payment-form" className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control bg-success px-3.5 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50" disabled={savingPayment}><Check size={14} />{savingPayment ? 'Saving...' : 'Record payment'}</button>
+          </>
+        }
+      >
+        {paymentInvoice && (
+          <form id="finance-payment-form" onSubmit={handlePayment} className="space-y-4">
+            <div className="rounded-card border border-line bg-bg p-4">
+              <div className="flex justify-between gap-3 text-xs"><span className="text-muted">Invoice total</span><span className="tabular-nums text-fg">{formatAmount(paymentInvoice.total, paymentInvoice.currency)}</span></div>
+              <div className="mt-2 flex justify-between gap-3 text-xs"><span className="text-muted">Already paid</span><span className="tabular-nums text-success">{formatAmount(paymentInvoice.amountPaid || 0, paymentInvoice.currency)}</span></div>
+              <div className="mt-3 flex justify-between gap-3 border-t border-line pt-3 text-xs font-semibold"><span className="text-fg">Remaining balance</span><span className="tabular-nums text-warning">{formatAmount(paymentInvoice.balanceDue ?? (paymentInvoice.total - (paymentInvoice.amountPaid || 0)), paymentInvoice.currency)}</span></div>
+            </div>
+            <div><label className="mb-1.5 block text-xs font-medium text-muted">Amount received</label><input required min="0.01" type="number" step="0.01" max={Number(paymentInvoice.balanceDue ?? paymentInvoice.total)} value={paymentAmount} onChange={(event) => setPaymentAmount(Number(event.target.value))} className={fieldClass} /></div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div><label className="mb-1.5 block text-xs font-medium text-muted">Payment method</label><CustomSelect value={paymentMethod} onChange={(value) => setPaymentMethod(value as typeof paymentMethod)} options={[{ value: 'bank_transfer', label: 'Bank transfer' }, { value: 'credit_card', label: 'Credit card' }, { value: 'cash', label: 'Cash' }, { value: 'other', label: 'Other' }]} className="w-full" triggerClassName="h-10 min-h-10 w-full" /></div>
+              <div><label className="mb-1.5 block text-xs font-medium text-muted">Payment date</label><input required type="date" value={paymentDate} onChange={(event) => setPaymentDate(event.target.value)} className={fieldClass} /></div>
+            </div>
+            <div><label className="mb-1.5 block text-xs font-medium text-muted">Reference</label><input value={paymentReference} onChange={(event) => setPaymentReference(event.target.value)} className={fieldClass} placeholder="Transaction reference" /></div>
+            <div><label className="mb-1.5 block text-xs font-medium text-muted">Notes</label><textarea value={paymentNotes} onChange={(event) => setPaymentNotes(event.target.value)} rows={3} className={fieldClass + ' py-2.5'} /></div>
+          </form>
+        )}
+      </Modal>
+
+      <Modal
+        open={!!confirmAction}
+        onClose={() => setConfirmAction(null)}
+        size="sm"
+        title={confirmAction?.type === 'invoice' ? 'Cancel invoice?' : 'Void expense?'}
+        description={confirmAction ? confirmAction.label : undefined}
+        footer={
+          <>
+            <button type="button" onClick={() => setConfirmAction(null)} className={actionClass}>Keep record</button>
+            <button type="button" onClick={() => void confirmDelete()} className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control bg-danger px-3.5 text-xs font-semibold text-white"><Trash2 size={14} />Confirm</button>
+          </>
+        }
+      >
+        <p className="text-xs leading-5 text-muted">
+          {confirmAction?.type === 'invoice'
+            ? 'The existing finance endpoint cancels invoices rather than hard-deleting them. Invoices with recorded payments may be rejected by the server.'
+            : 'The existing finance endpoint voids the expense record. It is not physically deleted from the server.'}
+        </p>
+      </Modal>
+
+      <Modal
+        open={!!detailInvoice}
+        onClose={() => setDetailInvoice(null)}
+        size="xl"
+        title={detailInvoice ? detailInvoice.invoiceNumber : 'Invoice'}
+        description={detailInvoice ? detailInvoice.clientCompany : undefined}
+        footer={
+          <button type="button" onClick={() => window.print()} className={actionClass}><Download size={14} />Print / Save PDF</button>
+        }
+      >
+        {detailInvoice && (
+          <div className="space-y-5">
+            <div className="flex flex-col gap-4 border-b border-line pb-4 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold text-fg">PT Kapitech Digital Indonesia</p>
+                <p className="mt-1 text-xs leading-5 text-muted">Invoice detail and payment record.</p>
+              </div>
+              <StatusBadge status={detailInvoice.status} />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div><p className="text-xs font-medium text-muted">Billed to</p><p className="mt-1 text-sm font-medium text-fg">{detailInvoice.clientName}</p><p className="text-xs text-muted">{detailInvoice.clientCompany}</p><p className="mt-1 text-xs text-muted">{detailInvoice.clientEmail}</p>{detailInvoice.clientPhone && <p className="text-xs text-muted">{detailInvoice.clientPhone}</p>}</div>
+              <div className="sm:text-right"><p className="text-xs font-medium text-muted">Invoice metadata</p><p className="mt-1 text-xs tabular-nums text-fg">Issue {detailInvoice.issueDate}</p><p className="text-xs tabular-nums text-fg">Due {detailInvoice.dueDate}</p><p className="text-xs text-muted">{detailInvoice.currency}</p></div>
+            </div>
+            <div className="overflow-x-auto rounded-control border border-line">
+              <table className="w-full min-w-[520px] text-xs">
+                <thead><tr className="border-b border-line text-muted"><th className="px-3 py-2 text-left font-medium">Description</th><th className="px-3 py-2 text-right font-medium">Qty</th><th className="px-3 py-2 text-right font-medium">Unit price</th><th className="px-3 py-2 text-right font-medium">Amount</th></tr></thead>
+                <tbody>{detailInvoice.items.map((item) => <tr key={item.id} className="border-b border-line last:border-0"><td className="px-3 py-2.5 text-fg">{item.description}</td><td className="px-3 py-2.5 text-right tabular-nums text-fg">{item.quantity}</td><td className="px-3 py-2.5 text-right tabular-nums text-fg">{formatAmount(item.unitPrice, detailInvoice.currency)}</td><td className="px-3 py-2.5 text-right tabular-nums text-fg">{formatAmount(item.amount, detailInvoice.currency)}</td></tr>)}</tbody>
+              </table>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-[1fr_260px]">
+              <div>
+                <p className="text-xs font-medium text-muted">Payment activity</p>
+                {detailInvoice.payments?.length ? (
+                  <div className="mt-2 space-y-2">{detailInvoice.payments.map((payment) => <div key={payment.id} className="flex flex-col gap-1 rounded-control border border-line bg-bg p-3 text-xs sm:flex-row sm:items-center sm:justify-between"><span className="text-muted">{payment.date} · {payment.method.replace('_', ' ')}{payment.reference ? ' · ' + payment.reference : ''}</span><span className="font-medium tabular-nums text-success">{formatAmount(payment.amount, detailInvoice.currency)}</span></div>)}</div>
+                ) : <p className="mt-2 rounded-control border border-line bg-bg p-3 text-xs text-muted">No recorded payments.</p>}
+                {detailInvoice.notes && <p className="mt-3 text-xs leading-5 text-muted">{detailInvoice.notes}</p>}
+                {detailInvoice.paymentTerms && <p className="mt-2 text-xs text-muted">Terms: {detailInvoice.paymentTerms}</p>}
+              </div>
+              <div className="rounded-card border border-line bg-bg p-4 text-xs">
+                <div className="flex justify-between gap-3"><span className="text-muted">Subtotal</span><span className="tabular-nums text-fg">{formatAmount(detailInvoice.subtotal, detailInvoice.currency)}</span></div>
+                <div className="mt-2 flex justify-between gap-3"><span className="text-muted">Discount</span><span className="tabular-nums text-fg">- {formatAmount(detailInvoice.discountAmount || 0, detailInvoice.currency)}</span></div>
+                <div className="mt-2 flex justify-between gap-3"><span className="text-muted">Tax ({detailInvoice.taxPercent}%)</span><span className="tabular-nums text-fg">{formatAmount(detailInvoice.taxAmount, detailInvoice.currency)}</span></div>
+                <div className="mt-3 flex justify-between gap-3 border-t border-line pt-3 font-semibold"><span className="text-fg">Total</span><span className="tabular-nums text-fg">{formatAmount(detailInvoice.total, detailInvoice.currency)}</span></div>
+                <div className="mt-2 flex justify-between gap-3"><span className="text-muted">Paid</span><span className="tabular-nums text-success">{formatAmount(detailInvoice.amountPaid || 0, detailInvoice.currency)}</span></div>
+                <div className="mt-2 flex justify-between gap-3 font-semibold"><span className="text-fg">Balance due</span><span className="tabular-nums text-warning">{formatAmount(detailInvoice.balanceDue ?? (detailInvoice.total - (detailInvoice.amountPaid || 0)), detailInvoice.currency)}</span></div>
+              </div>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };
+
+export default AdminInvoicing;
