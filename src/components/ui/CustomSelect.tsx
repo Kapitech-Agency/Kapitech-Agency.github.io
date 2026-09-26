@@ -92,7 +92,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
           sizeClasses[size]
         } ${
           isOpen
-            ? 'bg-panel border-accent text-fg shadow-[inset_0_0_0_2px_var(--accent)]'
+            ? 'bg-panel border-accent text-fg'
             : 'bg-panel hover:bg-panel-hover border-line hover:border-muted text-fg'
         } ${
           disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
