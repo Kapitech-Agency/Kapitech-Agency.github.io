@@ -4,11 +4,9 @@ import {
   Plus,
   Search,
   Phone,
-  DollarSign,
   Trash2,
   Edit3,
   Check,
-  UserCheck,
   AlertTriangle,
   ShieldAlert,
   Activity,
@@ -367,7 +365,7 @@ export const AdminClients: React.FC = () => {
                   <td className="px-4 py-3 align-top tabular-nums text-fg">{client.projectsCount}</td>
                   <td className="px-4 py-3 align-top"><div className="flex max-w-[260px] flex-col gap-1"><a href={client.email ? 'mailto:' + client.email : undefined} className="truncate text-fg hover:text-accent-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">{client.email || '—'}</a>{client.phone && <a href={'tel:' + client.phone} className="text-muted hover:text-fg">{client.phone}</a>}</div></td>
                   <td className="px-4 py-3 align-top"><span className={'inline-flex items-center gap-1.5 rounded-badge border px-2 py-1 text-[11px] font-medium ' + (client.status === 'active' ? 'border-success/20 bg-success/10 text-success' : client.status === 'completed' ? 'border-info/20 bg-info/10 text-info' : client.status === 'lead' ? 'border-warning/20 bg-warning/10 text-warning' : 'border-line bg-bg text-muted')}>{client.status === 'active' ? 'Active' : client.status === 'completed' ? 'Completed' : client.status === 'lead' ? 'Lead' : 'Inactive'}{isOverBudget && <AlertTriangle size={12} aria-label="SLA exceeded" />}</span></td>
-                  <td className="px-4 py-3 text-right align-top"><div className="flex justify-end gap-1.5">{client.phone && <a href={'https://wa.me/' + client.phone.replace(/\D/g, '')} target="_blank" rel="noreferrer" aria-label={'WhatsApp ' + client.name} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-success focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Phone size={14} /></a>}<button type="button" onClick={() => handleOpenEditClient(client)} aria-label={'Edit ' + client.name} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Edit3 size={14} /></button><button type="button" onClick={() => handleDeleteClient(client.id, client.name)} aria-label={'Delete ' + client.name} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-danger/10 hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Trash2 size={14} /></button></div></td>
+                  <td className="px-4 py-3 text-right align-top"><div className="flex justify-end gap-1.5">{client.phone && <a href={'https://wa.me/' + client.phone.replace(/\D/g, '')} target="_blank" rel="noreferrer" aria-label={'WhatsApp ' + client.name} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-success focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Phone size={14} /></a>}{canManageClients && <><button type="button" onClick={() => handleOpenEditClient(client)} aria-label={'Edit ' + client.name} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Edit3 size={14} /></button><button type="button" onClick={() => handleDeleteClient(client.id, client.name)} aria-label={'Delete ' + client.name} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-danger/10 hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Trash2 size={14} /></button></>}</div></td>
                 </tr>;
               })}
             </tbody>
