@@ -171,7 +171,7 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
                 step="1000000"
                 value={dealValue}
                 onChange={(e) => setDealValue(Number(e.target.value) || 0)}
-                className="w-full pl-4 pr-16 py-2.5 bg-panel border border-line rounded-control text-sm font-sans text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30 focus:border-[var(--accent)]"
+                className="w-full pl-4 pr-16 py-2.5 bg-panel border border-line rounded-control text-sm font-sans text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 focus:border-accent"
               />
               <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-sans text-muted">
                 IDR
@@ -272,27 +272,7 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
 
         </div>
 
-        {/* Footer */}
-        <div className="p-4 border-t border-line bg-panel flex items-center justify-between">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 rounded-control bg-panel text-xs font-sans text-muted hover:text-fg border border-line transition-colors"
-          >
-            {language === 'id' ? 'Batal' : 'Cancel'}
-          </button>
-
-          <button
-            type="button"
-            disabled={isSubmitting}
-            onClick={handleConvert}
-            className="px-5 py-2.5 rounded-control bg-accent hover:bg-accent text-white text-xs font-sans font-medium transition-colors flex items-center gap-2"
-          >
-            <span>{language === 'id' ? 'Konfirmasi & Buat Lead CRM' : 'Confirm & Create CRM Deal'}</span>
-            <ArrowRight size={14} />
-          </button>
-        </div>
-
+      </div>
 
     </Modal>
   );
