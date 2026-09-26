@@ -84,10 +84,10 @@ export const AdminCmsTestimonials: React.FC = () => {
       <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="ams-page-title">
-            <Users className="text-[var(--accent-text)] shrink-0" size={22} />
+            <Users className="text-accent-text shrink-0" size={22} />
             <span>Testimonials</span>
           </h1>
-          <p className="text-xs text-[var(--muted)] mt-1 font-sans">
+          <p className="text-xs text-muted mt-1 font-sans">
             {language === 'id' 
               ? 'Kelola ulasan klien, feedback kepuasan, dan rekomendasi eksekutif yang tampil di homepage.'
               : 'Manage client reviews, enterprise feedback, and executive recommendations on the homepage.'}
@@ -96,7 +96,7 @@ export const AdminCmsTestimonials: React.FC = () => {
 
         <button
           onClick={handleOpenAdd}
-          className="min-h-10 px-3 rounded-control bg-[var(--accent)] hover:bg-[var(--accent-hover)] active:bg-[var(--accent-pressed)] text-white text-xs font-sans font-medium transition-colors flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className="min-h-10 px-3 rounded-control bg-accent hover:bg-accent-hover active:bg-accent-pressed text-white text-xs font-sans font-medium transition-colors flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           <Plus size={14} />
           <span>{language === 'id' ? 'Tambah Testimoni' : 'Add Testimonial'}</span>
@@ -104,7 +104,7 @@ export const AdminCmsTestimonials: React.FC = () => {
       </div>
 
       {statusMessage && (
-        <div className="p-3 rounded-control bg-[var(--success)]/10 border border-[var(--success)]/25 text-[var(--success)] text-xs font-sans flex items-center gap-2">
+        <div className="p-3 rounded-control bg-success/10 border border-success/25 text-success text-xs font-sans flex items-center gap-2">
           <Check size={14} />
           <span>{statusMessage}</span>
         </div>
@@ -132,29 +132,29 @@ export const AdminCmsTestimonials: React.FC = () => {
         {testimonials.map((item) => (
           <div
             key={item.id}
-            className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-4 flex flex-col justify-between hover:border-[var(--line)] transition-all"
+            className="bg-panel border border-line rounded-card p-4 flex flex-col justify-between hover:border-line transition-all"
           >
             <div>
               {/* Rating stars */}
-              <div className="flex items-center gap-1 text-[var(--warning)] mb-4">
+              <div className="flex items-center gap-1 text-warning mb-4">
                 {[...Array(item.rating || 5)].map((_, i) => (
                   <Star key={i} size={14} fill="currentColor" />
                 ))}
               </div>
 
               {/* Quote */}
-              <p className="text-xs text-[var(--muted)] leading-relaxed italic mb-6">
+              <p className="text-xs text-muted leading-relaxed italic mb-6">
                 "{item.quoteId || item.quote}"
               </p>
             </div>
 
-            <div className="pt-4 border-t border-[var(--line)] flex items-center justify-between">
+            <div className="pt-4 border-t border-line flex items-center justify-between">
               <div>
-                <div className="text-xs font-medium text-[var(--text)]">{item.author}</div>
-                <div className="text-xs font-sans text-[var(--muted)]">
-                  {item.role}, <span className="text-[var(--text)]">{item.company}</span>
+                <div className="text-xs font-medium text-text">{item.author}</div>
+                <div className="text-xs font-sans text-muted">
+                  {item.role}, <span className="text-text">{item.company}</span>
                 </div>
-                <div className="text-[11px] font-sans text-[var(--muted)] mt-0.5 flex items-center gap-1">
+                <div className="text-[11px] font-sans text-muted mt-0.5 flex items-center gap-1">
                   <MapPin size={10} />
                   <span>{item.location}</span>
                 </div>
@@ -163,13 +163,13 @@ export const AdminCmsTestimonials: React.FC = () => {
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => handleOpenEdit(item)}
-                  className="min-h-9 min-w-9 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] transition-colors flex items-center justify-center"
+                  className="min-h-9 min-w-9 rounded-control bg-panel hover:bg-panel-hover text-muted hover:text-text border border-line transition-colors flex items-center justify-center"
                 >
                   <Edit3 size={14} />
                 </button>
                 <button
                   onClick={() => setDeleteTarget({ id: item.id, author: item.author })}
-                  className="min-h-9 min-w-9 rounded-control bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 transition-colors flex items-center justify-center"
+                  className="min-h-9 min-w-9 rounded-control bg-panel hover:bg-danger/10 text-muted hover:text-danger border border-line hover:border-danger/30 transition-colors flex items-center justify-center"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -204,7 +204,7 @@ export const AdminCmsTestimonials: React.FC = () => {
           <div className="space-y-4">
             <form onSubmit={handleSaveModal} className="space-y-4">
               <div>
-                <label className="block text-xs font-sans text-[var(--muted)] mb-1 font-semibold">
+                <label className="block text-xs font-sans text-muted mb-1 font-semibold">
                   {language === 'id' ? 'Nama Klien / Eksekutif *' : 'Client / Executive Name *'}
                 </label>
                 <input
@@ -213,13 +213,13 @@ export const AdminCmsTestimonials: React.FC = () => {
                   value={editingItem.author}
                   onChange={(e) => setEditingItem({ ...editingItem, author: e.target.value })}
                   placeholder="e.g., Marcus Thorne"
-                  className="w-full ams-control text-xs text-[var(--text)] font-sans min-h-10"
+                  className="w-full ams-control text-xs text-text font-sans min-h-10"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-sans text-[var(--muted)] mb-1 font-semibold">
+                  <label className="block text-xs font-sans text-muted mb-1 font-semibold">
                     {language === 'id' ? 'Jabatan' : 'Role / Position'}
                   </label>
                   <input
@@ -227,11 +227,11 @@ export const AdminCmsTestimonials: React.FC = () => {
                     value={editingItem.role}
                     onChange={(e) => setEditingItem({ ...editingItem, role: e.target.value })}
                     placeholder="e.g., VP of Product"
-                    className="w-full ams-control text-xs text-[var(--text)] font-sans min-h-10"
+                    className="w-full ams-control text-xs text-text font-sans min-h-10"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-sans text-[var(--muted)] mb-1 font-semibold">
+                  <label className="block text-xs font-sans text-muted mb-1 font-semibold">
                     {language === 'id' ? 'Perusahaan' : 'Company'}
                   </label>
                   <input
@@ -239,13 +239,13 @@ export const AdminCmsTestimonials: React.FC = () => {
                     value={editingItem.company}
                     onChange={(e) => setEditingItem({ ...editingItem, company: e.target.value })}
                     placeholder="e.g., Finova Global"
-                    className="w-full ams-control text-xs text-[var(--text)] font-sans min-h-10"
+                    className="w-full ams-control text-xs text-text font-sans min-h-10"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-sans text-[var(--muted)] mb-1 font-semibold">
+                <label className="block text-xs font-sans text-muted mb-1 font-semibold">
                   {language === 'id' ? 'Lokasi Klien' : 'Client Location'}
                 </label>
                 <input
@@ -253,12 +253,12 @@ export const AdminCmsTestimonials: React.FC = () => {
                   value={editingItem.location}
                   onChange={(e) => setEditingItem({ ...editingItem, location: e.target.value })}
                   placeholder="e.g., Jakarta, Indonesia"
-                  className="w-full ams-control text-xs text-[var(--text)] font-sans min-h-10"
+                  className="w-full ams-control text-xs text-text font-sans min-h-10"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-sans text-[var(--muted)] mb-1 font-semibold">
+                <label className="block text-xs font-sans text-muted mb-1 font-semibold">
                   {language === 'id' ? 'Isi Kutipan Testimoni *' : 'Testimonial Quote *'}
                 </label>
                 <textarea
@@ -267,7 +267,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                   value={editingItem.quoteId || editingItem.quote}
                   onChange={(e) => setEditingItem({ ...editingItem, quoteId: e.target.value, quote: e.target.value })}
                   placeholder={language === 'id' ? 'Ceritakan dampak positif atau kecepatan kerja sama dengan Kapitech...' : 'Share client feedback, impact, and delivery speed...'}
-                  className="w-full ams-control text-xs text-[var(--text)] font-sans"
+                  className="w-full ams-control text-xs text-text font-sans"
                 />
               </div>
 
