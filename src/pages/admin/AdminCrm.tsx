@@ -366,10 +366,10 @@ export const AdminCrm: React.FC = () => {
           <button type="button" onClick={() => deleteTarget && void confirmDeleteLead(deleteTarget.id)} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
         </div>
       </Modal>
-      <div className="space-y-5 sm:space-y-6">
+      <div className="space-y-6">
       
       {/* 1. Header & Actions */}
-      <div className="ams-dashboard-header flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="ams-page-header flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
 <h1 className="ams-page-title flex items-center gap-2.5">\n              <Users className="text-[var(--accent-text)] shrink-0" size={22} />
@@ -446,7 +446,7 @@ export const AdminCrm: React.FC = () => {
       {/* 2. Enterprise CRM KPI Funnel & Metrics Bar */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3">
         {/* Active Pipeline Card */}
-        <div className="lg:col-span-4 bg-[var(--panel)] border border-[var(--line)] p-5 sm:p-6 rounded-card flex flex-col justify-between group hover:border-[var(--line)] transition-all">
+        <div className="lg:col-span-4 bg-[var(--panel)] border border-[var(--line)] p-4 rounded-card flex flex-col justify-between group hover:border-[var(--line)] transition-all">
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-3">
               <span className="text-xs font-sans normal-case tracking-normal font-semibold">
