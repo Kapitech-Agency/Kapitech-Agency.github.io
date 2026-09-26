@@ -238,28 +238,28 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 overflow-y-auto overscroll-contain">
       <div className="fixed inset-0 bg-black/80" onClick={onClose} />
-      <div className="relative w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card -none z-10 flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+      <div className="relative w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl bg-panel border-0 sm:border sm:border-line rounded sm:rounded-card  z-10 flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
         
         {/* Sticky Header */}
-        <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
+        <div className="sticky top-0 z-20 bg-panel/95  px-5 sm:px-6 py-4 border-b border-line flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-control bg-[var(--accent)]/15 text-[var(--accent)] border border-[var(--accent)]/30 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-control bg-accent/10 text-accent-text border border-accent/30 flex items-center justify-center shrink-0">
               <FileSpreadsheet size={18} />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-[var(--text)] leading-tight">
+              <h3 className="text-sm font-medium text-fg leading-tight">
                 {language === 'id' ? 'Impor Data & Migrasi Skema' : 'Data Migration & CSV Import'}
               </h3>
-              <p className="text-[11px] font-sans text-[var(--muted)]">
+              <p className="text-[11px] font-sans text-muted">
                 {language === 'id' ? 'Unggah file spreadsheet CSV dengan pemetaan otomatis' : 'Upload structured CSV templates with instant schema ingestion'}
               </p>
             </div>
           </div>
           <button 
             onClick={onClose} 
-            className="w-8 h-8 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
+            className="w-8 h-8 rounded-control bg-panel text-muted hover:text-fg border border-line flex items-center justify-center transition-colors shrink-0 ml-3"
           >
             <X size={15} />
           </button>
@@ -268,7 +268,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
         {/* Scrollable Body */}
         <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 custom-scrollbar">
           <div>
-            <label className="text-[11px] font-sans text-[var(--muted)] normal-case block mb-2">
+            <label className="text-[11px] font-sans text-muted normal-case block mb-2">
               {language === 'id' ? 'Pilih Modul Tujuan Migrasi' : 'Select Target Destination Module'}
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -280,11 +280,11 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
                 }}
                 className={`p-3 rounded-control border flex flex-row sm:flex-col items-center gap-2 sm:gap-1.5 text-xs font-sans transition-all min-h-10 sm:min-h-[auto] ${
                   targetModule === 'clients'
-                    ? 'bg-[var(--accent)]/15 border-[var(--accent)] text-[var(--text)] font-medium -none'
-                    : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)]'
+                    ? 'bg-accent/10 border-accent text-fg font-medium '
+                    : 'bg-panel border-line text-muted hover:text-fg'
                 }`}
               >
-                <Users size={16} className={targetModule === 'clients' ? 'text-[var(--accent)]' : 'text-[var(--muted)]'} />
+                <Users size={16} className={targetModule === 'clients' ? 'text-accent-text' : 'text-muted'} />
                 <span>{language === 'id' ? 'Klien & Leads' : 'Clients & Leads'}</span>
               </button>
 
@@ -296,11 +296,11 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
                 }}
                 className={`p-3 rounded-control border flex flex-row sm:flex-col items-center gap-2 sm:gap-1.5 text-xs font-sans transition-all min-h-10 sm:min-h-[auto] ${
                   targetModule === 'projects'
-                    ? 'bg-[var(--accent)]/15 border-[var(--accent)] text-[var(--text)] font-medium'
-                    : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)]'
+                    ? 'bg-accent/10 border-accent text-fg font-medium'
+                    : 'bg-panel border-line text-muted hover:text-fg'
                 }`}
               >
-                <Layers size={16} className={targetModule === 'projects' ? 'text-[var(--accent)]' : 'text-[var(--muted)]'} />
+                <Layers size={16} className={targetModule === 'projects' ? 'text-accent-text' : 'text-muted'} />
                 <span>{language === 'id' ? 'Proyek Sprint' : 'Active Projects'}</span>
               </button>
 
@@ -312,26 +312,26 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
                 }}
                 className={`p-3 rounded-control border flex flex-row sm:flex-col items-center gap-2 sm:gap-1.5 text-xs font-sans transition-all min-h-10 sm:min-h-[auto] ${
                   targetModule === 'invoices'
-                    ? 'bg-[var(--accent)]/15 border-[var(--accent)] text-[var(--text)] font-medium'
-                    : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)]'
+                    ? 'bg-accent/10 border-accent text-fg font-medium'
+                    : 'bg-panel border-line text-muted hover:text-fg'
                 }`}
               >
-                <Receipt size={16} className={targetModule === 'invoices' ? 'text-[var(--accent)]' : 'text-[var(--muted)]'} />
+                <Receipt size={16} className={targetModule === 'invoices' ? 'text-accent-text' : 'text-muted'} />
                 <span>{language === 'id' ? 'Invoice & Transaksi' : 'Invoices & Billing'}</span>
               </button>
             </div>
           </div>
 
           {/* Template Download Utility */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-control bg-[var(--panel)] border border-[var(--line)]">
-            <div className="text-xs font-sans text-[var(--muted)]">
-              <span className="text-[var(--text)] font-semibold block">{language === 'id' ? 'Download Format Template Resmi' : 'Download Predefined Template'}</span>
-              <span className="text-[11px] font-sans text-[var(--muted)]">CSV format formatted for {targetModule}</span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-control bg-panel border border-line">
+            <div className="text-xs font-sans text-muted">
+              <span className="text-fg font-semibold block">{language === 'id' ? 'Download Format Template Resmi' : 'Download Predefined Template'}</span>
+              <span className="text-[11px] font-sans text-muted">CSV format formatted for {targetModule}</span>
             </div>
             <button
               type="button"
               onClick={handleDownloadTemplate}
-              className="min-h-10 px-3 rounded-control bg-[var(--panel)] hover:bg-[var(--line)] border border-[var(--line)] text-xs font-sans text-[var(--text)] flex items-center justify-center gap-1.5 transition-colors shrink-0 min-h-10"
+              className="min-h-10 px-3 rounded-control bg-panel hover:bg-[var(--line)] border border-line text-xs font-sans text-fg flex items-center justify-center gap-1.5 transition-colors shrink-0 min-h-10"
             >
               <Download size={13} className="text-success" />
               <span>Download .CSV</span>
@@ -339,18 +339,18 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
           </div>
 
           {/* Drag & Drop File Ingestion Area */}
-          <div className="relative border-2 border-dashed border-[var(--line)] hover:border-[var(--accent)]/50 rounded-card p-6 text-center transition-colors bg-[var(--panel)]/50">
+          <div className="relative border border-dashed border-line hover:border-accent/50 rounded-card p-6 text-center transition-colors bg-panel/50">
             <input
               type="file"
               accept=".csv"
               onChange={handleFileUpload}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             />
-            <Upload size={24} className="mx-auto text-[var(--muted)] mb-2" />
-            <p className="text-xs font-sans text-[var(--text)] font-semibold">
+            <Upload size={24} className="mx-auto text-muted mb-2" />
+            <p className="text-xs font-sans text-fg font-semibold">
               {file ? file.name : language === 'id' ? 'Klik atau tarik file CSV ke sini' : 'Click or drag & drop CSV file here'}
             </p>
-            <p className="text-[10px] font-sans text-[var(--muted)] mt-1">
+            <p className="text-[10px] font-sans text-muted mt-1">
               Max file size 10MB • UTF-8 CSV Encoding
             </p>
           </div>
@@ -370,10 +370,10 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
           {/* Preview rows if available */}
           {previewRows.length > 0 && (
             <div className="space-y-1.5">
-              <div className="text-[11px] font-sans text-[var(--muted)] normal-case">
+              <div className="text-[11px] font-sans text-muted normal-case">
                 {language === 'id' ? 'Pratinjau 5 Baris Data Pertama' : 'Preview (First 5 Rows Ingested)'}
               </div>
-              <div className="max-h-36 overflow-auto custom-scrollbar border border-[var(--line)] rounded-control bg-[var(--panel)] p-2 text-[10px] font-sans text-[var(--muted)]">
+              <div className="max-h-36 overflow-auto custom-scrollbar border border-line rounded-control bg-panel p-2 text-[10px] font-sans text-muted">
                 <pre>{JSON.stringify(previewRows, null, 2)}</pre>
               </div>
             </div>
@@ -381,11 +381,11 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
         </div>
 
         {/* Sticky Footer */}
-        <div className="sticky bottom-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-3.5 border-t border-[var(--line)] flex items-center justify-end gap-2.5 shrink-0">
+        <div className="sticky bottom-0 z-20 bg-panel/95  px-5 sm:px-6 py-3.5 border-t border-line flex items-center justify-end gap-2.5 shrink-0">
           <button
             type="button"
             onClick={onClose}
-            className="min-h-10 px-4 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] transition-colors"
+            className="min-h-10 px-4 rounded-control bg-panel hover:bg-panel border border-line text-xs font-sans text-fg transition-colors"
           >
             {language === 'id' ? 'Tutup' : 'Close'}
           </button>
@@ -393,7 +393,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
             type="button"
             onClick={handleExecuteImport}
             disabled={parsing || !file}
-            className="h-10 px-5 min-h-[40px] rounded-control bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-[var(--text)] text-xs font-sans font-medium -none flex items-center gap-2 transition-all"
+            className="h-10 px-5 min-h-[40px] rounded-control bg-accent hover:bg-accent-hover disabled:opacity-50 text-fg text-xs font-sans font-medium  flex items-center gap-2 transition-all"
           >
             <FileCheck2 size={15} />
             <span>{parsing ? 'Processing...' : language === 'id' ? 'Mulai Impor Data' : 'Execute Import'}</span>
