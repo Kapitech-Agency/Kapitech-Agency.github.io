@@ -2031,6 +2031,16 @@
   background: var(--bg) !important;
 }
 
+
+.ams-shell .ams-inbox-filter-controls {
+  gap: 8px;
+  align-items: center;
+}
+
+.ams-shell .ams-inbox-filter-controls > div {
+  flex: 0 0 auto;
+}
+
 .ams-shell .ams-inbox-workspace {
   gap: 16px;
 }
