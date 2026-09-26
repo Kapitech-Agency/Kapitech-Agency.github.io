@@ -573,7 +573,7 @@ export const AdminVendors: React.FC = () => {
       {isDrawerOpen && selectedVendor && (
         <div className="fixed inset-0 z-50 flex">
           <div className="fixed inset-0 bg-bg/80 " onClick={() => setIsDrawerOpen(false)} />
-          <div className="relative ml-auto w-full max-w-md bg-panel border-l border-line h-full max-h-[100dvh] flex flex-col justify-between p-4 sm:p-6 z-10 overflow-y-auto ams-drawer-surface">
+          <div className="relative ml-auto w-full max-w-md bg-panel border-l border-line h-full max-h-[100dvh] flex flex-col justify-between p-4 sm:p-6 z-10 overflow-y-auto">
             <div>
               <div className="flex items-center justify-between pb-4 border-b border-line">
                 <div className="flex items-center gap-3">
