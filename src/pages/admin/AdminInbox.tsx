@@ -421,7 +421,7 @@ export const AdminInbox: React.FC = () => {
       case 'inquiry':
       default:
         return (
-          <span className="px-2 py-0.5 rounded-chip bg-accent/10 border border-accent/30 text-danger text-[10px] font-sans flex items-center gap-1 font-semibold">
+          <span className="px-2 py-0.5 rounded-chip bg-info/10 border border-info/30 text-info text-[10px] font-sans flex items-center gap-1 font-semibold">
             <MessageSquare size={10} />
             <span>Client Brief</span>
           </span>
