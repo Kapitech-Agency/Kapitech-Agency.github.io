@@ -476,7 +476,7 @@ export const AdminInbox: React.FC = () => {
   }, [selectedSubmission, crmDeals]);
 
   return (
-    <div className="ams-inbox-page space-y-5 sm:space-y-6">
+    <div className="ams-inbox-page space-y-6 pb-8">
       
       {/* Toast Notification */}
       {toastMessage && (
@@ -497,66 +497,40 @@ export const AdminInbox: React.FC = () => {
         </div>
       )}
 
-      {/* ------------------------------------------------------------- */}
-      {/* 1. EXECUTIVE HEADER & ACTIONS */}
-      {/* ------------------------------------------------------------- */}
-      <div className="ams-page-header flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4">
-        <div>
-          <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
-            <div className="w-8 h-8 rounded-card bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--danger)] shrink-0">
-              <Inbox size={18} />
-            </div>
-            <h1 className="text-xl font-sans font-semibold text-[var(--text)] tracking-tight">
-              {language === 'id' ? 'Kotak Masuk Prospek & Pesan' : 'Leads & Inquiry Inbox'}
-            </h1>
-            <span className="text-xs font-sans py-0.5 px-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-full text-[var(--muted)]">
-              {submissions.length} {language === 'id' ? 'Pesan Aktif' : 'Inbound Briefs'}
-            </span>
+      <header className="ams-dashboard-header mb-6 flex flex-col gap-4 border-b border-line pb-5 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 text-xs text-muted">
+            <span>Kapitech AMS</span>
+            <span aria-hidden="true">/</span>
+            <span className="text-fg">Leads & Inbox</span>
           </div>
-          <p className="text-xs sm:text-sm text-[var(--muted)] font-sans">
+          <h1 className="mt-2 text-xl font-semibold leading-7 tracking-tight text-fg">Leads & Inbox</h1>
+          <p className="mt-1 max-w-2xl text-xs leading-5 text-muted">
             {language === 'id'
-              ? 'Pusat kualifikasi prospek masuk, triage brief klien, respon cepat, dan sinkronisasi instan ke CRM Pipeline.'
-              : 'Unified intake console for qualifying client briefs, dispatching fast responses, and converting deals into CRM.'}
+              ? 'Kelola inquiry masuk, lakukan triage, balas dengan cepat, dan teruskan peluang yang siap ke CRM.'
+              : 'Triage inbound inquiries, respond quickly, and move qualified opportunities into CRM.'}
           </p>
         </div>
-
-        {/* Global Controls */}
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Email alerts guide modal button */}
-          <button
-            onClick={() => setIsEmailModalOpen(true)}
-            className="min-h-10 px-3.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center gap-1.5"
-            title="Configure forwarding rules"
-          >
-            <Mail size={14} className="text-[var(--danger)]" />
+        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+          <span className="text-[11px] tabular-nums text-muted">{submissions.length} inbound</span>
+          <button type="button" onClick={() => setIsEmailModalOpen(true)} className="ams-action inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-line bg-transparent px-3 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" title="Configure forwarding rules">
+            <Mail size={14} />
             <span>{language === 'id' ? 'Rules Email' : 'Email Alerts'}</span>
           </button>
-
-          {/* Mark all read if new available */}
           {metrics.newCount > 0 && (
-            <button
-              onClick={handleMarkAllRead}
-              className="min-h-10 px-3.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center gap-1.5"
-            >
+            <button type="button" onClick={handleMarkAllRead} className="ams-action inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-line bg-transparent px-3 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
               <Check size={14} />
               <span>{language === 'id' ? 'Tandai Dibaca' : 'Mark Read'}</span>
             </button>
           )}
-
-
-
-          {/* Export CSV */}
           {submissions.length > 0 && (
-            <button
-              onClick={handleExportCSV}
-              className="min-h-10 px-3.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center gap-1.5"
-            >
+            <button type="button" onClick={handleExportCSV} className="ams-action inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-line bg-transparent px-3 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
               <Download size={14} />
               <span>Export CSV</span>
             </button>
           )}
         </div>
-      </div>
+      </header>
 
       {/* ------------------------------------------------------------- */}
       {/* 2. EXECUTIVE KPI SUMMARY RIBBON */}
