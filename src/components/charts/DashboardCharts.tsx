@@ -159,6 +159,7 @@ export const BarChart: React.FC<{
   const innerHeight = height - top - bottom;
   const slot = innerWidth / Math.max(data.length, 1);
   const active = activeIndex === null ? null : data[activeIndex];
+  const tooltipLeft = activeIndex === null ? 50 : activeIndex === 0 ? 28 : activeIndex === data.length - 1 ? 72 : 50;
 
   return (
     <div className="min-w-0" role="img" aria-label={ariaLabel}>
@@ -184,7 +185,7 @@ export const BarChart: React.FC<{
           })}
         </svg>
         {active && (
-          <div className="pointer-events-none absolute left-1/2 top-3 z-10 w-[190px] -translate-x-1/2 rounded-control border border-line bg-bg px-3 py-2 text-xs">
+          <div className="pointer-events-none absolute top-3 z-10 w-[190px] -translate-x-1/2 rounded-control border border-line bg-bg px-3 py-2 text-xs" style={{ left: `${tooltipLeft}%` }}>
             <p className="font-semibold text-fg">{active.label}</p>
             <div className="mt-1 flex justify-between gap-3 text-muted"><span>{valueLabel}</span><span className="tabular-nums text-fg">{valueFormat(active.value)}</span></div>
             {active.detail && <p className="mt-1 text-muted">{active.detail}</p>}
