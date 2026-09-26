@@ -641,7 +641,7 @@ export const AdminInvoicing: React.FC = () => {
             <span aria-hidden="true">/</span>
             <span className="text-fg">Finance &amp; Invoicing</span>
           </div>
-          <h1 className="mt-2 text-xl font-semibold leading-7 tracking-tight text-fg">{language === 'id' ? 'Keuangan &amp; Invoicing' : 'Finance &amp; Invoicing'}</h1>
+          <h1 className="mt-2 text-xl font-semibold leading-7 tracking-[-0.01em] text-fg">{language === 'id' ? 'Keuangan &amp; Invoicing' : 'Finance &amp; Invoicing'}</h1>
           <p className="mt-1 max-w-2xl text-xs leading-5 text-muted">
             {language === 'id' ? 'Pantau kas masuk, piutang, pengeluaran, dan invoice dari data keuangan aktual.' : 'Monitor collected revenue, receivables, expenses, and invoices from current financial data.'}
           </p>
@@ -733,7 +733,7 @@ export const AdminInvoicing: React.FC = () => {
                     <span className="text-xs leading-4 text-muted">{metric.label}</span>
                     <Icon size={16} className={'shrink-0 ' + metric.tone} strokeWidth={1.8} />
                   </div>
-                  <div className="mt-3 truncate text-lg font-medium leading-7 tracking-tight tabular-nums text-fg sm:text-xl">{metric.value}</div>
+                  <div className="mt-3 truncate text-lg font-medium leading-7 tracking-[-0.01em] tabular-nums text-fg sm:text-xl">{metric.value}</div>
                   <div className="mt-1 min-h-4 text-[11px] leading-4 text-muted">{metric.context}</div>
                 </div>
                 );
@@ -886,7 +886,7 @@ export const AdminInvoicing: React.FC = () => {
                   ) : (
                     <>
                   <div className="overflow-x-auto rounded-card border border-line bg-panel">
-                    <table className="w-full min-w-[1040px] border-collapse text-left text-xs">
+                    <table className="ams-table w-full min-w-[1040px] border-collapse text-left text-xs">
                       <thead className="sticky top-0 z-10 bg-panel">
                         <tr>
                           <th className="px-4 py-3 font-medium text-muted">Invoice</th>
@@ -966,7 +966,7 @@ export const AdminInvoicing: React.FC = () => {
                   ) : (
                     <>
                   <div className="overflow-x-auto rounded-card border border-line bg-panel">
-                    <table className="w-full min-w-[820px] border-collapse text-left text-xs">
+                    <table className="ams-table w-full min-w-[820px] border-collapse text-left text-xs">
                       <thead className="sticky top-0 z-10 bg-panel">
                         <tr>
                           <th className="px-4 py-3 font-medium text-muted">Date</th>
@@ -1220,7 +1220,7 @@ export const AdminInvoicing: React.FC = () => {
               <div className="sm:text-right"><p className="text-xs font-medium text-muted">Invoice metadata</p><p className="mt-1 text-xs tabular-nums text-fg">Issue {detailInvoice.issueDate}</p><p className="text-xs tabular-nums text-fg">Due {detailInvoice.dueDate}</p><p className="text-xs text-muted">{detailInvoice.currency}</p></div>
             </div>
             <div className="overflow-x-auto rounded-control border border-line">
-              <table className="w-full min-w-[520px] text-xs">
+              <table className="ams-table w-full min-w-[520px] text-xs">
                 <thead><tr className="border-b border-line text-muted"><th className="px-3 py-2 text-left font-medium">Description</th><th className="px-3 py-2 text-right font-medium">Qty</th><th className="px-3 py-2 text-right font-medium">Unit price</th><th className="px-3 py-2 text-right font-medium">Amount</th></tr></thead>
                 <tbody>{detailInvoice.items.map((item) => <tr key={item.id} className="border-b border-line last:border-0"><td className="px-3 py-2.5 text-fg">{item.description}</td><td className="px-3 py-2.5 text-right tabular-nums text-fg">{item.quantity}</td><td className="px-3 py-2.5 text-right tabular-nums text-fg">{formatAmount(item.unitPrice, detailInvoice.currency)}</td><td className="px-3 py-2.5 text-right tabular-nums text-fg">{formatAmount(item.amount, detailInvoice.currency)}</td></tr>)}</tbody>
               </table>
