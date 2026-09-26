@@ -77,7 +77,7 @@ const emptyLineItem = (): InvoiceLineItem => ({
   amount: 0
 });
 
-const cardClass = 'ams-dashboard-card rounded-card border border-line bg-panel p-4 sm:p-5';
+const cardClass = 'ams-dashboard-card rounded-card border border-line bg-panel p-4';
 const actionClass = 'inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-line bg-transparent px-3 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50';
 const primaryClass = 'inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control bg-accent px-3.5 text-xs font-semibold text-white transition-colors hover:bg-accent/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50';
 const fieldClass = 'min-h-10 w-full rounded-control border border-line bg-bg px-3 text-xs text-fg outline-none transition-colors placeholder:text-muted focus:border-accent';
@@ -887,7 +887,7 @@ export const AdminInvoicing: React.FC = () => {
                     <>
                   <div className="overflow-x-auto rounded-card border border-line bg-panel">
                     <table className="w-full min-w-[1040px] border-collapse text-left text-xs">
-                      <thead>
+                      <thead className="sticky top-0 z-10 bg-panel">
                         <tr>
                           <th className="px-4 py-3 font-medium text-muted">Invoice</th>
                           <th className="px-4 py-3 font-medium text-muted">Client / project</th>
@@ -960,14 +960,14 @@ export const AdminInvoicing: React.FC = () => {
                   {filteredExpenses.length === 0 ? (
                     <EmptyState
                       title={language === 'id' ? 'Belum ada pengeluaran' : 'No expenses found'}
-                      description={expenseTypeFilter !== 'all' ? 'No actual expense records match this filter.' : 'Only actual expense records are shown. No placeholder rows are used.'}
+                      description={expenseSearch || expenseTypeFilter !== 'all' ? 'No actual expense records match the current search or filter.' : 'Only actual expense records are shown. No placeholder rows are used.'}
                       action={canManageInvoices ? <button type="button" onClick={() => setExpenseModalOpen(true)} className={primaryClass}><Plus size={14} />Record expense</button> : undefined}
                     />
                   ) : (
                     <>
                   <div className="overflow-x-auto rounded-card border border-line bg-panel">
                     <table className="w-full min-w-[820px] border-collapse text-left text-xs">
-                      <thead>
+                      <thead className="sticky top-0 z-10 bg-panel">
                         <tr>
                           <th className="px-4 py-3 font-medium text-muted">Date</th>
                           <th className="px-4 py-3 font-medium text-muted">Type / category</th>
