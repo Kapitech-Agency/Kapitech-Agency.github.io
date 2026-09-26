@@ -11,6 +11,7 @@ import {
   Receipt,
   FileCheck2
 } from 'lucide-react';
+import { Modal } from '../../components/ui/Modal';
 import { useLanguage } from '../../lib/LanguageContext';
 import { saveCrmLead, CrmLead } from '../../lib/crmStore';
 import { saveAgencyProject, AgencyProject } from '../../lib/projectStore';
@@ -229,11 +230,8 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 overflow-y-auto overscroll-contain">
-      <div className="fixed inset-0 bg-black/80" onClick={onClose} />
-      <div className="relative w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl bg-panel border-0 sm:border sm:border-line rounded sm:rounded-card  z-10 flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
-        
-        {/* Sticky Header */}
+    <Modal open={true} onClose={onClose} size="lg" title={language === 'id' ? 'Impor Data & Migrasi Skema' : 'Data Migration & CSV Import'} description={language === 'id' ? 'Unggah file spreadsheet CSV dengan pemetaan otomatis.' : 'Upload structured CSV templates with instant schema ingestion.'}>
+        <div className="flex-1 min-h-0 space-y-4 overflow-y-auto custom-scrollbar">
         <div className="sticky top-0 z-20 bg-panel/95  px-5 sm:px-6 py-4 border-b border-line flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-control bg-accent/10 text-accent-text border border-accent/30 flex items-center justify-center shrink-0">
@@ -392,6 +390,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
         </div>
 
       </div>
-    </div>
+        </div>
+    </Modal>
   );
 };
