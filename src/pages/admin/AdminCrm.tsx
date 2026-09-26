@@ -366,74 +366,39 @@ export const AdminCrm: React.FC = () => {
           <button type="button" onClick={() => deleteTarget && void confirmDeleteLead(deleteTarget.id)} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
         </div>
       </Modal>
-      <div className="ams-leads-page space-y-6">
+      <div className="ams-leads-page space-y-6 pb-8">
       
-      {/* 1. Header & Actions */}
-      <div className="ams-page-header flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-3">
-<h1 className="ams-page-title flex items-center gap-2.5">\n              <Users className="text-[var(--accent-text)] shrink-0" size={22} />
-              <span>{t('admin.crm.title')}</span>
-              <span className="px-2 py-0.5 rounded-badge text-[10px] font-sans font-semibold normal-case tracking-normal bg-[var(--accent)]/15 text-[var(--danger)] border border-[var(--accent)]/30">
-                Enterprise
-              </span>
-            </h1>
+      <header className="ams-dashboard-header mb-6 flex flex-col gap-4 border-b border-line pb-5 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 text-xs text-muted">
+            <span>Kapitech AMS</span>
+            <span aria-hidden="true">/</span>
+            <span className="text-fg">CRM</span>
           </div>
-          <p className="text-xs text-[var(--muted)] mt-1.5 font-sans max-w-2xl">
+          <h1 className="mt-2 text-xl font-semibold leading-7 tracking-tight text-fg">{t('admin.crm.title')}</h1>
+          <p className="mt-1 max-w-2xl text-xs leading-5 text-muted">
             {language === 'id'
-              ? 'Lacak progres tahapan deal, kualifikasi brief teknis klien, dan konversi peluang menjadi sprint proyek aktif.'
-              : 'Track deal stages, qualify inbound scoping, and convert won opportunities directly to active project sprints.'}
+              ? 'Kelola pipeline prospek, tahapan deal, nilai peluang, dan follow-up tim dalam satu workspace.'
+              : 'Manage lead pipeline, deal stages, opportunity value, and team follow-up from one workspace.'}
           </p>
         </div>
-
-        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
-          {/* Currency Switcher */}
-          <div className="h-10 p-1 flex items-center rounded-control bg-[var(--panel)] border border-[var(--line)] font-sans text-xs">
-            <button
-              onClick={() => handleCurrencyToggle('IDR')}
-              className={`min-h-10 px-3 rounded-control transition-colors font-medium flex items-center justify-center ${
-                currency === 'IDR'
-                  ? 'bg-[var(--accent)] text-[var(--text)]'
-                  : 'text-[var(--muted)] hover:text-[var(--text)]'
-              }`}
-            >
-              IDR (Rp)
-            </button>
-            <button
-              onClick={() => handleCurrencyToggle('USD')}
-              className={`min-h-10 px-3 rounded-control transition-colors font-medium flex items-center justify-center ${
-                currency === 'USD'
-                  ? 'bg-[var(--accent)] text-[var(--text)]'
-                  : 'text-[var(--muted)] hover:text-[var(--text)]'
-              }`}
-            >
-              USD ($)
-            </button>
+        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+          <div className="flex h-10 items-center rounded-control border border-line bg-transparent p-0.5">
+            <button type="button" onClick={() => handleCurrencyToggle('IDR')} className={"min-h-9 rounded-control px-3 text-xs font-medium transition-colors " + (currency === 'IDR' ? 'bg-bg text-fg' : 'text-muted hover:text-fg')}>IDR</button>
+            <button type="button" onClick={() => handleCurrencyToggle('USD')} className={"min-h-9 rounded-control px-3 text-xs font-medium transition-colors " + (currency === 'USD' ? 'bg-bg text-fg' : 'text-muted hover:text-fg')}>USD</button>
           </div>
-
-          <button
-            onClick={() => exportCrmLeadsToCsv(filteredLeads)}
-            className="min-h-10 px-3.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center justify-center gap-2"
-            title={t('admin.action.exportCsv')}
-          >
-            <Download size={14} className="text-[var(--muted)]" />
-            <span className="hidden sm:inline">{t('admin.action.exportCsv')}</span>
+          <button type="button" onClick={() => exportCrmLeadsToCsv(filteredLeads)} className="ams-action inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-line bg-transparent px-3 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" title={t('admin.action.exportCsv')}>
+            <Download size={14} />
+            <span>{t('admin.action.exportCsv')}</span>
           </button>
-
           {canManageCrm && (
-                        <>
-                          <button
-                            onClick={() => handleOpenAddModal('new')}
-                            disabled={!canManageCrm}
-                            className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-medium transition-colors flex items-center justify-center gap-2"
-                          >
-                            <Plus size={15} />
-                            <span>{t('admin.crm.addDeal')}</span>
-                          </button>
-                        </>
-                      )}
+            <button type="button" onClick={() => handleOpenAddModal('new')} className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control bg-accent px-3 text-xs font-semibold text-white transition-colors hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+              <Plus size={14} />
+              <span>{t('admin.crm.addDeal')}</span>
+            </button>
+          )}
         </div>
-      </div>
+      </header>
 
       {/* Toast Alert */}
       {statusMessage && (
