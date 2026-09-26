@@ -271,47 +271,41 @@ export const AdminClients: React.FC = () => {
         </div>
       )}
 
-      {/* 2. Key Metrics Summary (3 cols) */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
-        <div className="ams-kpi">
-          <div className="flex items-center justify-between text-muted mb-2">
-            <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.totalClients')}</span>
-
-          </div>
-          <div className="ams-kpi-value">
-            {clients.length}
-          </div>
-          <div className="mt-2 text-xs text-muted">
-            {language === 'id' ? 'Klien Enterprise & SME' : 'Across Enterprise & SME tiers'}
+      {/* 2. Client KPI strip */}
+      <section aria-labelledby="client-snapshot-title">
+        <div className="mb-3 flex items-end justify-between gap-3">
+          <div>
+            <h2 id="client-snapshot-title" className="text-sm font-semibold text-fg">{language === 'id' ? 'Ringkasan klien' : 'Client snapshot'}</h2>
+            <p className="mt-1 text-xs text-muted">{language === 'id' ? 'Sinyal utama dari direktori klien saat ini.' : 'The key signals from the current client directory.'}</p>
           </div>
         </div>
-
-        <div className="ams-kpi">
-          <div className="flex items-center justify-between text-muted mb-2">
-            <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.activeAccounts')}</span>
-
+        <div className="grid grid-cols-2 gap-y-6 border-y border-line py-5 sm:grid-cols-3">
+          <div className="min-w-0 px-1 sm:px-4 sm:first:pl-1">
+            <div className="flex items-start justify-between gap-3">
+              <span className="text-xs leading-4 text-muted">{t('admin.client.totalClients')}</span>
+              <Users size={16} strokeWidth={1.8} className="shrink-0 text-muted" aria-hidden="true" />
+            </div>
+            <div className="mt-3 text-2xl font-medium leading-8 tracking-[-0.02em] tabular-nums text-fg">{clients.length}</div>
+            <div className="mt-1 min-h-4 text-xs leading-4 text-muted">{language === 'id' ? 'Seluruh akun yang terdaftar' : 'All registered client accounts'}</div>
           </div>
-          <div className="ams-kpi-value text-success">
-            {activeAccountsCount}
+          <div className="min-w-0 border-l border-line px-1 sm:px-4">
+            <div className="flex items-start justify-between gap-3">
+              <span className="text-xs leading-4 text-muted">{t('admin.client.activeAccounts')}</span>
+              <Activity size={16} strokeWidth={1.8} className="shrink-0 text-success" aria-hidden="true" />
+            </div>
+            <div className="mt-3 text-2xl font-medium leading-8 tracking-[-0.02em] tabular-nums text-success">{activeAccountsCount}</div>
+            <div className="mt-1 min-h-4 text-xs leading-4 text-muted">{language === 'id' ? 'Akun dengan status aktif' : 'Accounts currently active'}</div>
           </div>
-          <div className="mt-2 text-xs text-muted">
-            {language === 'id' ? 'Retainer & Sprint Aktif' : 'Active Retainers & Sprints'}
+          <div className="col-span-2 min-w-0 border-t border-line px-1 pt-5 sm:col-span-1 sm:border-l sm:border-t-0 sm:px-4 sm:pt-0">
+            <div className="flex items-start justify-between gap-3">
+              <span className="text-xs leading-4 text-muted">{t('admin.client.lifetimeSpend')}</span>
+              <span className="shrink-0 text-xs font-medium text-muted tabular-nums">{currency}</span>
+            </div>
+            <div className="mt-3 text-2xl font-medium leading-8 tracking-[-0.02em] tabular-nums text-fg">{formatAmount(totalLifetimeSpend, currency)}</div>
+            <div className="mt-1 min-h-4 text-xs leading-4 text-muted">{language === 'id' ? 'Nilai billed kumulatif' : 'Cumulative billed value'}</div>
           </div>
         </div>
-
-        <div className="ams-kpi">
-          <div className="flex items-center justify-between text-muted mb-2">
-            <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.lifetimeSpend')}</span>
-
-          </div>
-          <div className="ams-kpi-value">
-            {formatAmount(totalLifetimeSpend, currency)}
-          </div>
-          <div className="mt-2 text-xs text-muted">
-            {language === 'id' ? 'Total Nilai Kontrak Billed' : 'Cumulative Billed Value'}
-          </div>
-        </div>
-      </div>
+      </section>
 
       {/* 3. Search & Filter Bar */}
       <div className="w-full flex flex-col sm:flex-row sm:items-end gap-3">
