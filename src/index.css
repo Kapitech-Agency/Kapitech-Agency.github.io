@@ -1345,77 +1345,71 @@
 }
 
 /* AMS PORTAL SURFACES
-   Portal content is rendered outside .ams-shell. Keep it on the same
-   design-system tokens as the application shell without legacy glass styles. */
-.ams-popover-surface {
-  background: var(--ams-bg);
-  color: var(--ams-text);
-  border: 1px solid var(--ams-line);
-  border-radius: var(--ams-radius-control);
+   Portals mount inside .ams-shell so they inherit the canonical AMS tokens.
+   No legacy glass, blur, or alternate portal palette is allowed. */
+.ams-shell .ams-popover-surface {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
   box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   isolation: isolate;
 }
 
-.ams-popover-surface .ams-dropdown-item {
+.ams-shell .ams-popover-surface .ams-dropdown-item {
   min-height: 36px;
   padding: 8px 10px;
   background: transparent;
-  color: var(--ams-muted);
+  color: var(--muted);
   border-radius: 6px;
 }
 
-.ams-popover-surface .ams-dropdown-item:hover,
-.ams-popover-surface .ams-dropdown-item[data-active="true"] {
-  background: var(--ams-panel-hover);
-  color: var(--ams-text);
+.ams-shell .ams-popover-surface .ams-dropdown-item:hover,
+.ams-shell .ams-popover-surface .ams-dropdown-item[data-active="true"] {
+  background: var(--panel-hover);
+  color: var(--text);
 }
 
-.ams-popover-surface .ams-dropdown-item[data-selected="true"] {
-  background: color-mix(in srgb, var(--ams-accent) 14%, transparent);
-  color: var(--ams-text);
+.ams-shell .ams-popover-surface .ams-dropdown-item[data-selected="true"] {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--text);
   font-weight: 600;
 }
 
-.ams-popover-surface .ams-dropdown-item:focus-visible {
-  outline: 2px solid var(--ams-accent);
+.ams-shell .ams-popover-surface .ams-dropdown-item:focus-visible {
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
-.ams-notification-surface {
-  background: var(--ams-bg);
-  color: var(--ams-text);
-  border: 1px solid var(--ams-line);
-  border-radius: var(--ams-radius-card);
+.ams-shell .ams-notification-surface {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 12px;
   box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   isolation: isolate;
 }
 
-.ams-notification-header {
-  background: var(--ams-bg);
+.ams-shell .ams-notification-header,
+.ams-shell .ams-notification-list,
+.ams-shell .ams-notification-item {
+  background: var(--panel);
 }
 
-.ams-notification-list {
-  background: var(--ams-bg);
+.ams-shell .ams-notification-item:hover,
+.ams-shell .ams-notification-item:focus-visible {
+  background: var(--panel-hover);
 }
 
-.ams-notification-item {
-  background: var(--ams-bg);
+.ams-shell .ams-notification-item.is-unread {
+  background: color-mix(in srgb, var(--accent) 8%, var(--panel));
 }
 
-.ams-notification-item:hover,
-.ams-notification-item:focus-visible {
-  background: var(--ams-panel-hover);
-}
-
-.ams-notification-item.is-unread {
-  background: color-mix(in srgb, var(--ams-accent) 8%, transparent);
-}
-
-.ams-notification-item:last-child {
+.ams-shell .ams-notification-item:last-child {
   border-bottom: 0;
 }
 
