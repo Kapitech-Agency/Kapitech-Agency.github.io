@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Activity,
+  BarChart3,
   AlertTriangle,
   ArrowUpRight,
   CircleDollarSign,
@@ -87,27 +88,27 @@ function MetricCard({
   label: string;
   value: string | number;
   icon: React.ElementType;
-  tone: 'success' | 'warning' | 'info' | 'neutral';
+  tone: 'accent' | 'success' | 'warning' | 'info';
   meta?: React.ReactNode;
 }) {
-  const toneClasses = {
-    success: 'border-success/20 bg-success/10 text-success',
-    warning: 'border-warning/20 bg-warning/10 text-warning',
-    info: 'border-info/20 bg-info/10 text-info',
-    neutral: 'border-line bg-bg text-muted',
+  const iconClasses = {
+    accent: 'border-accent/25 bg-accent/10 text-accent-text',
+    success: 'border-success/25 bg-success/10 text-success',
+    warning: 'border-warning/25 bg-warning/10 text-warning',
+    info: 'border-info/25 bg-info/10 text-info',
   }[tone];
 
   return (
-    <section className="rounded-card border border-line bg-panel p-4" aria-label={label}>
+    <section className="min-w-0 bg-transparent" aria-label={label}>
       <div className="flex items-start justify-between gap-3">
-        <span className="text-xs leading-4 text-muted">{label}</span>
-        <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-control border ${toneClasses}`}>
-          <Icon size={15} strokeWidth={1.8} />
+        <span className="min-w-0 text-xs leading-4 text-muted">{label}</span>
+        <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-control border ${iconClasses}`} aria-hidden="true">
+          <Icon size={16} strokeWidth={1.8} />
         </span>
       </div>
-      <div className="mt-4">
-        <div className="text-xl font-medium leading-7 tracking-tight tabular-nums text-fg">{value}</div>
-        {meta && <div className="mt-1.5 text-xs leading-4 text-muted">{meta}</div>}
+      <div className="mt-3">
+        <div className="text-2xl font-medium leading-8 tracking-tight tabular-nums text-fg">{value}</div>
+        {meta && <div className="mt-1 text-xs leading-4 text-muted">{meta}</div>}
       </div>
     </section>
   );
@@ -216,10 +217,11 @@ export const GlobalExecutiveDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-col gap-4 border-b border-line pb-4 sm:flex-row sm:items-end sm:justify-between">
+      <header className="ams-page-header flex flex-col gap-4 border-b border-line pb-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
-          <h1 className="text-xl font-semibold leading-7 tracking-tight text-fg">
-            Executive Overview &amp; Operations
+          <h1 className="ams-page-title text-xl font-semibold leading-7 tracking-tight text-fg">
+            <BarChart3 aria-hidden="true" />
+            <span>Executive Overview &amp; Operations</span>
           </h1>
           <p className="mt-1 text-xs leading-4 text-muted">
             Current operational snapshot for pipeline, receivables, project delivery, and priorities.
@@ -246,14 +248,23 @@ export const GlobalExecutiveDashboard: React.FC = () => {
           <ShieldAlert className="mt-0.5 shrink-0 text-danger" size={17} />
           <p className="text-xs leading-5 text-fg">MFA is required before accessing protected AMS functions.</p>
         </div>
-        <button
-          type="button"
-          onClick={() => void fetchOverview()}
-          disabled={isLoading}
-          className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-control border border-danger/40 bg-danger/10 px-3 text-xs font-semibold text-danger transition-colors hover:bg-danger/15 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger"
-        >
-          {isLoading ? 'Retrying...' : retryLabel}
-        </button>
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+          <button
+            type="button"
+            onClick={() => void fetchOverview()}
+            disabled={isLoading}
+            className="inline-flex min-h-10 w-full shrink-0 items-center justify-center gap-1.5 rounded-control border border-danger/40 bg-danger/10 px-3 text-xs font-semibold text-danger transition-colors hover:bg-danger/15 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger sm:w-auto"
+          >
+            <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
+            {isLoading ? 'Retrying...' : retryLabel}
+          </button>
+          <Link
+            to="/admin/settings?tab=security"
+            className="inline-flex min-h-10 w-full shrink-0 items-center justify-center gap-1.5 rounded-control border border-line bg-panel px-3 text-xs font-medium text-muted transition-colors hover:bg-panel-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:w-auto"
+          >
+            Security &amp; MFA <ArrowUpRight size={13} />
+          </Link>
+        </div>
       </div>
 
       {error && (
@@ -267,7 +278,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
           label="Revenue Collected"
           value={formatCurrency(metrics.revenueCollected)}
           icon={CircleDollarSign}
-          tone="success"
+          tone="accent"
           meta={<>Billed total: <span className="font-medium tabular-nums text-fg">{formatCurrency(metrics.totalBilled)}</span></>}
         />
         <MetricCard
@@ -293,7 +304,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
           label="Active Projects"
           value={metrics.activeProjects}
           icon={ClipboardCheck}
-          tone="neutral"
+          tone="success"
           meta={metrics.projectsAtRisk > 0 ? (
             <span className="text-warning">{metrics.projectsAtRisk} at risk</span>
           ) : (
