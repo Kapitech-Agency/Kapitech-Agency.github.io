@@ -136,7 +136,7 @@ const Metric = ({
     <div className="min-w-0 px-1">
       <div className="flex items-start justify-between gap-3">
         <span className="text-xs leading-4 text-muted">{label}</span>
-        <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-control border border-line ${toneClass[tone]}`} aria-hidden="true">
+        <span className={`flex h-7 w-7 shrink-0 items-center justify-center ${toneClass[tone]}`.replace("bg-accent/10 text-accent-text","text-accent-text bg-transparent").replace("bg-success/10 text-success","text-success bg-transparent").replace("bg-info/10 text-info","text-info bg-transparent").replace("bg-warning/10 text-warning","text-warning bg-transparent").replace("bg-danger/10 text-danger","text-danger bg-transparent").replace("bg-bg text-muted","text-muted bg-transparent")}` aria-hidden="true">
           <Icon size={16} strokeWidth={1.8} />
         </span>
       </div>
@@ -360,7 +360,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
                 <p className="mt-1 text-xs text-muted">The few signals worth checking first.</p>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-y-6 sm:grid-cols-3 min-[1100px]:grid-cols-6">
+            <div className="grid grid-cols-2 gap-y-6 border-y border-line py-5 sm:grid-cols-3 min-[1100px]:grid-cols-6">
               <Metric label="Revenue collected" value={formatCurrency(metrics?.revenueCollected)} icon={CircleDollarSign} href="/admin/invoicing" context={financials?.revenueThisMonth != null ? `${formatCurrency(financials.revenueThisMonth)} this month` : 'Financial access required'} />
               <Metric label="Outstanding" value={formatCurrency(metrics?.outstandingReceivables)} icon={WalletCards} tone="warning" href="/admin/invoicing" context={metrics?.overdueReceivables ? `${formatCurrency(metrics.overdueReceivables)} overdue` : 'No overdue balance reported'} />
               <Metric label="Open leads" value={metrics?.openLeads ?? 0} icon={Users} tone="info" href="/admin/crm" context={metrics?.activePipeline != null ? `${formatCurrency(metrics.activePipeline)} active pipeline` : 'CRM access required'} />
