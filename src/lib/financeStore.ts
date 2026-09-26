@@ -6,7 +6,7 @@
 
 import { api } from './apiClient';
 
-export type InvoiceStatus = 'draft' | 'sent' | 'partially_paid' | 'paid' | 'overdue';
+export type InvoiceStatus = 'draft' | 'sent' | 'partially_paid' | 'paid' | 'overdue' | 'cancelled';
 
 export interface InvoiceLineItem {
   id: string;
