@@ -166,7 +166,7 @@ export const AdminApprovals: React.FC = () => {
       return <span className="px-2 py-0.5 rounded text-xs font-sans bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 normal-case font-semibold">High Risk</span>;
     }
     if (l === 'medium') {
-      return <span className="px-2 py-0.5 rounded text-xs font-sans bg-amber-500/10 text-[var(--warning)] border border-[var(--warning)]/30 normal-case font-semibold">Medium Risk</span>;
+      return <span className="px-2 py-0.5 rounded text-xs font-sans bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/30 normal-case font-semibold">Medium Risk</span>;
     }
     return <span className="px-2 py-0.5 rounded text-xs font-sans bg-[var(--panel-hover)] text-[var(--muted)] border border-[var(--line)] normal-case font-semibold">Low Risk</span>;
   };
