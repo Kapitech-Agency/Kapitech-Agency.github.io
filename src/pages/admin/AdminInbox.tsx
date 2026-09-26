@@ -53,10 +53,12 @@ import { ConvertToCrmModal } from '../../components/admin/inbox/ConvertToCrmModa
 import { Modal } from '../../components/ui/Modal';
 import { useLanguage } from '../../lib/LanguageContext';
 import { api } from '../../lib/apiClient';
+import { hasAdminPermission } from '../../lib/adminAuth';
 
 export const AdminInbox: React.FC = () => {
   const { language } = useLanguage();
   const navigate = useNavigate();
+  const canManageCrm = hasAdminPermission('canManageCrm');
 
   // Core Data & Currency
   const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
@@ -139,6 +141,11 @@ export const AdminInbox: React.FC = () => {
 
   // Status update
   const handleStatusChange = async (id: string, newStatus: ContactSubmission['status']) => {
+    if (!canManageCrm) {
+      setToastMessage({ text: language === 'id' ? 'Anda tidak memiliki izin mengelola Leads & Inbox.' : 'You do not have CRM permission.' });
+      window.setTimeout(() => setToastMessage(null), 3000);
+      return;
+    }
     setIsUpdating(true);
     try {
       const res = await api.leads.update(id, { status: newStatus });
@@ -153,6 +160,11 @@ export const AdminInbox: React.FC = () => {
 
   // Priority update
   const handlePriorityChange = async (id: string, newPriority: ContactSubmission['priority']) => {
+    if (!canManageCrm) {
+      setToastMessage({ text: language === 'id' ? 'Anda tidak memiliki izin mengelola Leads & Inbox.' : 'You do not have CRM permission.' });
+      window.setTimeout(() => setToastMessage(null), 3000);
+      return;
+    }
     try {
       const res = await api.leads.update(id, { priority: newPriority });
       if (!res.success) throw new Error(res.error || 'Priority update failed');
@@ -164,6 +176,11 @@ export const AdminInbox: React.FC = () => {
 
   // Assignee update
   const handleAssigneeChange = async (id: string, assignee: string) => {
+    if (!canManageCrm) {
+      setToastMessage({ text: language === 'id' ? 'Anda tidak memiliki izin mengelola Leads & Inbox.' : 'You do not have CRM permission.' });
+      window.setTimeout(() => setToastMessage(null), 3000);
+      return;
+    }
     try {
       const res = await api.leads.update(id, { assignedTo: assignee });
       if (!res.success) throw new Error(res.error || 'Assignee update failed');
@@ -175,6 +192,11 @@ export const AdminInbox: React.FC = () => {
 
   // Star toggle
   const handleToggleStar = async (e: React.MouseEvent, id: string, currentStarred?: boolean) => {
+    if (!canManageCrm) {
+      setToastMessage({ text: language === 'id' ? 'Anda tidak memiliki izin mengelola Leads & Inbox.' : 'You do not have CRM permission.' });
+      window.setTimeout(() => setToastMessage(null), 3000);
+      return;
+    }
     e.stopPropagation();
     try {
       const res = await api.leads.update(id, { starred: !currentStarred });
@@ -187,7 +209,7 @@ export const AdminInbox: React.FC = () => {
 
   // Save internal notes
   const handleSaveInternalNote = async () => {
-    if (!selectedSubmission) return;
+    if (!selectedSubmission || !canManageCrm) return;
     setIsSavingNote(true);
     try {
       const res = await api.leads.update(selectedSubmission.id, { internalNotes: internalNoteDraft });
@@ -206,6 +228,7 @@ export const AdminInbox: React.FC = () => {
 
   // Delete submission
   const handleDelete = async (id: string) => {
+    if (!canManageCrm) return;
     setConfirmAction({ type: 'delete', id });
   };
 
@@ -228,6 +251,7 @@ export const AdminInbox: React.FC = () => {
 
   // Mark all new as In-Review
   const handleMarkAllRead = async () => {
+    if (!canManageCrm) return;
     const count = submissions.filter(s => s.status === 'new').length;
     if (count > 0) setConfirmAction({ type: 'mark-read', count });
   };
@@ -948,6 +972,7 @@ export const AdminInbox: React.FC = () => {
                       <div className="flex items-center gap-2 shrink-0">
                         <button
                           onClick={(e) => handleToggleStar(e, item.id, item.starred)}
+                          disabled={!canManageCrm}
                           className="min-h-10 min-w-10 rounded-control flex items-center justify-center text-[var(--muted)] hover:text-[var(--warning)] hover:bg-[var(--warning)]/10 transition-colors focus-visible:outline-none" aria-label={item.starred ? "Unstar brief" : "Star brief"}
                         >
                           <Star size={13} className={item.starred ? 'fill-[var(--warning)] text-[var(--warning)]' : ''} />
@@ -1095,6 +1120,7 @@ export const AdminInbox: React.FC = () => {
                     {/* Quick Canned Response Template Picker */}
                     <button
                       onClick={() => setIsCannedModalOpen(true)}
+                      disabled={!canManageCrm}
                       className="h-9 px-3.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--text)] border border-[var(--line)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
                     >
                       <Sparkles size={13} className="text-[var(--danger)]" />
@@ -1306,7 +1332,7 @@ export const AdminInbox: React.FC = () => {
                       <div className="flex items-center justify-end">
                         <button
                           type="button"
-                          disabled={isSavingNote}
+                          disabled={isSavingNote || !canManageCrm}
                           onClick={handleSaveInternalNote}
                           className="min-h-10 px-4 py-2 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 "
                         >
@@ -1322,7 +1348,7 @@ export const AdminInbox: React.FC = () => {
                         <User size={13} className="text-[var(--success)]" />
                         <span>{language === 'id' ? 'Penanggung Jawab Kualifikasi' : 'Assigned Triage Lead'}</span>
                       </label>
-                      <CustomSelect value={selectedSubmission.assignedTo || 'Lead Full-Stack Tech'} onChange={(value) => handleAssigneeChange(selectedSubmission.id, value)} options={[{value:'Lead Full-Stack Tech',label:'Lead Full-Stack Tech (Engineering)'},{value:'Senior UI/UX Designer',label:'Senior UI/UX Designer (Design)'},{value:'Technical Project Manager',label:'Technical Project Manager (Scoping)'},{value:'Business Director',label:'Business Director (Accounts)'}]} />
+                      <CustomSelect disabled={!canManageCrm} value={selectedSubmission.assignedTo || 'Lead Full-Stack Tech'} onChange={(value) => handleAssigneeChange(selectedSubmission.id, value)} options={[{value:'Lead Full-Stack Tech',label:'Lead Full-Stack Tech (Engineering)'},{value:'Senior UI/UX Designer',label:'Senior UI/UX Designer (Design)'},{value:'Technical Project Manager',label:'Technical Project Manager (Scoping)'},{value:'Business Director',label:'Business Director (Accounts)'}]} />
                     </div>
                   </div>
                 )}
@@ -1335,19 +1361,20 @@ export const AdminInbox: React.FC = () => {
                   {/* Status Selector */}
                   <div className="flex items-center gap-1.5">
                     <span className="text-xs font-sans text-[var(--muted)]">Status:</span>
-                    <CustomSelect disabled={isUpdating} value={selectedSubmission.status} onChange={(value) => handleStatusChange(selectedSubmission.id, value as ContactSubmission['status'])} options={[{value:'new',label:'New'},{value:'in-review',label:'In Review'},{value:'contacted',label:'Contacted'},{value:'closed',label:'Closed Deal'}]} />
+                    <CustomSelect disabled={isUpdating || !canManageCrm} value={selectedSubmission.status} onChange={(value) => handleStatusChange(selectedSubmission.id, value as ContactSubmission['status'])} options={[{value:'new',label:'New'},{value:'in-review',label:'In Review'},{value:'contacted',label:'Contacted'},{value:'closed',label:'Closed Deal'}]} />
                   </div>
 
                   {/* Priority Selector */}
                   <div className="flex items-center gap-1.5">
                     <span className="text-xs font-sans text-[var(--muted)]">Priority:</span>
-                    <CustomSelect value={selectedSubmission.priority || 'normal'} onChange={(value) => handlePriorityChange(selectedSubmission.id, value as ContactSubmission['priority'])} options={[{value:'urgent',label:'Urgent'},{value:'high',label:'High'},{value:'normal',label:'Normal'},{value:'low',label:'Low'}]} />
+                    <CustomSelect disabled={!canManageCrm} value={selectedSubmission.priority || 'normal'} onChange={(value) => handlePriorityChange(selectedSubmission.id, value as ContactSubmission['priority'])} options={[{value:'urgent',label:'Urgent'},{value:'high',label:'High'},{value:'normal',label:'Normal'},{value:'low',label:'Low'}]} />
                   </div>
                 </div>
 
                 {/* Delete Button */}
                 <button
                   onClick={() => handleDelete(selectedSubmission.id)}
+                  disabled={!canManageCrm}
                   className="min-h-10 min-w-10 p-2 rounded-control bg-[var(--panel)] border border-[var(--line)] text-[var(--muted)] hover:text-[var(--danger)] hover:border-[var(--danger)]/40 transition-colors flex items-center justify-center"
                   title={language === 'id' ? 'Hapus pesan ini secara permanen' : 'Delete this brief permanently'}
                 >
