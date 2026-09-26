@@ -540,9 +540,6 @@
 .ams-shell .ams-leads-page .ams-table-scroll,.ams-shell .ams-inbox-page .ams-table-scroll{max-width:100%;overflow-x:auto}.ams-shell .ams-table-scroll table{min-width:max-content}
 .ams-shell .ams-leads-page .ams-kanban-scroll> *{flex:0 0 300px;min-width:280px;max-width:340px}
 .ams-shell .ams-inbox-list-pane,.ams-shell .ams-inbox-reader-pane{min-width:0;min-height:0}.ams-shell .ams-inbox-reader-pane{overflow:hidden}
-.ams-shell .ams-modal-root,.ams-shell [role=dialog]{overscroll-behavior:contain}
-.ams-shell .ams-drawer-surface{animation:ams-drawer-in 180ms ease-out}
-@keyframes ams-drawer-in{from{opacity:.98;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
 .ams-shell .custom-scrollbar::-webkit-scrollbar{width:4px;height:4px}.ams-shell .custom-scrollbar::-webkit-scrollbar-track{background:transparent}.ams-shell .custom-scrollbar::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}.ams-shell .custom-scrollbar::-webkit-scrollbar-thumb:hover{background:var(--muted)}
 .ams-portal-root{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text)}
 .ams-portal-root .ams-popover-surface,.ams-portal-root .ams-notification-surface{box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
@@ -558,7 +555,7 @@
  .ams-shell .ams-page-title{font-size:18px;line-height:24px}.ams-shell .ams-kpi-value{font-size:22px;line-height:28px}
  .ams-shell .ams-dashboard-card .text-2xl{font-size:22px;line-height:28px}.ams-shell .ams-panel{padding:16px}
  .ams-shell .ams-table-scroll table{min-width:680px}.ams-shell .ams-leads-page .ams-kanban-scroll> *{flex-basis:min(84vw,320px);min-width:min(84vw,280px);max-width:min(84vw,320px)}
- .ams-shell .ams-drawer-surface{width:100%;max-width:100%;padding:16px}.ams-shell .ams-mobile-drawer>.relative{width:min(300px,86vw);max-width:86vw}
+.ams-shell .ams-mobile-drawer>.relative{width:min(300px,86vw);max-width:86vw}
  .ams-shell input:not([type=checkbox]):not([type=radio]),.ams-shell select{min-height:40px;font-size:16px}
  .ams-shell table th,.ams-shell table td{white-space:nowrap}
 }
