@@ -332,7 +332,7 @@ export const AdminCrm: React.FC = () => {
       case 'high':
         return <span className="px-2 py-0.5 rounded bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/30 text-[9px] font-sans font-semibold normal-case">High</span>;
       case 'medium':
-        return <span className="px-2 py-0.5 rounded bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 text-[9px] font-sans font-semibold normal-case">Medium</span>;
+        return <span className="px-2 py-0.5 rounded-badge bg-[var(--info)]/10 text-[var(--info)] border border-[var(--info)]/30 text-[9px] font-sans font-semibold normal-case">Medium</span>;
       case 'low':
       default:
         return <span className="px-2 py-0.5 rounded bg-[var(--panel-hover)] text-[var(--muted)] border border-[var(--line)] text-[9px] font-sans font-semibold normal-case">Low</span>;
@@ -366,7 +366,7 @@ export const AdminCrm: React.FC = () => {
           <button type="button" onClick={() => deleteTarget && void confirmDeleteLead(deleteTarget.id)} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
         </div>
       </Modal>
-      <div className="space-y-6">
+      <div className="ams-leads-page space-y-6">
       
       {/* 1. Header & Actions */}
       <div className="ams-page-header flex flex-col lg:flex-row lg:items-center justify-between gap-4">
